@@ -87,7 +87,6 @@
 
 	<build>
 		<plugins>
-<!-- 
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.3</version>
@@ -96,12 +95,11 @@
 					<target>1.7</target>
 				</configuration>
 			</plugin>
-			-->
 			<!-- Plugin required to build java classes from XSD using XJC -->
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>jaxb2-maven-plugin</artifactId>
-				<version>2.2</version>
+				<version>1.6</version>
 				<executions>
 					<execution>
 						<goals>
