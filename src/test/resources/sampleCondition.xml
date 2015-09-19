@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<reponses>
+	<condition id="fhfksfhskfhs">
+		<expression>producer.prd_StateLevelLicenses.agt_AgentSLLicense[0].agt_LicenseID == 4172766 and producer.prd_Id == 2</expression>
+		<response>
+		<![CDATA[
+			<IDataXMLCoder version="1.0">
+				<record javaclass="com.wm.data.ISMemDataImpl">
+					<value name="DoctypeName">RJT Overwrite</value>
+					<value name="foo">iso</value>
+				</record>
+			</IDataXMLCoder>
+			]]>
+		</response>
+	</condition>
+</reponses>

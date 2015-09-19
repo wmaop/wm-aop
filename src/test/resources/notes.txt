@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<given id="aspect id">
+    <service intercepted="before">com.catlin.foo:bar</service>
+    <then>
+        <when id="check for hello">alpha.beta == "hello"</when>
+        <return><![CDATA[IDataXMLCoder version="1.0">
+            <record javaclass="com.wm.data.ISMemDataImpl">
+                <value name="apple">alpha</value>
+                <value name="pear">beta</value>
+            </record>
+        </IDataXMLCoder>]]>
+        </return>
+    </then>
+</given>
+
+
+
+<given xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="bddSchema.xsd" id="aspect id">
+    <service intercepted="invoke">pub.test:svcB</service>
+    <then>
+        <return><![CDATA[<IDataXMLCoder version="1.0">
+            <record javaclass="com.wm.data.ISMemDataImpl">
+                <value name="apple">alpha</value>
+                <value name="pear">beta</value>
+            </record>
+        </IDataXMLCoder>]]>
+        </return>
+    </then>
+</given>
+
+
+Invokemanage.cnf
+h<?xml version="1.0" encoding="UTF-8"?>
+
+<IDataXMLCoder version="1.0">
+  <record javaclass="com.wm.data.ISMemDataImpl">
+    <array name="processorArray" type="value" depth="1">
+      <value>com.xlcatlin.wm.aop.chainprocessor.AOPChainProcessor</value>
+    </array>
+  </record>
+</IDataXMLCoder>
+

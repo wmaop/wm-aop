@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+  <xs:element name="advice">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="given"/>
+        <xs:element ref="when" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attribute name="id" use="required"/>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="given">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="service"/>
+        <xs:element ref="when" minOccurs="0"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="service">
+    <xs:complexType>
+      <xs:simpleContent>
+        <xs:extension base="xs:string">
+          <xs:attribute ref="intercepted" default="invoke"/>
+        </xs:extension>
+      </xs:simpleContent>
+    </xs:complexType>
+  </xs:element>
+
+
+  <xs:element name="then">
+    <xs:complexType>
+      <xs:choice>
+        <xs:element ref="return"/>
+        <xs:element ref="pipelineCapture"/>
+        <xs:element ref="assert"/>
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="when">
+    <xs:complexType mixed="true">
+      <xs:sequence>
+        <xs:element ref="then" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attribute name="id" use="required"/>
+      <xs:attribute name="condition"/>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="else">
+    <xs:complexType mixed="true">
+      <xs:attribute name="id" use="required"/>
+    </xs:complexType>
+  </xs:element>
+
+
+  <xs:element name="return" type="xs:string"/>
+  <xs:element name="pipelineCapture" type="xs:string"/>
+  <xs:element name="assert">
+    <xs:complexType>
+      <xs:attribute name="id" use="required"/>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:attribute name="intercepted">
+    <xs:simpleType>
+      <xs:restriction base="xs:normalizedString">
+        <xs:enumeration value="before"/>
+        <xs:enumeration value="invoke"/>
+        <xs:enumeration value="after"/>
+      </xs:restriction>
+    </xs:simpleType>
+  </xs:attribute>
+</xs:schema>
