@@ -36,6 +36,7 @@
         <xs:element ref="return"/>
         <xs:element ref="pipelineCapture"/>
         <xs:element ref="assert"/>
+        <xs:element ref="throw"/>
       </xs:choice>
     </xs:complexType>
   </xs:element>
@@ -58,13 +59,15 @@
 
 
   <xs:element name="return" type="xs:string"/>
+  <xs:element name="throw" type="xs:string"/>
   <xs:element name="pipelineCapture" type="xs:string"/>
+  
   <xs:element name="assert">
     <xs:complexType>
       <xs:attribute name="id" use="required"/>
     </xs:complexType>
   </xs:element>
-
+  
   <xs:attribute name="intercepted">
     <xs:simpleType>
       <xs:restriction base="xs:normalizedString">

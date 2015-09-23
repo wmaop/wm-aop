@@ -1,15 +1,10 @@
 package com.xlcatlin.wm.interceptor.mock.conditional;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.xml.parsers.ParserConfigurationException;
-
-import org.xml.sax.SAXException;
 
 import com.wm.data.IData;
 import com.wm.data.IDataUtil;
@@ -24,17 +19,11 @@ public class ConditionalResponseInterceptor implements Interceptor {
 
 	private final JexlIDataMatcher evaluator;
 	private final Map<String, IData> responses = new HashMap<String, IData>();
+	private final IData defaultResponse;
+	private final String defaultId;
 	private final boolean ignoreNoMatch;
 
-	public ConditionalResponseInterceptor(InputStream responseXMLStream, boolean ignoreNoMatch) throws IOException, SAXException, ParserConfigurationException {
-		this(new XMLResponseParser().parse(responseXMLStream), ignoreNoMatch);
-	}
-
-	public ConditionalResponseInterceptor(String responseXML, boolean ignoreNoMatch) throws IOException, SAXException, ParserConfigurationException {
-		this(new XMLResponseParser().parse(responseXML), ignoreNoMatch);
-	}
-
-	public ConditionalResponseInterceptor(List<ConditionResponse> conditionResponses, boolean ignoreNoMatch) throws IOException {
+	public ConditionalResponseInterceptor(List<ConditionResponse> conditionResponses, ConditionResponse dr, boolean ignoreNoMatch) throws IOException {
 		Map<String, String> exprs = new LinkedHashMap<String, String>();
 		this.ignoreNoMatch = ignoreNoMatch;
 		for (ConditionResponse cr : conditionResponses) {
@@ -42,6 +31,13 @@ public class ConditionalResponseInterceptor implements Interceptor {
 			exprs.put(sid, cr.getExpression());
 			responses.put(sid, new IDataXMLCoder().decodeFromBytes(cr.getResponse().getBytes()));
 			System.out.println("]>]> Adding response id " + sid + " length " + cr.getResponse().length() + " for expression " + cr.getExpression());
+		}
+		if (dr != null && dr.getResponse() != null) {
+			defaultResponse = new IDataXMLCoder().decodeFromBytes(dr.getResponse().getBytes());
+			defaultId = dr.getId();
+		} else {
+			defaultId = null;
+			defaultResponse = null;
 		}
 		evaluator = new JexlIDataMatcher(exprs);
 	}
@@ -52,6 +48,10 @@ public class ConditionalResponseInterceptor implements Interceptor {
 		if (result != null) {
 			System.out.println("]>]> Merging response " + result.getId());
 			IDataUtil.merge(responses.get(result.getId()), idata);
+			return InterceptResult.TRUE;
+		} else if (defaultResponse != null) {
+			System.out.println("]>]> Merging default response " + defaultId);
+			IDataUtil.merge(defaultResponse, idata);
 			return InterceptResult.TRUE;
 		}
 		if (ignoreNoMatch) {
