@@ -1,4 +1,4 @@
-package com.xlcatlin.wm.aop.matcher.jexl;
+package com.xlcatlin.util.jexl;
 
 import org.apache.commons.jexl2.JexlContext;
 
@@ -16,7 +16,8 @@ public class IDataJexlContext implements JexlContext {
 
 	public Object get(String name) {
 		IDataCursor cursor = idata.getCursor();
-		Object o = IDataUtil.get(cursor, name.replace('_', ':')); // Use better escape
+		Object o = IDataUtil.get(cursor, name.replace('_', ':')); // Use better
+																	// escape
 		cursor.destroy();
 		Object ret = o;
 		try {
@@ -44,7 +45,6 @@ public class IDataJexlContext implements JexlContext {
 	public boolean has(String name) {
 		IDataCursor cursor = idata.getCursor();
 		Object o = IDataUtil.get(cursor, name.replace('_', ':'));
-		System.out.println("Has " + name + " = " + (o != null));
 		cursor.destroy();
 		return o != null;
 	}

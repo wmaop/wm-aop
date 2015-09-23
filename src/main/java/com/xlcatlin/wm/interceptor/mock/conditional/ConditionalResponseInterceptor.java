@@ -6,6 +6,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
+
 import com.wm.data.IData;
 import com.wm.data.IDataUtil;
 import com.wm.util.coder.IDataXMLCoder;
@@ -16,6 +18,8 @@ import com.xlcatlin.wm.aop.matcher.jexl.JexlIDataMatcher;
 import com.xlcatlin.wm.aop.pipeline.FlowPosition;
 
 public class ConditionalResponseInterceptor implements Interceptor {
+
+	private static final Logger logger = Logger.getLogger(ConditionalResponseInterceptor.class);
 
 	private final JexlIDataMatcher evaluator;
 	private final Map<String, IData> responses = new HashMap<String, IData>();
@@ -30,7 +34,7 @@ public class ConditionalResponseInterceptor implements Interceptor {
 			String sid = cr.getId();
 			exprs.put(sid, cr.getExpression());
 			responses.put(sid, new IDataXMLCoder().decodeFromBytes(cr.getResponse().getBytes()));
-			System.out.println("]>]> Adding response id " + sid + " length " + cr.getResponse().length() + " for expression " + cr.getExpression());
+			logger.info("]>]> Adding response id " + sid + " length " + cr.getResponse().length() + " for expression " + cr.getExpression());
 		}
 		if (dr != null && dr.getResponse() != null) {
 			defaultResponse = new IDataXMLCoder().decodeFromBytes(dr.getResponse().getBytes());
@@ -44,13 +48,13 @@ public class ConditionalResponseInterceptor implements Interceptor {
 
 	public InterceptResult intercept(FlowPosition flowPosition, IData idata) {
 		MatchResult result = evaluator.match(idata);
-		System.out.println("]>]> Evaluated " + result);
+		logger.info("]>]> Evaluated " + result);
 		if (result != null) {
-			System.out.println("]>]> Merging response " + result.getId());
+			logger.info("]>]> Merging response " + result.getId());
 			IDataUtil.merge(responses.get(result.getId()), idata);
 			return InterceptResult.TRUE;
 		} else if (defaultResponse != null) {
-			System.out.println("]>]> Merging default response " + defaultId);
+			logger.info("]>]> Merging default response " + defaultId);
 			IDataUtil.merge(defaultResponse, idata);
 			return InterceptResult.TRUE;
 		}

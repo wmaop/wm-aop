@@ -7,6 +7,8 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
+import org.apache.log4j.Logger;
+
 import com.wm.data.IData;
 import com.xlcatlin.wm.aop.InterceptPoint;
 import com.xlcatlin.wm.aop.chainprocessor.AOPChainProcessor;
@@ -25,6 +27,8 @@ import com.xlcatlin.wm.interceptor.xsd.bdd.When;
  */
 public class BddParser {
 
+	private static final Logger logger = Logger.getLogger(BddParser.class);
+
 	class AssertionHolder {
 		String whenCondition;
 		String whenid;
@@ -42,13 +46,13 @@ public class BddParser {
 		Interceptor interceptor = new WhenProcessor(xmlAdvice, true);
 		com.xlcatlin.wm.aop.Advice advice = new com.xlcatlin.wm.aop.Advice(xmlAdvice.getId(), getJoinPoint(xmlAdvice), interceptor);
 
-		System.out.println("Registering advice: " + advice.getId());
+		logger.info("Registering advice: " + advice.getId());
 		AOPChainProcessor.getInstance().registerAdvice(advice);
 	}
 
 	private InterceptPoint getInterceptPoint(Advice xmlAdvice) {
 		InterceptPoint interceptPoint = InterceptPoint.valueOf(xmlAdvice.getGiven().getService().getIntercepted().toUpperCase());
-		System.out.println("Creating intercept point: " + interceptPoint);
+		logger.info("Creating intercept point: " + interceptPoint);
 		return interceptPoint;
 	}
 
@@ -57,7 +61,7 @@ public class BddParser {
 		When when = xmlAdvice.getGiven().getWhen();
 
 		FlowPositionMatcher flowPositionMatcher = new FlowPositionMatcher(service.getValue() + '_' + service.getIntercepted(), service.getValue());
-		System.out.println("Created flow position matcher: " + flowPositionMatcher);
+		logger.info("Created flow position matcher: " + flowPositionMatcher);
 
 		Matcher<? super IData> pipelineMatcher = getMatcher(when.getCondition(), when.getId());
 
@@ -72,7 +76,7 @@ public class BddParser {
 		} else {
 			pipelineMatcher = new AlwaysTrueMatcher();
 		}
-		System.out.println("Created pipeline matcher: " + pipelineMatcher);
+		logger.info("Created pipeline matcher: " + pipelineMatcher);
 		return pipelineMatcher;
 	}
 }

@@ -9,11 +9,11 @@ import com.xlcatlin.wm.aop.matcher.MatchResult;
 import com.xlcatlin.wm.aop.matcher.Matcher;
 import com.xlcatlin.wm.aop.pipeline.FlowPosition;
 
-public class JexlIServiceNameMatcher implements Matcher<FlowPosition> {
+public class JexlServiceNameMatcher implements Matcher<FlowPosition> {
 
 	private final Expression expression;
 	private final String sid;
-	public JexlIServiceNameMatcher(String sid, String expr) {
+	public JexlServiceNameMatcher(String sid, String expr) {
 		this.sid = sid;
 		expression = createExpression(sid, expr);
 	}

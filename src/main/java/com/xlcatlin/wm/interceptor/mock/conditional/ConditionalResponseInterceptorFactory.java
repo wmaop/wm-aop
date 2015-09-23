@@ -10,7 +10,7 @@ import com.xlcatlin.wm.aop.PointCut;
 import com.xlcatlin.wm.aop.matcher.FlowPositionMatcher;
 import com.xlcatlin.wm.aop.matcher.Matcher;
 import com.xlcatlin.wm.aop.matcher.jexl.JexlIDataMatcher;
-import com.xlcatlin.wm.aop.matcher.jexl.JexlIServiceNameMatcher;
+import com.xlcatlin.wm.aop.matcher.jexl.JexlServiceNameMatcher;
 import com.xlcatlin.wm.aop.pipeline.FlowPosition;
 import com.xlcatlin.wm.aop.pointcut.ServicePipelinePointCut;
 import com.xlcatlin.wm.interceptor.mock.canned.CannedResponseInterceptor;
@@ -56,7 +56,7 @@ public class ConditionalResponseInterceptorFactory {
 			if ((c >= '0' && c <= '9') || (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || c == ':' || c == '_') {
 				continue;
 			} else {
-				return new JexlIServiceNameMatcher(serviceName, serviceName);
+				return new JexlServiceNameMatcher(serviceName, serviceName);
 			}
 		}
 		return new FlowPositionMatcher(serviceName, serviceName);

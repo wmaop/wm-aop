@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
+import org.apache.log4j.Logger;
 
 import com.wm.app.b2b.server.BaseService;
 import com.wm.app.b2b.server.invoke.InvokeChainProcessor;
@@ -23,6 +24,8 @@ import com.xlcatlin.wm.aop.pipeline.FlowPosition;
 
 public class AOPChainProcessor implements InvokeChainProcessor {
 
+	private static final Logger logger = Logger.getLogger(AOPChainProcessor.class);
+
 	private static AOPChainProcessor instance;
 
 	private final Map<InterceptPoint, List<Advice>> ADVICES = new HashMap<InterceptPoint, List<Advice>>();
@@ -34,7 +37,7 @@ public class AOPChainProcessor implements InvokeChainProcessor {
 	}
 
 	public AOPChainProcessor() {
-		System.out.println("]>]> Initialising " + this.getClass().getName());
+		logger.info("]>]> Initialising " + this.getClass().getName());
 		for (InterceptPoint ip : InterceptPoint.values()) {
 			ADVICES.put(ip, new ArrayList<Advice>());
 		}
@@ -46,13 +49,13 @@ public class AOPChainProcessor implements InvokeChainProcessor {
 			adv.clear();
 		}
 		ID_ADVICE.clear();
-		System.out.println("]>]> Cleared all Advice");
+		logger.info("]>]> Cleared all Advice");
 	}
 
 	public void registerAdvice(Advice advice) {
 		ADVICES.get(advice.getPointCut().getInterceptPoint()).add(advice);
 		ID_ADVICE.put(advice.getId(), advice);
-		System.out.println("]>]> Registered advice " + advice);
+		logger.info("]>]> Registered advice " + advice);
 	}
 
 	public void unregisterAdvice(String adviceId) {
@@ -78,7 +81,7 @@ public class AOPChainProcessor implements InvokeChainProcessor {
 
 	public void setEnabled(boolean enabled) {
 		interceptingEnabled = enabled;
-		System.out.println("]>]> Intercepting " + (enabled ? "enabled" : "disabled"));
+		logger.info("]>]> Intercepting " + (enabled ? "enabled" : "disabled"));
 	}
 
 	public boolean isEnabled() {
@@ -101,7 +104,9 @@ public class AOPChainProcessor implements InvokeChainProcessor {
 		pipelinePosition.setInterceptPoint(INVOKE);
 		boolean hasIntercepted = processAdvice(true, pipelinePosition, idata, serviceStatus);
 
-		System.out.println(ReflectionToStringBuilder.toString(serviceStatus));
+		if (logger.isDebugEnabled()) {
+			logger.debug(ReflectionToStringBuilder.toString(serviceStatus));
+		}
 
 		if (!hasIntercepted && processorChain.hasNext()) {
 			((InvokeChainProcessor) processorChain.next()).process(processorChain, baseService, idata, serviceStatus);
@@ -115,7 +120,7 @@ public class AOPChainProcessor implements InvokeChainProcessor {
 		for (Advice advice : ADVICES.get(pos.getInterceptPoint())) {
 			if (advice.getPointCut().isApplicable(pos, idata)) {
 				Interceptor interceptor = advice.getInterceptor();
-				System.out.println("]>]> Intercepting " + pos);
+				logger.info("]>]> Intercepting " + pos);
 				InterceptResult interceptResult = interceptor.intercept(pos, idata);
 				if (interceptResult.hasIntercepted() && exitOnIntercept) {
 					Exception e = interceptResult.getException();

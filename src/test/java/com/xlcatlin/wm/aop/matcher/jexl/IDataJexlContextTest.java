@@ -8,7 +8,7 @@ import com.wm.data.BasicData;
 import com.wm.data.IData;
 import com.wm.data.IDataCursor;
 import com.wm.data.IDataUtil;
-import com.xlcatlin.wm.aop.matcher.jexl.IDataJexlContext;
+import com.xlcatlin.util.jexl.IDataJexlContext;
 
 public class IDataJexlContextTest {
 

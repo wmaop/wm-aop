@@ -10,6 +10,7 @@ import org.apache.commons.jexl2.JexlContext;
 import org.apache.commons.jexl2.MapContext;
 
 import com.wm.data.IData;
+import com.xlcatlin.util.jexl.IDataJexlContext;
 import com.xlcatlin.util.jexl.JexlExpressionFactory;
 import com.xlcatlin.wm.aop.matcher.MatchResult;
 import com.xlcatlin.wm.aop.matcher.Matcher;

@@ -6,6 +6,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
+
 import com.wm.data.IData;
 import com.xlcatlin.wm.aop.chainprocessor.InterceptResult;
 import com.xlcatlin.wm.aop.chainprocessor.Interceptor;
@@ -17,6 +19,8 @@ import com.xlcatlin.wm.interceptor.xsd.bdd.Then;
 import com.xlcatlin.wm.interceptor.xsd.bdd.When;
 
 public class WhenProcessor implements Interceptor {
+
+	private static final Logger logger = Logger.getLogger(WhenProcessor.class);
 
 	private final JexlIDataMatcher evaluator;
 	private final Map<String, List<ThenAction>> actionMap = new HashMap<String, List<ThenAction>>();
@@ -57,7 +61,7 @@ public class WhenProcessor implements Interceptor {
 				} else {
 					defaultActions.add(action);
 				}
-				System.out.println("]>]> Adding response id " + sid + " to action " + action);
+				logger.info("]>]> Adding response id " + sid + " to action " + action);
 			}
 		}
 		evaluator = new JexlIDataMatcher(exprs);
@@ -65,7 +69,7 @@ public class WhenProcessor implements Interceptor {
 
 	public InterceptResult intercept(FlowPosition flowPosition, IData idata) {
 		MatchResult result = evaluator.match(idata);
-		System.out.println("]>]> Evaluated " + result);
+		logger.info("]>]> Evaluated " + result);
 		if (result != null) {
 			return executeActions(actionMap.get(result.getId()), flowPosition, idata);
 		} else if (defaultActions.size() > 0) {
