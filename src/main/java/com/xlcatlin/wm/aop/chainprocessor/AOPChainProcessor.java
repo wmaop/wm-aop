@@ -38,6 +38,8 @@ public class AOPChainProcessor implements InvokeChainProcessor {
 
 	public AOPChainProcessor() {
 		logger.info("]>]> Initialising " + this.getClass().getName());
+		ADVICES.clear();
+		ID_ADVICE.clear();
 		for (InterceptPoint ip : InterceptPoint.values()) {
 			ADVICES.put(ip, new ArrayList<Advice>());
 		}
@@ -59,12 +61,12 @@ public class AOPChainProcessor implements InvokeChainProcessor {
 	}
 
 	public void unregisterAdvice(String adviceId) {
-		ID_ADVICE.remove(adviceId);
+		unregisterAdvice(ID_ADVICE.get(adviceId));
 	}
 
 	public void unregisterAdvice(Advice advice) {
 		ADVICES.get(advice.getPointCut().getInterceptPoint()).remove(advice);
-		ID_ADVICE.remove(advice).getId();
+		ID_ADVICE.remove(advice.getId());
 	}
 
 	public Advice getAdvice(String id) {

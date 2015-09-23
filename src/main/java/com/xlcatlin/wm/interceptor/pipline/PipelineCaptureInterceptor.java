@@ -1,7 +1,9 @@
 package com.xlcatlin.wm.interceptor.pipline;
 
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 
 import com.wm.data.IData;
 import com.wm.util.coder.IDataXMLCoder;
@@ -29,7 +31,7 @@ public class PipelineCaptureInterceptor implements Interceptor {
 	@Override
 	public InterceptResult intercept(FlowPosition flowPosition, IData idata) {
 		String fname = prefix + '-' + ++fileCount + suffix;
-		try (FileOutputStream fos = new FileOutputStream(fname)) {
+		try (OutputStream fos = getFileOutputStream(fname)) {
 			new IDataXMLCoder().encode(fos, idata);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
@@ -37,4 +39,7 @@ public class PipelineCaptureInterceptor implements Interceptor {
 		return InterceptResult.TRUE;
 	}
 
+	OutputStream getFileOutputStream(String fileName) throws FileNotFoundException {
+		return new FileOutputStream(fileName);
+	}
 }
