@@ -35,11 +35,11 @@ public class AOPChainProcessorTest {
 		FlowPositionMatcher serviceNameMatcher = new FlowPositionMatcher("my id", "pre:foo");
 		Matcher<IData> pipelineMatcher = new JexlIDataMatcher("doc", "documentName == 'iso'");
 		Assertion assertion = new Assertion("myAssertion");
-		Advice assertionAdvice = new Advice("adv1", new ServicePipelinePointCut(serviceNameMatcher, pipelineMatcher), assertion, InterceptPoint.BEFORE);
+		Advice assertionAdvice = new Advice("adv1", new ServicePipelinePointCut(serviceNameMatcher, pipelineMatcher, InterceptPoint.BEFORE), assertion);
 		cp.registerAdvice(assertionAdvice);
 
 		CannedResponseInterceptor interceptor = new CannedResponseInterceptor(classLoader.getResourceAsStream("cannedResponse.xml"));
-		Advice interceptAdvice = new Advice("adv2", new ServicePipelinePointCut(serviceNameMatcher, pipelineMatcher), interceptor, InterceptPoint.INVOKE);
+		Advice interceptAdvice = new Advice("adv2", new ServicePipelinePointCut(serviceNameMatcher, pipelineMatcher, InterceptPoint.INVOKE), interceptor);
 		cp.registerAdvice(interceptAdvice);
 
 		// Pipeline mocking
@@ -77,8 +77,8 @@ public class AOPChainProcessorTest {
 
 		FlowPositionMatcher serviceNameMatcher = new FlowPositionMatcher("my id", "pre:foo");
 		CannedResponseInterceptor interceptor = new CannedResponseInterceptor(classLoader.getResourceAsStream("cannedResponse.xml"));
-		ServicePipelinePointCut pointCut = new ServicePipelinePointCut(serviceNameMatcher, new AlwaysTrueMatcher());
-		Advice advice = new Advice("intercept", pointCut, interceptor, InterceptPoint.INVOKE);
+		ServicePipelinePointCut pointCut = new ServicePipelinePointCut(serviceNameMatcher, new AlwaysTrueMatcher(), InterceptPoint.INVOKE);
+		Advice advice = new Advice("intercept", pointCut, interceptor);
 		cp.registerAdvice(advice);
 
 		// Pipeline mocking

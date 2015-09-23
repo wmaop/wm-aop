@@ -1,16 +1,17 @@
 package com.xlcatlin.wm.aop.pointcut;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import org.junit.Test;
 
-import static org.mockito.Mockito.*;
-
 import com.wm.data.IData;
+import com.xlcatlin.wm.aop.InterceptPoint;
 import com.xlcatlin.wm.aop.matcher.MatchResult;
 import com.xlcatlin.wm.aop.matcher.Matcher;
 import com.xlcatlin.wm.aop.pipeline.FlowPosition;
-import com.xlcatlin.wm.aop.pointcut.ServicePipelinePointCut;
 
 public class ServicePipelinePointCutTest {
 
@@ -20,10 +21,10 @@ public class ServicePipelinePointCutTest {
 		Matcher<FlowPosition> serviceNameMatcher = mock(Matcher.class);
 		Matcher<? super IData> pipelineMatcher = mock(Matcher.class);
 		IData idataMock = mock(IData.class);
-		
-		when (serviceNameMatcher.match(pipelinePosition)).thenReturn(MatchResult.TRUE);
-		when (pipelineMatcher.match(idataMock)).thenReturn(MatchResult.TRUE);
-		ServicePipelinePointCut sppc = new ServicePipelinePointCut(serviceNameMatcher, pipelineMatcher);
+
+		when(serviceNameMatcher.match(pipelinePosition)).thenReturn(MatchResult.TRUE);
+		when(pipelineMatcher.match(idataMock)).thenReturn(MatchResult.TRUE);
+		ServicePipelinePointCut sppc = new ServicePipelinePointCut(serviceNameMatcher, pipelineMatcher, InterceptPoint.INVOKE);
 		assertTrue(sppc.isApplicable(pipelinePosition, idataMock));
 	}
 
@@ -35,14 +36,14 @@ public class ServicePipelinePointCutTest {
 		Matcher<? super IData> pipelineMatcher = mock(Matcher.class);
 		IData idataMock = mock(IData.class);
 		IData falseIdataMock = mock(IData.class);
-		
-		when (serviceNameMatcher.match(pipelinePosition)).thenReturn(MatchResult.TRUE);
-		when (serviceNameMatcher.match(falsePipelinePosition)).thenReturn(MatchResult.FALSE);
-		when (pipelineMatcher.match(idataMock)).thenReturn(MatchResult.TRUE);
-		when (pipelineMatcher.match(falseIdataMock)).thenReturn(MatchResult.FALSE);
-		
-		ServicePipelinePointCut sppc = new ServicePipelinePointCut(serviceNameMatcher, pipelineMatcher);
-		
+
+		when(serviceNameMatcher.match(pipelinePosition)).thenReturn(MatchResult.TRUE);
+		when(serviceNameMatcher.match(falsePipelinePosition)).thenReturn(MatchResult.FALSE);
+		when(pipelineMatcher.match(idataMock)).thenReturn(MatchResult.TRUE);
+		when(pipelineMatcher.match(falseIdataMock)).thenReturn(MatchResult.FALSE);
+
+		ServicePipelinePointCut sppc = new ServicePipelinePointCut(serviceNameMatcher, pipelineMatcher, InterceptPoint.INVOKE);
+
 		assertFalse(sppc.isApplicable(falsePipelinePosition, idataMock));
 		assertFalse(sppc.isApplicable(pipelinePosition, falseIdataMock));
 		assertTrue(sppc.isApplicable(pipelinePosition, idataMock));

@@ -24,7 +24,7 @@ import com.xlcatlin.wm.aop.pipeline.FlowPosition;
 public class AOPChainProcessor implements InvokeChainProcessor {
 
 	private static AOPChainProcessor instance;
-	
+
 	private final Map<InterceptPoint, List<Advice>> ADVICES = new HashMap<InterceptPoint, List<Advice>>();
 	private final Map<String, Advice> ID_ADVICE = new HashMap<String, Advice>();
 	private boolean interceptingEnabled = false;
@@ -42,7 +42,7 @@ public class AOPChainProcessor implements InvokeChainProcessor {
 	}
 
 	public void clearAdvice() {
-		for (List<Advice> adv: ADVICES.values()) {
+		for (List<Advice> adv : ADVICES.values()) {
 			adv.clear();
 		}
 		ID_ADVICE.clear();
@@ -50,7 +50,7 @@ public class AOPChainProcessor implements InvokeChainProcessor {
 	}
 
 	public void registerAdvice(Advice advice) {
-		ADVICES.get(advice.getInterceptPoint()).add(advice);
+		ADVICES.get(advice.getPointCut().getInterceptPoint()).add(advice);
 		ID_ADVICE.put(advice.getId(), advice);
 		System.out.println("]>]> Registered advice " + advice);
 	}
@@ -58,19 +58,19 @@ public class AOPChainProcessor implements InvokeChainProcessor {
 	public void unregisterAdvice(String adviceId) {
 		ID_ADVICE.remove(adviceId);
 	}
-	
+
 	public void unregisterAdvice(Advice advice) {
-		ADVICES.get(advice.getInterceptPoint()).remove(advice);
+		ADVICES.get(advice.getPointCut().getInterceptPoint()).remove(advice);
 		ID_ADVICE.remove(advice).getId();
 	}
 
 	public Advice getAdvice(String id) {
 		return ID_ADVICE.get(id);
 	}
-	
+
 	public List<Advice> listAdvice() {
 		List<Advice> list = new ArrayList<Advice>();
-		for (List<Advice> adv: ADVICES.values()) {
+		for (List<Advice> adv : ADVICES.values()) {
 			list.addAll(adv);
 		}
 		return list;
@@ -78,41 +78,35 @@ public class AOPChainProcessor implements InvokeChainProcessor {
 
 	public void setEnabled(boolean enabled) {
 		interceptingEnabled = enabled;
-		System.out.println("]>]> Intercepting " + (enabled?"enabled":"disabled"));
+		System.out.println("]>]> Intercepting " + (enabled ? "enabled" : "disabled"));
 	}
 
 	public boolean isEnabled() {
 		return interceptingEnabled;
 	}
-	
-	public void process(@SuppressWarnings("rawtypes") Iterator processorChain,
-			BaseService baseService, IData idata, ServiceStatus serviceStatus)
-			throws ServerException {
-		
+
+	public void process(@SuppressWarnings("rawtypes") Iterator processorChain, BaseService baseService, IData idata, ServiceStatus serviceStatus) throws ServerException {
+
 		if (interceptingEnabled) {
 			processIntercept(processorChain, baseService, idata, serviceStatus);
 		} else if (processorChain.hasNext()) {
-			((InvokeChainProcessor) processorChain.next()).process(
-					processorChain, baseService, idata, serviceStatus);
+			((InvokeChainProcessor) processorChain.next()).process(processorChain, baseService, idata, serviceStatus);
 		}
 	}
 
-	private void processIntercept(@SuppressWarnings("rawtypes") Iterator processorChain,
-			BaseService baseService, IData idata, ServiceStatus serviceStatus)
-			throws ServerException {
+	private void processIntercept(@SuppressWarnings("rawtypes") Iterator processorChain, BaseService baseService, IData idata, ServiceStatus serviceStatus) throws ServerException {
 		FlowPosition pipelinePosition = new FlowPosition(BEFORE, baseService.getNSName().getFullName());
 		processAdvice(false, pipelinePosition, idata, serviceStatus);
-		
+
 		pipelinePosition.setInterceptPoint(INVOKE);
 		boolean hasIntercepted = processAdvice(true, pipelinePosition, idata, serviceStatus);
-		
+
 		System.out.println(ReflectionToStringBuilder.toString(serviceStatus));
-		
+
 		if (!hasIntercepted && processorChain.hasNext()) {
-			((InvokeChainProcessor) processorChain.next()).process(
-					processorChain, baseService, idata, serviceStatus);
+			((InvokeChainProcessor) processorChain.next()).process(processorChain, baseService, idata, serviceStatus);
 		}
-		
+
 		pipelinePosition.setInterceptPoint(AFTER);
 		processAdvice(false, pipelinePosition, idata, serviceStatus);
 	}

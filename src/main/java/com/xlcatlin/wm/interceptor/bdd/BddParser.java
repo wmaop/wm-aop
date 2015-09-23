@@ -40,7 +40,7 @@ public class BddParser {
 
 	private void processAdvice(Advice xmlAdvice) {
 		Interceptor interceptor = new WhenProcessor(xmlAdvice, true);
-		com.xlcatlin.wm.aop.Advice advice = new com.xlcatlin.wm.aop.Advice(xmlAdvice.getId(), getJoinPoint(xmlAdvice), interceptor, getInterceptPoint(xmlAdvice));
+		com.xlcatlin.wm.aop.Advice advice = new com.xlcatlin.wm.aop.Advice(xmlAdvice.getId(), getJoinPoint(xmlAdvice), interceptor);
 
 		System.out.println("Registering advice: " + advice.getId());
 		AOPChainProcessor.getInstance().registerAdvice(advice);
@@ -61,7 +61,7 @@ public class BddParser {
 
 		Matcher<? super IData> pipelineMatcher = getMatcher(when.getCondition(), when.getId());
 
-		ServicePipelinePointCut joinPoint = new ServicePipelinePointCut(flowPositionMatcher, pipelineMatcher);
+		ServicePipelinePointCut joinPoint = new ServicePipelinePointCut(flowPositionMatcher, pipelineMatcher, getInterceptPoint(xmlAdvice));
 		return joinPoint;
 	}
 

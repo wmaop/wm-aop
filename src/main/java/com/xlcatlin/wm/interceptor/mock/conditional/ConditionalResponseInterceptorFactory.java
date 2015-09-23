@@ -7,8 +7,8 @@ import java.util.List;
 import com.xlcatlin.wm.aop.Advice;
 import com.xlcatlin.wm.aop.InterceptPoint;
 import com.xlcatlin.wm.aop.PointCut;
-import com.xlcatlin.wm.aop.matcher.Matcher;
 import com.xlcatlin.wm.aop.matcher.FlowPositionMatcher;
+import com.xlcatlin.wm.aop.matcher.Matcher;
 import com.xlcatlin.wm.aop.matcher.jexl.JexlIDataMatcher;
 import com.xlcatlin.wm.aop.matcher.jexl.JexlIServiceNameMatcher;
 import com.xlcatlin.wm.aop.pipeline.FlowPosition;
@@ -37,10 +37,9 @@ public class ConditionalResponseInterceptorFactory {
 		List<Advice> advices = new ArrayList<Advice>();
 		for (ConditionResponse pair : expressions) {
 			String sid = pair.getId();
-			PointCut pointCut = new ServicePipelinePointCut(getServiceNameMatcher(serviceName),
-					new JexlIDataMatcher(sid, pair.getExpression()));
+			PointCut pointCut = new ServicePipelinePointCut(getServiceNameMatcher(serviceName), new JexlIDataMatcher(sid, pair.getExpression()), InterceptPoint.INVOKE);
 			try {
-				advices.add(new Advice(sid, pointCut, new CannedResponseInterceptor(pair.getResponse()), InterceptPoint.INVOKE));
+				advices.add(new Advice(sid, pointCut, new CannedResponseInterceptor(pair.getResponse())));
 			} catch (Exception e) {
 				throw new RuntimeException("Unable to parse XML for " + serviceName, e);
 			}
@@ -49,7 +48,8 @@ public class ConditionalResponseInterceptorFactory {
 	}
 
 	/**
-	 * Return the matcher based on the text presented.  Alpha numeric with : or _ for a straight string match, any other for Jexl 
+	 * Return the matcher based on the text presented. Alpha numeric with : or _
+	 * for a straight string match, any other for Jexl
 	 */
 	private Matcher<FlowPosition> getServiceNameMatcher(String serviceName) {
 		for (char c : serviceName.toCharArray()) {

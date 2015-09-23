@@ -6,13 +6,11 @@ public class Advice {
 
 	private final PointCut pointCut;
 	private final Interceptor interceptor;
-	private final InterceptPoint interceptPoint;
 	private final String id;
-	
-	public Advice(String id, PointCut pointCut, Interceptor interceptor, InterceptPoint interceptPoint) {
+
+	public Advice(String id, PointCut pointCut, Interceptor interceptor) {
 		this.pointCut = pointCut;
 		this.interceptor = interceptor;
-		this.interceptPoint = interceptPoint;
 		this.id = id;
 	}
 
@@ -24,18 +22,13 @@ public class Advice {
 		return interceptor;
 	}
 
-	public InterceptPoint getInterceptPoint() {
-		return interceptPoint;
-	}
-
 	public String getId() {
 		return id;
 	}
-	
+
 	@Override
 	public String toString() {
-		return id + " " + pointCut.toString() + ' ' + interceptor + ' ' + interceptPoint;
+		return id + " " + pointCut.toString() + ' ' + interceptor + ' ' + pointCut.getInterceptPoint();
 	}
 
-	
 }
