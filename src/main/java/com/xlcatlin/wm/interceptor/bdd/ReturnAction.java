@@ -12,8 +12,12 @@ public class ReturnAction implements ThenAction {
 
 	private final IData responseIData;
 
-	ReturnAction(String content) throws IOException {
-		responseIData = new IDataXMLCoder().decodeFromBytes(content.getBytes());
+	ReturnAction(String content) {
+		try {
+			responseIData = new IDataXMLCoder().decodeFromBytes(content.getBytes());
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	@Override

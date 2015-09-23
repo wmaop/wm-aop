@@ -1,6 +1,5 @@
 package com.xlcatlin.wm.interceptor.bdd;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -8,15 +7,12 @@ import java.util.List;
 import java.util.Map;
 
 import com.wm.data.IData;
-import com.wm.data.IDataUtil;
-import com.wm.util.coder.IDataXMLCoder;
 import com.xlcatlin.wm.aop.chainprocessor.InterceptResult;
 import com.xlcatlin.wm.aop.chainprocessor.Interceptor;
 import com.xlcatlin.wm.aop.matcher.MatchResult;
 import com.xlcatlin.wm.aop.matcher.jexl.JexlIDataMatcher;
 import com.xlcatlin.wm.aop.pipeline.FlowPosition;
 import com.xlcatlin.wm.interceptor.xsd.bdd.Advice;
-import com.xlcatlin.wm.interceptor.xsd.bdd.Assert;
 import com.xlcatlin.wm.interceptor.xsd.bdd.Then;
 import com.xlcatlin.wm.interceptor.xsd.bdd.When;
 
@@ -27,7 +23,7 @@ public class WhenProcessor implements Interceptor {
 	private final List<ThenAction> defaultActions = new ArrayList<ThenAction>();
 	private final boolean ignoreNoMatch;
 
-	public WhenProcessor(Advice xmlAdvice, boolean ignoreNoMatch) throws IOException {
+	public WhenProcessor(Advice xmlAdvice, boolean ignoreNoMatch) {
 		Map<String, String> exprs = new LinkedHashMap<String, String>();
 		this.ignoreNoMatch = ignoreNoMatch;
 		for (When when : xmlAdvice.getWhen()) {
@@ -35,6 +31,8 @@ public class WhenProcessor implements Interceptor {
 			String expr = when.getCondition();
 
 			for (Object o : when.getContent()) {
+				if (!(o instanceof Then))
+					continue;
 				Then then = (Then) o;
 				ThenAction action;
 				if (then.getAssert() != null) {
@@ -50,7 +48,12 @@ public class WhenProcessor implements Interceptor {
 				}
 				if (expr != null) {
 					exprs.put(sid, expr);
-					actionMap.get(sid).add(action);
+					List<ThenAction> am = actionMap.get(sid);
+					if (am == null) {
+						am = new ArrayList<ThenAction>();
+						actionMap.put(sid, am);
+					}
+					am.add(action);
 				} else {
 					defaultActions.add(action);
 				}

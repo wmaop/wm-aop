@@ -25,12 +25,12 @@ public class BddParserTest {
 
 	@Test
 	public void shouldParse() throws JAXBException, IOException {
-		
+
 		PowerMockito.mockStatic(AOPChainProcessor.class);
 		AOPChainProcessor mockProcessor = mock(AOPChainProcessor.class);
 		PowerMockito.when(AOPChainProcessor.getInstance()).thenReturn(mockProcessor);
-		
-		InputStream bddstream = this.getClass().getResourceAsStream("/bdd/validBdd.xml");
+
+		InputStream bddstream = this.getClass().getResourceAsStream("/bdd/multipleReturnBdd.xml");
 		new BddParser().parse(bddstream);
 
 		verify(mockProcessor).registerAdvice(any(Advice.class));
