@@ -1,8 +1,11 @@
-<given xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
- xsi:noNamespaceSchemaLocation="bddSchema.xsd" id="aspect id">
-    <service intercepted="before">com.catlin.foo:bar</service>
-    <then>
-        <when id="check for hello">alpha.beta == "hello"</when>
-        <pipelineCapture to="d:\tmp\bar.xml"/>
-    </then>
-</given>
+<advice xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../main/xsd/bddSchema.xsd" id="advice id">
+    <given>
+        <service intercepted="before">com.catlin.foo:bar</service>
+    </given>
+    <when id="check for hello">
+        <then>
+            <pipelineCapture>target/testCapture.xml</pipelineCapture>
+        </then>
+    </when>
+</advice>

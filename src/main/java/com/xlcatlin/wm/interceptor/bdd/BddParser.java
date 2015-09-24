@@ -35,19 +35,16 @@ public class BddParser {
 		String assertionid;
 	}
 
-	public void parse(InputStream bddstream) throws JAXBException, IOException {
+	public com.xlcatlin.wm.aop.Advice parse(InputStream bddstream) throws JAXBException, IOException {
 		JAXBContext jaxbContext = JAXBContext.newInstance(Advice.class);
 		Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
 		Advice xmlAdvice = (Advice) jaxbUnmarshaller.unmarshal(bddstream);
-		processAdvice(xmlAdvice);
+		return processAdvice(xmlAdvice);
 	}
 
-	private void processAdvice(Advice xmlAdvice) {
+	private com.xlcatlin.wm.aop.Advice processAdvice(Advice xmlAdvice) {
 		Interceptor interceptor = new WhenProcessor(xmlAdvice, true);
-		com.xlcatlin.wm.aop.Advice advice = new com.xlcatlin.wm.aop.Advice(xmlAdvice.getId(), getJoinPoint(xmlAdvice), interceptor);
-
-		logger.info("Registering advice: " + advice.getId());
-		AOPChainProcessor.getInstance().registerAdvice(advice);
+		return new com.xlcatlin.wm.aop.Advice(xmlAdvice.getId(), getJoinPoint(xmlAdvice), interceptor);
 	}
 
 	private InterceptPoint getInterceptPoint(Advice xmlAdvice) {
@@ -63,7 +60,7 @@ public class BddParser {
 		FlowPositionMatcher flowPositionMatcher = new FlowPositionMatcher(service.getValue() + '_' + service.getIntercepted(), service.getValue());
 		logger.info("Created flow position matcher: " + flowPositionMatcher);
 
-		Matcher<? super IData> pipelineMatcher = getMatcher(when.getCondition(), when.getId());
+		Matcher pipelineMatcher = ((when == null) ? new AlwaysTrueMatcher<IData>() : getMatcher(when.getCondition(), when.getId()));
 
 		ServicePipelinePointCut joinPoint = new ServicePipelinePointCut(flowPositionMatcher, pipelineMatcher, getInterceptPoint(xmlAdvice));
 		return joinPoint;

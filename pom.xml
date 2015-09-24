@@ -4,7 +4,7 @@
 
 	<groupId>com.xlcatlin</groupId>
 	<artifactId>wm-aop</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<name>wm-aop</name>
@@ -15,10 +15,12 @@
 		<powermock.version>1.6.2</powermock.version>
 		<jaxb.version>2.2.7</jaxb.version> <!-- Must match jaxb2-maven-plugin dep version -->
 		<jexl.version>2.1.1</jexl.version>
+		<commons-loggin.version>1.1.1</commons-loggin.version>
 		<commons-lang.version>2.3</commons-lang.version>
 		<mockito.version>1.10.19</mockito.version>
 		<log4j.version>1.2.16</log4j.version>
 		<junit.version>4.12</junit.version>
+		
 	</properties>
 
 	<dependencies>
@@ -56,14 +58,19 @@
 			<version>${commons-lang.version}</version>
 			<scope>provided</scope>
 		</dependency>
-
+		<dependency>
+			<!-- Proided by jexl so mark for exclusion in copy-->
+			<groupId>commons-logging</groupId>
+			<artifactId>commons-logging</artifactId>
+			<version>${commons-loggin.version}</version>
+			<scope>provided</scope>
+		</dependency>
 		<dependency>
 			<groupId>com.sun.xml.bind</groupId>
 			<artifactId>jaxb-impl</artifactId>
 			<version>${jaxb.version}</version>
 			<scope>provided</scope>
 		</dependency>
-
 		<dependency>
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>

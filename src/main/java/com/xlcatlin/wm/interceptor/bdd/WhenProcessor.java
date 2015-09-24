@@ -27,6 +27,8 @@ public class WhenProcessor implements Interceptor {
 	private final List<ThenAction> defaultActions = new ArrayList<ThenAction>();
 	private final boolean ignoreNoMatch;
 
+	private boolean hasExpressions;
+	
 	public WhenProcessor(Advice xmlAdvice, boolean ignoreNoMatch) {
 		Map<String, String> exprs = new LinkedHashMap<String, String>();
 		this.ignoreNoMatch = ignoreNoMatch;
@@ -64,11 +66,12 @@ public class WhenProcessor implements Interceptor {
 				logger.info("]>]> Adding response id " + sid + " to action " + action);
 			}
 		}
+		hasExpressions = !exprs.isEmpty();
 		evaluator = new JexlIDataMatcher(exprs);
 	}
 
 	public InterceptResult intercept(FlowPosition flowPosition, IData idata) {
-		MatchResult result = evaluator.match(idata);
+		MatchResult result = hasExpressions ? evaluator.match(idata) : null;
 		logger.info("]>]> Evaluated " + result);
 		if (result != null) {
 			return executeActions(actionMap.get(result.getId()), flowPosition, idata);

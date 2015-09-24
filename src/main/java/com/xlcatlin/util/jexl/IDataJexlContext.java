@@ -1,6 +1,7 @@
 package com.xlcatlin.util.jexl;
 
 import org.apache.commons.jexl2.JexlContext;
+import org.apache.log4j.Logger;
 
 import com.wm.data.IData;
 import com.wm.data.IDataCursor;
@@ -8,6 +9,7 @@ import com.wm.data.IDataUtil;
 
 public class IDataJexlContext implements JexlContext {
 
+	private static final Logger logger = Logger.getLogger(IDataJexlContext.class);
 	private final IData idata;
 
 	public IDataJexlContext(IData idata) {
@@ -32,8 +34,8 @@ public class IDataJexlContext implements JexlContext {
 				ret = new IDataJexlContext((IData) o);
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
-			return ret;
+			logger.error("Error evaluating: " + name, e);
+			throw new RuntimeException(e);
 		}
 		return ret;
 	}

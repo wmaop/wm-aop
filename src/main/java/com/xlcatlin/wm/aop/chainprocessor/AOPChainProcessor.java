@@ -26,6 +26,8 @@ public class AOPChainProcessor implements InvokeChainProcessor {
 
 	private static final Logger logger = Logger.getLogger(AOPChainProcessor.class);
 
+	private static final String PFX = "]>]> ";
+
 	private static AOPChainProcessor instance;
 
 	private final Map<InterceptPoint, List<Advice>> ADVICES = new HashMap<InterceptPoint, List<Advice>>();
@@ -37,7 +39,7 @@ public class AOPChainProcessor implements InvokeChainProcessor {
 	}
 
 	public AOPChainProcessor() {
-		logger.info("]>]> Initialising " + this.getClass().getName());
+		logger.info(PFX + "Initialising " + this.getClass().getName());
 		ADVICES.clear();
 		ID_ADVICE.clear();
 		for (InterceptPoint ip : InterceptPoint.values()) {
@@ -51,13 +53,13 @@ public class AOPChainProcessor implements InvokeChainProcessor {
 			adv.clear();
 		}
 		ID_ADVICE.clear();
-		logger.info("]>]> Cleared all Advice");
+		logger.info(PFX + "Cleared all Advice");
 	}
 
 	public void registerAdvice(Advice advice) {
 		ADVICES.get(advice.getPointCut().getInterceptPoint()).add(advice);
 		ID_ADVICE.put(advice.getId(), advice);
-		logger.info("]>]> Registered advice " + advice);
+		logger.info(PFX + "Registered advice " + advice);
 	}
 
 	public void unregisterAdvice(String adviceId) {
@@ -83,7 +85,7 @@ public class AOPChainProcessor implements InvokeChainProcessor {
 
 	public void setEnabled(boolean enabled) {
 		interceptingEnabled = enabled;
-		logger.info("]>]> Intercepting " + (enabled ? "enabled" : "disabled"));
+		logger.info(PFX + "Intercepting " + (enabled ? "enabled" : "disabled"));
 	}
 
 	public boolean isEnabled() {
@@ -119,19 +121,33 @@ public class AOPChainProcessor implements InvokeChainProcessor {
 	}
 
 	private boolean processAdvice(boolean exitOnIntercept, FlowPosition pos, IData idata, ServiceStatus serviceStatus) {
-		for (Advice advice : ADVICES.get(pos.getInterceptPoint())) {
-			if (advice.getPointCut().isApplicable(pos, idata)) {
-				Interceptor interceptor = advice.getInterceptor();
-				logger.info("]>]> Intercepting " + pos);
-				InterceptResult interceptResult = interceptor.intercept(pos, idata);
-				if (interceptResult.hasIntercepted() && exitOnIntercept) {
-					Exception e = interceptResult.getException();
-					if (e != null) {
-						serviceStatus.setException(e);
+		boolean hasIntercepted = false;
+		try {
+			for (Advice advice : ADVICES.get(pos.getInterceptPoint())) {
+				if (advice.getPointCut().isApplicable(pos, idata)) {
+					hasIntercepted = intercept(exitOnIntercept, pos, idata, serviceStatus, advice);
+					if (hasIntercepted) {
+						break;
 					}
-					return true;
 				}
 			}
+		} catch (Exception e) {
+			logger.error(PFX + "Error intercepting, behaviour at " + pos + " may be unknown", e);
+		}
+		return hasIntercepted;
+	}
+
+	private boolean intercept(boolean exitOnIntercept, FlowPosition pos, IData idata, ServiceStatus serviceStatus,
+			Advice advice) {
+		Interceptor interceptor = advice.getInterceptor();
+		logger.info(PFX + "Intercepting " + pos);
+		InterceptResult interceptResult = interceptor.intercept(pos, idata);
+		if (interceptResult.hasIntercepted() && exitOnIntercept) {
+			Exception e = interceptResult.getException();
+			if (e != null) {
+				serviceStatus.setException(e);
+			}
+			return true;
 		}
 		return false;
 	}

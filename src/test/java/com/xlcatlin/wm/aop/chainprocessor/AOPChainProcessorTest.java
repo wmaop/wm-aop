@@ -3,16 +3,20 @@ package com.xlcatlin.wm.aop.chainprocessor;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
 import org.junit.Test;
 
 import com.wm.app.b2b.server.BaseService;
+import com.wm.app.b2b.server.invoke.InvokeChainProcessor;
 import com.wm.app.b2b.server.invoke.ServiceStatus;
 import com.wm.data.IData;
 import com.wm.lang.ns.NSName;
@@ -27,6 +31,7 @@ import com.xlcatlin.wm.aop.matcher.jexl.JexlIDataMatcher;
 import com.xlcatlin.wm.aop.pointcut.ServicePipelinePointCut;
 import com.xlcatlin.wm.interceptor.assertion.Assertion;
 import com.xlcatlin.wm.interceptor.mock.canned.CannedResponseInterceptor;
+import com.xlcatlin.wm.interceptor.mock.exception.ExceptionInterceptor;
 
 public class AOPChainProcessorTest {
 
@@ -52,19 +57,7 @@ public class AOPChainProcessorTest {
 		when(baseService.getNSName()).thenReturn(NSName.create("pre:foo"));
 		ServiceStatus ss = mock(ServiceStatus.class);
 
-		@SuppressWarnings("rawtypes")
-		Iterator chainIterator = new Iterator() {
-			public boolean hasNext() {
-				return false;
-			}
-
-			public Object next() {
-				return null;
-			}
-
-			public void remove() {
-			}
-		};
+		Iterator<InvokeChainProcessor> chainIterator = new ArrayList<InvokeChainProcessor>().iterator();
 
 		// Execute
 		cp.process(chainIterator, baseService, idata, ss);
@@ -91,19 +84,7 @@ public class AOPChainProcessorTest {
 		when(baseService.getNSName()).thenReturn(NSName.create("pre:foo"));
 		ServiceStatus ss = mock(ServiceStatus.class);
 
-		@SuppressWarnings("rawtypes")
-		Iterator chainIterator = new Iterator() {
-			public boolean hasNext() {
-				return false;
-			}
-
-			public Object next() {
-				return null;
-			}
-
-			public void remove() {
-			}
-		};
+		Iterator<InvokeChainProcessor> chainIterator = new ArrayList<InvokeChainProcessor>().iterator();
 
 		// Execute
 		cp.process(chainIterator, baseService, idata, ss);
@@ -169,12 +150,69 @@ public class AOPChainProcessorTest {
 	}
 
 	@Test
-	public void shouldSetException() {
-		fail();
+	public void shouldSetException() throws Exception{
+		ClassLoader classLoader = this.getClass().getClassLoader();
+		AOPChainProcessor cp = new AOPChainProcessor();
+		cp.setEnabled(true);
+
+		FlowPositionMatcher serviceNameMatcher = new FlowPositionMatcher("my id", "pre:foo");
+		Exception exception = new Exception();
+		Interceptor interceptor = new ExceptionInterceptor(exception );
+		ServicePipelinePointCut pointCut = new ServicePipelinePointCut(serviceNameMatcher, new AlwaysTrueMatcher(), InterceptPoint.INVOKE);
+		Advice advice = new Advice("intercept", pointCut, interceptor);
+		cp.registerAdvice(advice);
+
+		// Pipeline mocking
+		IData idata = new IDataXMLCoder().decode(classLoader.getResourceAsStream("pipeline.xml"));
+		BaseService baseService = mock(BaseService.class);
+		when(baseService.getNSName()).thenReturn(NSName.create("pre:foo"));
+		ServiceStatus ss = mock(ServiceStatus.class);
+
+		Iterator<InvokeChainProcessor> chainIterator = new ArrayList<InvokeChainProcessor>().iterator();
+
+		// Execute
+		cp.process(chainIterator, baseService, idata, ss);
+
+		verify(ss, times(1)).setException(exception);
 	}
 
 	@Test
-	public void shouldExecuteNextChainStep() {
-		fail();
+	public void shouldExecuteNextChainStepWhenNotInvoked() throws Exception {
+		ClassLoader classLoader = this.getClass().getClassLoader();
+		AOPChainProcessor cp = new AOPChainProcessor();
+		cp.setEnabled(true);
+
+		// Pipeline mocking
+		IData idata = new IDataXMLCoder().decode(classLoader.getResourceAsStream("pipeline.xml"));
+		BaseService baseService = mock(BaseService.class);
+		when(baseService.getNSName()).thenReturn(NSName.create("pre:foo"));
+		ServiceStatus ss = mock(ServiceStatus.class);
+
+		InvokeChainProcessor icp = mock(InvokeChainProcessor.class);
+		Iterator<InvokeChainProcessor> chainIterator = Arrays.asList(icp).iterator();
+		
+		// Execute
+		cp.process(chainIterator, baseService, idata, ss);
+
+		verify(icp, times(1)).process(chainIterator, baseService, idata, ss);
+	}
+	@Test
+	public void shouldExecuteNextChainStepWhenDisabled() throws Exception {
+		ClassLoader classLoader = this.getClass().getClassLoader();
+		AOPChainProcessor cp = new AOPChainProcessor();
+
+		// Pipeline mocking
+		IData idata = new IDataXMLCoder().decode(classLoader.getResourceAsStream("pipeline.xml"));
+		BaseService baseService = mock(BaseService.class);
+		when(baseService.getNSName()).thenReturn(NSName.create("pre:foo"));
+		ServiceStatus ss = mock(ServiceStatus.class);
+
+		InvokeChainProcessor icp = mock(InvokeChainProcessor.class);
+		Iterator<InvokeChainProcessor> chainIterator = Arrays.asList(icp).iterator();
+		
+		// Execute
+		cp.process(chainIterator, baseService, idata, ss);
+
+		verify(icp, times(1)).process(chainIterator, baseService, idata, ss);
 	}
 }

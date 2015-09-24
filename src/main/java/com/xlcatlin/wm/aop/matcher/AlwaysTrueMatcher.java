@@ -1,6 +1,6 @@
 package com.xlcatlin.wm.aop.matcher;
 
-public class AlwaysTrueMatcher implements Matcher<Object> {
+public class AlwaysTrueMatcher<T> implements Matcher<T> {
 
 	@Override
 	public String toString() {
