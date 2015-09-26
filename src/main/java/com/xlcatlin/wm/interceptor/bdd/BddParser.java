@@ -11,16 +11,15 @@ import org.apache.log4j.Logger;
 
 import com.wm.data.IData;
 import com.xlcatlin.wm.aop.InterceptPoint;
-import com.xlcatlin.wm.aop.chainprocessor.AOPChainProcessor;
 import com.xlcatlin.wm.aop.chainprocessor.Interceptor;
 import com.xlcatlin.wm.aop.matcher.AlwaysTrueMatcher;
 import com.xlcatlin.wm.aop.matcher.FlowPositionMatcher;
 import com.xlcatlin.wm.aop.matcher.Matcher;
 import com.xlcatlin.wm.aop.matcher.jexl.JexlWrappingMatcher;
 import com.xlcatlin.wm.aop.pointcut.ServicePipelinePointCut;
-import com.xlcatlin.wm.interceptor.xsd.bdd.Advice;
-import com.xlcatlin.wm.interceptor.xsd.bdd.Service;
-import com.xlcatlin.wm.interceptor.xsd.bdd.When;
+import com.xlcatlin.wm.interceptor.bdd.xsd.Advice;
+import com.xlcatlin.wm.interceptor.bdd.xsd.Service;
+import com.xlcatlin.wm.interceptor.bdd.xsd.When;
 
 /**
  * Pay attention to the Advice class - one from the parse, one from aop
@@ -60,7 +59,7 @@ public class BddParser {
 		FlowPositionMatcher flowPositionMatcher = new FlowPositionMatcher(service.getValue() + '_' + service.getIntercepted(), service.getValue());
 		logger.info("Created flow position matcher: " + flowPositionMatcher);
 
-		Matcher pipelineMatcher = ((when == null) ? new AlwaysTrueMatcher<IData>() : getMatcher(when.getCondition(), when.getId()));
+		Matcher pipelineMatcher = ((when == null) ? new AlwaysTrueMatcher<IData>(null) : getMatcher(when.getCondition(), when.getId()));
 
 		ServicePipelinePointCut joinPoint = new ServicePipelinePointCut(flowPositionMatcher, pipelineMatcher, getInterceptPoint(xmlAdvice));
 		return joinPoint;
@@ -71,7 +70,7 @@ public class BddParser {
 		if (condition != null && condition.length() > 0) {
 			pipelineMatcher = new JexlWrappingMatcher<IData>(id, condition);
 		} else {
-			pipelineMatcher = new AlwaysTrueMatcher();
+			pipelineMatcher = new AlwaysTrueMatcher<IData>(id);
 		}
 		logger.info("Created pipeline matcher: " + pipelineMatcher);
 		return pipelineMatcher;

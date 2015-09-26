@@ -1,7 +1,7 @@
 <advice xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../main/xsd/bddSchema.xsd" id="advice id">
     <given>
-        <service intercepted="before">com.catlin.foo:bar</service>
+        <service intercepted="invoke">com.catlin.foo:bar</service>
     </given>
     <when id="check for hello" condition='alpha.beta == "hello"'>
         <then>

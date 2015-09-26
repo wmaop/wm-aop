@@ -14,9 +14,9 @@ import com.xlcatlin.wm.aop.chainprocessor.Interceptor;
 import com.xlcatlin.wm.aop.matcher.MatchResult;
 import com.xlcatlin.wm.aop.matcher.jexl.JexlIDataMatcher;
 import com.xlcatlin.wm.aop.pipeline.FlowPosition;
-import com.xlcatlin.wm.interceptor.xsd.bdd.Advice;
-import com.xlcatlin.wm.interceptor.xsd.bdd.Then;
-import com.xlcatlin.wm.interceptor.xsd.bdd.When;
+import com.xlcatlin.wm.interceptor.bdd.xsd.Advice;
+import com.xlcatlin.wm.interceptor.bdd.xsd.Then;
+import com.xlcatlin.wm.interceptor.bdd.xsd.When;
 
 public class WhenProcessor implements Interceptor {
 
@@ -73,6 +73,12 @@ public class WhenProcessor implements Interceptor {
 	public InterceptResult intercept(FlowPosition flowPosition, IData idata) {
 		MatchResult result = hasExpressions ? evaluator.match(idata) : null;
 		logger.info("]>]> Evaluated " + result);
+
+		// Check for match of expression, ignoring if its a non-expression default
+		if (result != null && !result.isMatch()) {
+			return InterceptResult.FALSE;			
+		}
+		
 		if (result != null) {
 			return executeActions(actionMap.get(result.getId()), flowPosition, idata);
 		} else if (defaultActions.size() > 0) {

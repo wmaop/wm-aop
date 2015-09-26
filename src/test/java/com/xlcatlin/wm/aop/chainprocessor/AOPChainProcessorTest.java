@@ -74,7 +74,7 @@ public class AOPChainProcessorTest {
 
 		FlowPositionMatcher serviceNameMatcher = new FlowPositionMatcher("my id", "pre:foo");
 		CannedResponseInterceptor interceptor = new CannedResponseInterceptor(classLoader.getResourceAsStream("cannedResponse.xml"));
-		ServicePipelinePointCut pointCut = new ServicePipelinePointCut(serviceNameMatcher, new AlwaysTrueMatcher(), InterceptPoint.INVOKE);
+		ServicePipelinePointCut pointCut = new ServicePipelinePointCut(serviceNameMatcher, new AlwaysTrueMatcher("my id"), InterceptPoint.INVOKE);
 		Advice advice = new Advice("intercept", pointCut, interceptor);
 		cp.registerAdvice(advice);
 
@@ -158,7 +158,7 @@ public class AOPChainProcessorTest {
 		FlowPositionMatcher serviceNameMatcher = new FlowPositionMatcher("my id", "pre:foo");
 		Exception exception = new Exception();
 		Interceptor interceptor = new ExceptionInterceptor(exception );
-		ServicePipelinePointCut pointCut = new ServicePipelinePointCut(serviceNameMatcher, new AlwaysTrueMatcher(), InterceptPoint.INVOKE);
+		ServicePipelinePointCut pointCut = new ServicePipelinePointCut(serviceNameMatcher, new AlwaysTrueMatcher("my id"), InterceptPoint.INVOKE);
 		Advice advice = new Advice("intercept", pointCut, interceptor);
 		cp.registerAdvice(advice);
 

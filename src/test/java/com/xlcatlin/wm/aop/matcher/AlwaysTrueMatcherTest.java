@@ -10,9 +10,9 @@ public class AlwaysTrueMatcherTest {
 
 	@Test
 	public void shouldBeTrue() {
-		AlwaysTrueMatcher atm = new AlwaysTrueMatcher();
+		AlwaysTrueMatcher<Object> atm = new AlwaysTrueMatcher<Object>("foo");
 		assertTrue(atm.match("kfhkfjhk").isMatch());
-		assertEquals("undefined", atm.match("gggkg").getId());
+		assertEquals("foo", atm.match("gggkg").getId());
 	}
 
 }

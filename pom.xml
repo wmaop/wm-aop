@@ -33,23 +33,20 @@
 		<dependency>
 			<groupId>com.softwareag.webmethods</groupId>
 			<artifactId>wm-isserver</artifactId>
-			<version>9.8</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/lib/wm-isserver.jar</systemPath>
+			<version>9.0.1-1</version>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.softwareag.webmethods</groupId>
 			<artifactId>wm-isclient</artifactId>
-			<version>9.8</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/lib/wm-isclient.jar</systemPath>
+			<version>9.0.1-1</version>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.softwareag.webmethods</groupId>
 			<artifactId>wm-g11nutils</artifactId>
-			<version>9.8</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/lib/wm-g11nutils.jar</systemPath>
+			<version>9.0</version>
+			<scope>provided</scope>
 		</dependency>
 
 		<dependency>
@@ -127,7 +124,7 @@
 							<goal>xjc</goal>
 						</goals>
 						<configuration>
-							<packageName>com.xlcatlin.wm.interceptor.xsd.bdd</packageName>
+							<packageName>com.xlcatlin.wm.interceptor.bdd.xsd</packageName>
 						</configuration>
 					</execution>
 				</executions>

@@ -1,4 +1,4 @@
-package com.xlcatlin.wm.mock.bdd;
+package com.xlcatlin.wm.interceptor.bdd;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
@@ -24,7 +24,7 @@ import com.xlcatlin.wm.interceptor.bdd.BddParser;
 public class BddParserTest {
 
 	@Test
-	public void shouldParse() throws JAXBException, IOException {
+	public void shouldParse() throws Exception {
 
 		PowerMockito.mockStatic(AOPChainProcessor.class);
 		AOPChainProcessor mockProcessor = mock(AOPChainProcessor.class);
@@ -35,5 +35,4 @@ public class BddParserTest {
 
 		verify(mockProcessor).registerAdvice(any(Advice.class));
 	}
-
 }

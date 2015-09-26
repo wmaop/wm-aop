@@ -20,4 +20,8 @@ public class MatchResult {
 	public String getId() {
 		return id;
 	}
+	
+	public String toString() {
+		return "MatchResult:"+isMatch+" for " + id;
+	}
 }
