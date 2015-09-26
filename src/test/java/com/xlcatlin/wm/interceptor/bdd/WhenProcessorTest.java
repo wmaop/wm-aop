@@ -29,6 +29,12 @@ import com.xlcatlin.wm.aop.chainprocessor.AOPChainProcessor;
 public class WhenProcessorTest {
 
 	@Test
+	public void shouldAssert() throws Exception {
+		AOPChainProcessor cp = getConfiguredProcessor("bdd/assertionBdd.xml");
+		fail();
+	}
+
+	@Test
 	public void shouldFireCannedReturn() throws Exception {
 		AOPChainProcessor cp = getConfiguredProcessor("bdd/cannedReturnBdd.xml");
 		
@@ -72,6 +78,37 @@ public class WhenProcessorTest {
 		verify(ss, times(1)).setException(isA(Exception.class));
 	}
 
+	@Test
+	public void shouldExecuteMultipleReturns() throws Exception {
+		AOPChainProcessor cp = getConfiguredProcessor("bdd/multipleReturnBdd.xml");
+		fail();
+	}
+	
+	@Test
+	public void shouldExecuteServiceAndWhenConditions() throws Exception {
+		AOPChainProcessor cp = getConfiguredProcessor("bdd/multipleReturnServiceConditionWithElseBdd.xml");
+		fail();
+	}
+	
+	@Test
+	public void shouldReturnWithElse() throws Exception {
+		AOPChainProcessor cp = getConfiguredProcessor("bdd/multipleReturnWithElseBdd.xml");
+		fail();
+	}
+	
+	@Test
+	public void shouldReturnWithoutElse() throws Exception {
+		AOPChainProcessor cp = getConfiguredProcessor("bdd/multipleReturnWithoutElseBdd.xml");
+		fail();
+	}
+	
+
+	@Test
+	public void shouldCapturePipeline() throws Exception {
+		AOPChainProcessor cp = getConfiguredProcessor("bdd/pipelineCaptureBdd.xml");
+		fail();
+	}
+	
 	private AOPChainProcessor getConfiguredProcessor(String testXmlFileName) throws Exception {
 		ClassLoader classLoader = this.getClass().getClassLoader();
 		AOPChainProcessor cp = new AOPChainProcessor();
