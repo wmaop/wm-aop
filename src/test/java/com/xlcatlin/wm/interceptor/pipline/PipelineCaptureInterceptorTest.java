@@ -14,9 +14,9 @@ public class PipelineCaptureInterceptorTest {
 
 	@Test
 	public void test() throws Exception {
-		PipelineCaptureInterceptor pci = spy(new PipelineCaptureInterceptor("foo.xml"));
+		PipelineCaptureInterceptor pci = spy(new PipelineCaptureInterceptor("target/foo.xml"));
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		when(pci.getFileOutputStream("foo-1.xml")).thenReturn(baos);
+		when(pci.getFileOutputStream("target/foo-1.xml")).thenReturn(baos);
 
 		pci.intercept(null, IDataFactory.create());
 		assertTrue(baos.toString().contains("IDataXMLCoder version="));
