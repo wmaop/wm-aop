@@ -75,11 +75,7 @@ public class WhenProcessor implements Interceptor {
 		logger.info("]>]> Evaluated " + result);
 
 		// Check for match of expression, ignoring if its a non-expression default
-		if (result != null && !result.isMatch()) {
-			return InterceptResult.FALSE;			
-		}
-		
-		if (result != null) {
+		if (result != null && result.isMatch()) {
 			return executeActions(actionMap.get(result.getId()), flowPosition, idata);
 		} else if (defaultActions.size() > 0) {
 			return executeActions(defaultActions, flowPosition, idata);

@@ -1,7 +1,7 @@
 <advice xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../main/xsd/bddSchema.xsd" id="aspect id">
     <given>
-        <service intercepted="before">com.catlin.foo:bar</service>
+        <service intercepted="invoke">com.catlin.foo:bar</service>
         <when id="servicewhen" condition="foo == 2"/>
     </given>
     <when id="input 1" condition="input == 1">
@@ -18,7 +18,7 @@
         <then>
             <return><![CDATA[<IDataXMLCoder version="1.0">
             <record javaclass="com.wm.data.ISMemDataImpl">
-                <value name="pear">beta</value>
+                <value name="apple">beta</value>
             </record>
         </IDataXMLCoder>]]>
         </return>
@@ -28,7 +28,7 @@
         <then>
             <return><![CDATA[<IDataXMLCoder version="1.0">
             <record javaclass="com.wm.data.ISMemDataImpl">
-                <value name="plum">gamma</value>
+                <value name="apple">gamma</value>
             </record>
         </IDataXMLCoder>]]>
         </return>

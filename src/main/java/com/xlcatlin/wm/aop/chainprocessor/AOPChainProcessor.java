@@ -108,8 +108,8 @@ public class AOPChainProcessor implements InvokeChainProcessor {
 		pipelinePosition.setInterceptPoint(INVOKE);
 		boolean hasIntercepted = processAdvice(true, pipelinePosition, idata, serviceStatus);
 
-		if (logger.isDebugEnabled()) {
-			logger.debug(ReflectionToStringBuilder.toString(serviceStatus));
+		if (hasIntercepted && logger.isDebugEnabled()) {
+			logger.debug("Intercepted: " + ReflectionToStringBuilder.toString(serviceStatus));
 		}
 
 		if (!hasIntercepted && processorChain.hasNext()) {

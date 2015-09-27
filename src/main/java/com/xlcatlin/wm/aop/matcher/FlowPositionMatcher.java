@@ -20,7 +20,7 @@ public class FlowPositionMatcher implements Matcher<FlowPosition> {
 
 	@Override
 	public String toString() {
-		return "FlowPosiionMatcher["+serviceName+"]";
+		return "FlowPositionMatcher["+serviceName+"]";
 	}
 	
 }

@@ -72,7 +72,7 @@ public class BddParser {
 		}
 		Matcher<? super IData> pipelineMatcher;
 		if (condition != null && condition.length() > 0) {
-			pipelineMatcher = new JexlWrappingMatcher<IData>(id, condition);
+			pipelineMatcher = new JexlWrappingMatcher(id, condition);
 		} else {
 			pipelineMatcher = new AlwaysTrueMatcher<IData>(id);
 		}

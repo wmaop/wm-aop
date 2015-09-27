@@ -81,7 +81,21 @@ public class WhenProcessorTest {
 	@Test
 	public void shouldExecuteMultipleReturns() throws Exception {
 		AOPChainProcessor cp = getConfiguredProcessor("bdd/multipleReturnBdd.xml");
-		fail();
+
+		// Pipeline mocking
+		IData pipeline = IDataFactory.create();
+		ServiceStatus ss = mock(ServiceStatus.class);
+		Iterator<InvokeChainProcessor> chainIterator = new ArrayList<InvokeChainProcessor>().iterator();
+
+		// No change to pipeline, not fired
+		cp.process(chainIterator, getBaseService("com.catlin.foo:bar"), pipeline, ss);
+		assertEquals(null, get(pipeline, "apple"));
+
+		// Service condition so should set default
+		add(pipeline, "foo", 2);
+		cp.process(chainIterator, getBaseService("com.catlin.foo:bar"), pipeline, ss);
+		assertEquals("gamma", get(pipeline, "apple"));
+
 	}
 	
 	@Test
