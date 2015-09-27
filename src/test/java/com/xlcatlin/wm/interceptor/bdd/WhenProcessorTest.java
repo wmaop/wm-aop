@@ -31,7 +31,22 @@ public class WhenProcessorTest {
 	@Test
 	public void shouldAssert() throws Exception {
 		AOPChainProcessor cp = getConfiguredProcessor("bdd/assertionBdd.xml");
-		fail();
+		// Pipeline mocking
+		IData pipeline = IDataFactory.create();
+		ServiceStatus ss = mock(ServiceStatus.class);
+
+		Iterator<InvokeChainProcessor> chainIterator = new ArrayList<InvokeChainProcessor>().iterator();
+
+		// Execute a service, no change to pipeline
+		cp.process(chainIterator, getBaseService("pub.test:svcA"), pipeline, ss);
+		
+		// Correct service, condition doesnt match
+		cp.process(chainIterator, getBaseService("com.catlin.foo:bar"), pipeline, ss);
+		WhenProcessor wp = (WhenProcessor) cp.getAdvice("advice id").getInterceptor();
+		// Correct service, condition  match
+		add(pipeline, "foo", 2);
+		cp.process(chainIterator, getBaseService("com.catlin.foo:bar"), pipeline, ss);
+		fail("Not complete");
 	}
 
 	@Test
@@ -79,7 +94,7 @@ public class WhenProcessorTest {
 	}
 
 	@Test
-	public void shouldExecuteMultipleReturns() throws Exception {
+	public void shouldExecuteMultipleReturnsWithDefault() throws Exception {
 		AOPChainProcessor cp = getConfiguredProcessor("bdd/multipleReturnBdd.xml");
 
 		// Pipeline mocking
@@ -96,24 +111,55 @@ public class WhenProcessorTest {
 		cp.process(chainIterator, getBaseService("com.catlin.foo:bar"), pipeline, ss);
 		assertEquals("gamma", get(pipeline, "apple"));
 
+		add(pipeline, "input", 1);
+		cp.process(chainIterator, getBaseService("com.catlin.foo:bar"), pipeline, ss);
+		assertEquals("alpha", get(pipeline, "apple"));
+
+		add(pipeline, "input", 2);
+		cp.process(chainIterator, getBaseService("com.catlin.foo:bar"), pipeline, ss);
+		assertEquals("beta", get(pipeline, "apple"));
 	}
 	
 	@Test
 	public void shouldExecuteServiceAndWhenConditions() throws Exception {
-		AOPChainProcessor cp = getConfiguredProcessor("bdd/multipleReturnServiceConditionWithElseBdd.xml");
-		fail();
-	}
-	
-	@Test
-	public void shouldReturnWithElse() throws Exception {
 		AOPChainProcessor cp = getConfiguredProcessor("bdd/multipleReturnWithElseBdd.xml");
-		fail();
+		// Pipeline mocking
+		IData pipeline = IDataFactory.create();
+		ServiceStatus ss = mock(ServiceStatus.class);
+		Iterator<InvokeChainProcessor> chainIterator = new ArrayList<InvokeChainProcessor>().iterator();
+
+		cp.process(chainIterator, getBaseService("com.catlin.foo:bar"), pipeline, ss);
+		assertEquals("gamma", get(pipeline, "apple"));
+
+		add(pipeline, "input", 1);
+		cp.process(chainIterator, getBaseService("com.catlin.foo:bar"), pipeline, ss);
+		assertEquals("alpha", get(pipeline, "apple"));
+
+		add(pipeline, "input", 2);
+		cp.process(chainIterator, getBaseService("com.catlin.foo:bar"), pipeline, ss);
+		assertEquals("beta", get(pipeline, "apple"));
 	}
 	
 	@Test
 	public void shouldReturnWithoutElse() throws Exception {
 		AOPChainProcessor cp = getConfiguredProcessor("bdd/multipleReturnWithoutElseBdd.xml");
-		fail();
+
+		// Pipeline mocking
+		IData pipeline = IDataFactory.create();
+		ServiceStatus ss = mock(ServiceStatus.class);
+		Iterator<InvokeChainProcessor> chainIterator = new ArrayList<InvokeChainProcessor>().iterator();
+
+		// No change to pipeline, not fired
+		cp.process(chainIterator, getBaseService("com.catlin.foo:bar"), pipeline, ss);
+		assertEquals(null, get(pipeline, "apple"));
+
+		add(pipeline, "input", 1);
+		cp.process(chainIterator, getBaseService("com.catlin.foo:bar"), pipeline, ss);
+		assertEquals("alpha", get(pipeline, "apple"));
+
+		add(pipeline, "input", 2);
+		cp.process(chainIterator, getBaseService("com.catlin.foo:bar"), pipeline, ss);
+		assertEquals("beta", get(pipeline, "apple"));
 	}
 	
 

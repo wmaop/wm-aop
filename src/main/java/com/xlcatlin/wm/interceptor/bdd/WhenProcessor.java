@@ -23,8 +23,8 @@ public class WhenProcessor implements Interceptor {
 	private static final Logger logger = Logger.getLogger(WhenProcessor.class);
 
 	private final JexlIDataMatcher evaluator;
-	private final Map<String, List<ThenAction>> actionMap = new HashMap<String, List<ThenAction>>();
-	private final List<ThenAction> defaultActions = new ArrayList<ThenAction>();
+	private final Map<String, List<Interceptor>> interceptorMap = new HashMap<String, List<Interceptor>>();
+	private final List<Interceptor> defaultInterceptors = new ArrayList<Interceptor>();
 	private final boolean ignoreNoMatch;
 
 	private boolean hasExpressions;
@@ -32,6 +32,7 @@ public class WhenProcessor implements Interceptor {
 	public WhenProcessor(Advice xmlAdvice, boolean ignoreNoMatch) {
 		Map<String, String> exprs = new LinkedHashMap<String, String>();
 		this.ignoreNoMatch = ignoreNoMatch;
+		InterceptorFactory intFactory = new InterceptorFactory();
 		for (When when : xmlAdvice.getWhen()) {
 			String sid = when.getId();
 			String expr = when.getCondition();
@@ -39,31 +40,19 @@ public class WhenProcessor implements Interceptor {
 			for (Object o : when.getContent()) {
 				if (!(o instanceof Then))
 					continue;
-				Then then = (Then) o;
-				ThenAction action;
-				if (then.getAssert() != null) {
-					action = new AssertAction(then.getAssert());
-				} else if (then.getReturn() != null) {
-					action = new ReturnAction(then.getReturn());
-				} else if (then.getPipelineCapture() != null) {
-					action = new PipelineCaptureAction(then.getPipelineCapture());
-				} else if (then.getThrow() != null) {
-					action = new ExceptionAction(then.getThrow());
-				} else {
-					throw new RuntimeException("No then actions");
-				}
+				Interceptor interceptor = intFactory.getInterceptor((Then) o);
 				if (expr != null) {
 					exprs.put(sid, expr);
-					List<ThenAction> am = actionMap.get(sid);
+					List<Interceptor> am = interceptorMap.get(sid);
 					if (am == null) {
-						am = new ArrayList<ThenAction>();
-						actionMap.put(sid, am);
+						am = new ArrayList<Interceptor>();
+						interceptorMap.put(sid, am);
 					}
-					am.add(action);
+					am.add(interceptor);
 				} else {
-					defaultActions.add(action);
+					defaultInterceptors.add(interceptor);
 				}
-				logger.info("]>]> Adding response id " + sid + " to action " + action);
+				logger.info("]>]> Adding response id " + sid + " to action " + interceptor);
 			}
 		}
 		hasExpressions = !exprs.isEmpty();
@@ -76,9 +65,9 @@ public class WhenProcessor implements Interceptor {
 
 		// Check for match of expression, ignoring if its a non-expression default
 		if (result != null && result.isMatch()) {
-			return executeActions(actionMap.get(result.getId()), flowPosition, idata);
-		} else if (defaultActions.size() > 0) {
-			return executeActions(defaultActions, flowPosition, idata);
+			return executeActions(interceptorMap.get(result.getId()), flowPosition, idata);
+		} else if (defaultInterceptors.size() > 0) {
+			return executeActions(defaultInterceptors, flowPosition, idata);
 		}
 		if (ignoreNoMatch) {
 			return InterceptResult.TRUE;
@@ -86,10 +75,10 @@ public class WhenProcessor implements Interceptor {
 		throw new RuntimeException("No conditions match pipeline state");
 	}
 
-	private InterceptResult executeActions(List<ThenAction> list, FlowPosition flowPosition, IData idata) {
+	private InterceptResult executeActions(List<Interceptor> list, FlowPosition flowPosition, IData idata) {
 		InterceptResult result = InterceptResult.TRUE;
-		for (ThenAction action : list) {
-			InterceptResult ir = action.execute(flowPosition, idata);
+		for (Interceptor action : list) {
+			InterceptResult ir = action.intercept(flowPosition, idata);
 			if (ir.getException() != null) {
 				result = ir; // Set Exception as return;
 			}

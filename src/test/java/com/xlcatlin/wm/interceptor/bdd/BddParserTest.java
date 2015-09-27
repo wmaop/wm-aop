@@ -1,8 +1,7 @@
 package com.xlcatlin.wm.interceptor.bdd;
 
-import static org.mockito.Matchers.any;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 
 import java.io.InputStream;
 
@@ -27,8 +26,8 @@ public class BddParserTest {
 		PowerMockito.when(AOPChainProcessor.getInstance()).thenReturn(mockProcessor);
 
 		InputStream bddstream = this.getClass().getResourceAsStream("/bdd/multipleReturnBdd.xml");
-		new BddParser().parse(bddstream);
-
-		verify(mockProcessor).registerAdvice(any(Advice.class));
+		Advice advice = new BddParser().parse(bddstream);
+		
+		assertEquals("aspect id",advice.getId());
 	}
 }
