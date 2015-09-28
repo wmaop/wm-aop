@@ -4,12 +4,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.wm.data.IData;
-import com.xlcatlin.wm.aop.chainprocessor.InterceptResult;
-import com.xlcatlin.wm.aop.chainprocessor.Interceptor;
-import com.xlcatlin.wm.aop.pipeline.FlowPosition;
-
-public class AssertionManager {
+public class AssertionManager  {
 
 	private static AssertionManager instance = new AssertionManager();
 	
@@ -25,12 +20,6 @@ public class AssertionManager {
 		assertions.put(name, assertion);
 	}
 
-	public Interceptor trackInterceptor(String name, Interceptor interceptor) {
-		TrackingInterceptor ti = new TrackingInterceptor(interceptor);
-		addAssertion(name, ti);
-		return ti;
-	}
-	
 	public Assertion getAssetion(String name) {
 		return assertions.get(name);
 	}
@@ -42,4 +31,9 @@ public class AssertionManager {
 	public Collection<String> getAssetionNames() {
 		return assertions.keySet();
 	}
+
+	public void removeAssertion(String name) {
+		assertions.remove(name);
+	}
+
 }

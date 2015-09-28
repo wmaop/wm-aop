@@ -3,12 +3,14 @@ package com.xlcatlin.wm.aop.chainprocessor;
 import static com.xlcatlin.wm.aop.InterceptPoint.AFTER;
 import static com.xlcatlin.wm.aop.InterceptPoint.BEFORE;
 import static com.xlcatlin.wm.aop.InterceptPoint.INVOKE;
+import static com.xlcatlin.wm.aop.AdviceState.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Observable;
 
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 import org.apache.log4j.Logger;
@@ -22,7 +24,7 @@ import com.xlcatlin.wm.aop.Advice;
 import com.xlcatlin.wm.aop.InterceptPoint;
 import com.xlcatlin.wm.aop.pipeline.FlowPosition;
 
-public class AOPChainProcessor implements InvokeChainProcessor {
+public class AOPChainProcessor extends Observable implements InvokeChainProcessor {
 
 	private static final Logger logger = Logger.getLogger(AOPChainProcessor.class);
 
@@ -89,7 +91,7 @@ public class AOPChainProcessor implements InvokeChainProcessor {
 		boolean hasIntercepted = false;
 		try {
 			for (Advice advice : ADVICES.get(pos.getInterceptPoint())) {
-				if (advice.getPointCut().isApplicable(pos, idata)) {
+				if (advice.getAdviceState() == ENABLED && advice.getPointCut().isApplicable(pos, idata)) {
 					hasIntercepted = intercept(exitOnIntercept, pos, idata, serviceStatus, advice);
 					if (hasIntercepted) {
 						break;
@@ -130,6 +132,9 @@ public class AOPChainProcessor implements InvokeChainProcessor {
 	public void registerAdvice(Advice advice) {
 		ADVICES.get(advice.getPointCut().getInterceptPoint()).add(advice);
 		ID_ADVICE.put(advice.getId(), advice);
+		setChanged();
+		notifyObservers(advice);
+		advice.setAdviceState(ENABLED);
 		logger.info(PFX + "Registered advice " + advice);
 	}
 
@@ -140,6 +145,9 @@ public class AOPChainProcessor implements InvokeChainProcessor {
 	public void unregisterAdvice(Advice advice) {
 		ADVICES.get(advice.getPointCut().getInterceptPoint()).remove(advice);
 		ID_ADVICE.remove(advice.getId());
+		advice.setAdviceState(DISPOSED);
+		setChanged();
+		notifyObservers(advice);
 	}
 
 	public Advice getAdvice(String id) {

@@ -7,6 +7,7 @@ public class Advice {
 	private final PointCut pointCut;
 	private final Interceptor interceptor;
 	private final String id;
+	private AdviceState adviceState = AdviceState.NEW;
 
 	public Advice(String id, PointCut pointCut, Interceptor interceptor) {
 		this.pointCut = pointCut;
@@ -26,9 +27,17 @@ public class Advice {
 		return id;
 	}
 
+	public AdviceState getAdviceState() {
+		return adviceState;
+	}
+
+	public void setAdviceState(AdviceState adviceState) {
+		this.adviceState = adviceState;
+	}
+
 	@Override
 	public String toString() {
-		return id + " " + pointCut.toString() + ' ' + interceptor + ' ' + pointCut.getInterceptPoint();
+		return id + ' ' + adviceState + ' ' + pointCut + ' ' + interceptor + ' ' + pointCut.getInterceptPoint();
 	}
 
 	@Override

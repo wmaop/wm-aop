@@ -43,7 +43,7 @@ public class BddParser {
 	}
 
 	private Advice processAdvice(Scenario scenario) {
-		Interceptor interceptor = new WhenProcessor(scenario, true);
+		Interceptor interceptor = new BddInterceptor(scenario, true);
 		return new Advice(scenario.getId(), getJoinPoint(scenario), interceptor);
 	}
 

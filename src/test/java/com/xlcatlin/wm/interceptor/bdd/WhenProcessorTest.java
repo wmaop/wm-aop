@@ -42,7 +42,7 @@ public class WhenProcessorTest {
 		
 		// Correct service, condition doesnt match
 		cp.process(chainIterator, getBaseService("com.catlin.foo:bar"), pipeline, ss);
-		WhenProcessor wp = (WhenProcessor) cp.getAdvice("advice id").getInterceptor();
+		BddInterceptor wp = (BddInterceptor) cp.getAdvice("advice id").getInterceptor();
 		// Correct service, condition  match
 		add(pipeline, "foo", 2);
 		cp.process(chainIterator, getBaseService("com.catlin.foo:bar"), pipeline, ss);
