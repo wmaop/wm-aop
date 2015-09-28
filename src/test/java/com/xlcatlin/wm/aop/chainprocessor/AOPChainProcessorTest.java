@@ -29,7 +29,7 @@ import com.xlcatlin.wm.aop.matcher.FlowPositionMatcher;
 import com.xlcatlin.wm.aop.matcher.Matcher;
 import com.xlcatlin.wm.aop.matcher.jexl.JexlIDataMatcher;
 import com.xlcatlin.wm.aop.pointcut.ServicePipelinePointCut;
-import com.xlcatlin.wm.interceptor.assertion.Assertion;
+import com.xlcatlin.wm.interceptor.assertion.AssertionInterceptor;
 import com.xlcatlin.wm.interceptor.mock.canned.CannedResponseInterceptor;
 import com.xlcatlin.wm.interceptor.mock.exception.ExceptionInterceptor;
 
@@ -43,7 +43,7 @@ public class AOPChainProcessorTest {
 
 		FlowPositionMatcher serviceNameMatcher = new FlowPositionMatcher("my id", "pre:foo");
 		Matcher<IData> pipelineMatcher = new JexlIDataMatcher("doc", "documentName == 'iso'");
-		Assertion assertion = new Assertion("myAssertion");
+		AssertionInterceptor assertion = new AssertionInterceptor("myAssertion");
 		Advice assertionAdvice = new Advice("adv1", new ServicePipelinePointCut(serviceNameMatcher, pipelineMatcher, InterceptPoint.BEFORE), assertion);
 		cp.registerAdvice(assertionAdvice);
 
@@ -62,7 +62,7 @@ public class AOPChainProcessorTest {
 		// Execute
 		cp.process(chainIterator, baseService, idata, ss);
 
-		assertTrue(((Assertion) cp.getAdvice("adv1").getInterceptor()).hasAsserted());
+		assertTrue(((AssertionInterceptor) cp.getAdvice("adv1").getInterceptor()).hasAsserted());
 		assertEquals(1, assertion.getInvokeCount());
 	}
 

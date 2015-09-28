@@ -1,4 +1,4 @@
-<advice xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<scenario xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../main/xsd/bddSchema.xsd" id="advice id">
     <given>
         <service intercepted="invoke">com.catlin.foo:bar</service>
@@ -8,4 +8,4 @@
             <throw>java.lang.Exception</throw>
         </then>
     </when>
-</advice>
+</scenario>

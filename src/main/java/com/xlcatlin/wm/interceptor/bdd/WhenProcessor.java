@@ -14,7 +14,7 @@ import com.xlcatlin.wm.aop.chainprocessor.Interceptor;
 import com.xlcatlin.wm.aop.matcher.MatchResult;
 import com.xlcatlin.wm.aop.matcher.jexl.JexlIDataMatcher;
 import com.xlcatlin.wm.aop.pipeline.FlowPosition;
-import com.xlcatlin.wm.interceptor.bdd.xsd.Advice;
+import com.xlcatlin.wm.interceptor.bdd.xsd.Scenario;
 import com.xlcatlin.wm.interceptor.bdd.xsd.Then;
 import com.xlcatlin.wm.interceptor.bdd.xsd.When;
 
@@ -29,11 +29,11 @@ public class WhenProcessor implements Interceptor {
 
 	private boolean hasExpressions;
 	
-	public WhenProcessor(Advice xmlAdvice, boolean ignoreNoMatch) {
+	public WhenProcessor(Scenario scenario, boolean ignoreNoMatch) {
 		Map<String, String> exprs = new LinkedHashMap<String, String>();
 		this.ignoreNoMatch = ignoreNoMatch;
 		InterceptorFactory intFactory = new InterceptorFactory();
-		for (When when : xmlAdvice.getWhen()) {
+		for (When when : scenario.getWhen()) {
 			String sid = when.getId();
 			String expr = when.getCondition();
 

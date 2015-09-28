@@ -10,6 +10,7 @@ import javax.xml.bind.Unmarshaller;
 import org.apache.log4j.Logger;
 
 import com.wm.data.IData;
+import com.xlcatlin.wm.aop.Advice;
 import com.xlcatlin.wm.aop.InterceptPoint;
 import com.xlcatlin.wm.aop.chainprocessor.Interceptor;
 import com.xlcatlin.wm.aop.matcher.AlwaysTrueMatcher;
@@ -17,7 +18,7 @@ import com.xlcatlin.wm.aop.matcher.FlowPositionMatcher;
 import com.xlcatlin.wm.aop.matcher.Matcher;
 import com.xlcatlin.wm.aop.matcher.jexl.JexlWrappingMatcher;
 import com.xlcatlin.wm.aop.pointcut.ServicePipelinePointCut;
-import com.xlcatlin.wm.interceptor.bdd.xsd.Advice;
+import com.xlcatlin.wm.interceptor.bdd.xsd.Scenario;
 import com.xlcatlin.wm.interceptor.bdd.xsd.Service;
 import com.xlcatlin.wm.interceptor.bdd.xsd.When;
 
@@ -34,32 +35,32 @@ public class BddParser {
 		String assertionid;
 	}
 
-	public com.xlcatlin.wm.aop.Advice parse(InputStream bddstream) throws JAXBException, IOException {
-		JAXBContext jaxbContext = JAXBContext.newInstance(Advice.class);
+	public Advice parse(InputStream bddstream) throws JAXBException, IOException {
+		JAXBContext jaxbContext = JAXBContext.newInstance(Scenario.class);
 		Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
-		Advice xmlAdvice = (Advice) jaxbUnmarshaller.unmarshal(bddstream);
-		return processAdvice(xmlAdvice);
+		Scenario scenario = (Scenario) jaxbUnmarshaller.unmarshal(bddstream);
+		return processAdvice(scenario);
 	}
 
-	private com.xlcatlin.wm.aop.Advice processAdvice(Advice xmlAdvice) {
-		Interceptor interceptor = new WhenProcessor(xmlAdvice, true);
-		return new com.xlcatlin.wm.aop.Advice(xmlAdvice.getId(), getJoinPoint(xmlAdvice), interceptor);
+	private Advice processAdvice(Scenario scenario) {
+		Interceptor interceptor = new WhenProcessor(scenario, true);
+		return new Advice(scenario.getId(), getJoinPoint(scenario), interceptor);
 	}
 
-	private InterceptPoint getInterceptPoint(Advice xmlAdvice) {
-		InterceptPoint interceptPoint = InterceptPoint.valueOf(xmlAdvice.getGiven().getService().getIntercepted().toUpperCase());
+	private InterceptPoint getInterceptPoint(Scenario scenario) {
+		InterceptPoint interceptPoint = InterceptPoint.valueOf(scenario.getGiven().getService().getIntercepted().toUpperCase());
 		logger.info("Creating intercept point: " + interceptPoint);
 		return interceptPoint;
 	}
 
-	private ServicePipelinePointCut getJoinPoint(Advice xmlAdvice) {
-		Service service = xmlAdvice.getGiven().getService();
-		When when = xmlAdvice.getGiven().getWhen();
+	private ServicePipelinePointCut getJoinPoint(Scenario scenario) {
+		Service service = scenario.getGiven().getService();
+		When when = scenario.getGiven().getWhen();
 
 		FlowPositionMatcher flowPositionMatcher = new FlowPositionMatcher(service.getValue() + '_' + service.getIntercepted(), service.getValue());
 		logger.info("Created flow position matcher: " + flowPositionMatcher);
 
-		ServicePipelinePointCut joinPoint = new ServicePipelinePointCut(flowPositionMatcher, getMatcher(when), getInterceptPoint(xmlAdvice));
+		ServicePipelinePointCut joinPoint = new ServicePipelinePointCut(flowPositionMatcher, getMatcher(when), getInterceptPoint(scenario));
 		return joinPoint;
 	}
 

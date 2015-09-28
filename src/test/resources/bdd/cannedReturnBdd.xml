@@ -1,4 +1,4 @@
-<advice xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<scenario xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:noNamespaceSchemaLocation="../../../main/xsd/bddSchema.xsd" id="advice id">
 	<given>
 		<service intercepted="invoke">pub.test:svcB</service>
@@ -13,4 +13,4 @@
             </return>
 		</then>
 	</when>
-</advice>
+</scenario>

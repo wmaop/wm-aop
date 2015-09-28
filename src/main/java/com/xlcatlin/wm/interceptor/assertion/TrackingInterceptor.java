@@ -1,27 +1,31 @@
-package com.xlcatlin.wm.interceptor;
+package com.xlcatlin.wm.interceptor.assertion;
 
 import com.wm.data.IData;
 import com.xlcatlin.wm.aop.chainprocessor.InterceptResult;
 import com.xlcatlin.wm.aop.chainprocessor.Interceptor;
 import com.xlcatlin.wm.aop.pipeline.FlowPosition;
 
-public abstract class TrackingInterceptor implements Interceptor {
+public class TrackingInterceptor implements Interceptor, Assertion {
 
 	private int invocationCount;
+	private final Interceptor wrappedInterceptor;
+	
+	TrackingInterceptor(Interceptor wrappedInterceptor) {
+		this.wrappedInterceptor =wrappedInterceptor;
+	}
 	
 	@Override
 	public InterceptResult intercept(FlowPosition flowPosition, IData idata) {
-		InterceptResult ir = interceptFlow(flowPosition, idata);
+		InterceptResult ir = wrappedInterceptor.intercept(flowPosition, idata);
 		if (ir.hasIntercepted()) {
 			invocationCount++;
 		}
 		return ir;
 	}
-	
-	public int getInvocationCount() {
+
+	@Override
+	public int getInvokeCount() {
 		return invocationCount;
 	}
-	
-	abstract InterceptResult interceptFlow(FlowPosition flowPosition, IData idata);
 
 }

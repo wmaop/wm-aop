@@ -48,41 +48,6 @@ public class AOPChainProcessor implements InvokeChainProcessor {
 		AOPChainProcessor.instance = this;
 	}
 
-	public void clearAdvice() {
-		for (List<Advice> adv : ADVICES.values()) {
-			adv.clear();
-		}
-		ID_ADVICE.clear();
-		logger.info(PFX + "Cleared all Advice");
-	}
-
-	public void registerAdvice(Advice advice) {
-		ADVICES.get(advice.getPointCut().getInterceptPoint()).add(advice);
-		ID_ADVICE.put(advice.getId(), advice);
-		logger.info(PFX + "Registered advice " + advice);
-	}
-
-	public void unregisterAdvice(String adviceId) {
-		unregisterAdvice(ID_ADVICE.get(adviceId));
-	}
-
-	public void unregisterAdvice(Advice advice) {
-		ADVICES.get(advice.getPointCut().getInterceptPoint()).remove(advice);
-		ID_ADVICE.remove(advice.getId());
-	}
-
-	public Advice getAdvice(String id) {
-		return ID_ADVICE.get(id);
-	}
-
-	public List<Advice> listAdvice() {
-		List<Advice> list = new ArrayList<Advice>();
-		for (List<Advice> adv : ADVICES.values()) {
-			list.addAll(adv);
-		}
-		return list;
-	}
-
 	public void setEnabled(boolean enabled) {
 		interceptingEnabled = enabled;
 		logger.info(PFX + "Intercepting " + (enabled ? "enabled" : "disabled"));
@@ -150,5 +115,42 @@ public class AOPChainProcessor implements InvokeChainProcessor {
 			return true;
 		}
 		return false;
+	}
+
+
+	public void clearAdvice() {
+		for (List<Advice> advs : ADVICES.values()) {
+			for (Advice adv : advs) {
+				unregisterAdvice(adv);
+			}
+		}
+		logger.info(PFX + "Cleared all Advice");
+	}
+
+	public void registerAdvice(Advice advice) {
+		ADVICES.get(advice.getPointCut().getInterceptPoint()).add(advice);
+		ID_ADVICE.put(advice.getId(), advice);
+		logger.info(PFX + "Registered advice " + advice);
+	}
+
+	public void unregisterAdvice(String adviceId) {
+		unregisterAdvice(ID_ADVICE.get(adviceId));
+	}
+
+	public void unregisterAdvice(Advice advice) {
+		ADVICES.get(advice.getPointCut().getInterceptPoint()).remove(advice);
+		ID_ADVICE.remove(advice.getId());
+	}
+
+	public Advice getAdvice(String id) {
+		return ID_ADVICE.get(id);
+	}
+
+	public List<Advice> listAdvice() {
+		List<Advice> list = new ArrayList<Advice>();
+		for (List<Advice> adv : ADVICES.values()) {
+			list.addAll(adv);
+		}
+		return list;
 	}
 }

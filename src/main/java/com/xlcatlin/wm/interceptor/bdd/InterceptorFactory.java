@@ -3,7 +3,7 @@ package com.xlcatlin.wm.interceptor.bdd;
 import java.io.IOException;
 
 import com.xlcatlin.wm.aop.chainprocessor.Interceptor;
-import com.xlcatlin.wm.interceptor.assertion.Assertion;
+import com.xlcatlin.wm.interceptor.assertion.AssertionInterceptor;
 import com.xlcatlin.wm.interceptor.bdd.xsd.Then;
 import com.xlcatlin.wm.interceptor.mock.canned.CannedResponseInterceptor;
 import com.xlcatlin.wm.interceptor.mock.exception.ExceptionInterceptor;
@@ -46,7 +46,7 @@ public class InterceptorFactory {
 	}
 
 	public Interceptor getAssertInterceptor(String assertionName) {
-		return new Assertion(assertionName);
+		return new AssertionInterceptor(assertionName);
 	}
 
 }

@@ -1,4 +1,4 @@
-<advice xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<scenario xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../main/xsd/bddSchema.xsd" id="aspect id">
     <given>
         <service intercepted="invoke">com.catlin.foo:bar</service>
@@ -33,4 +33,4 @@
         </return>
         </then>
     </when>
-</advice>
+</scenario>
