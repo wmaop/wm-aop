@@ -166,7 +166,14 @@ public class WhenProcessorTest {
 	@Test
 	public void shouldCapturePipeline() throws Exception {
 		AOPChainProcessor cp = getConfiguredProcessor("bdd/pipelineCaptureBdd.xml");
-		fail();
+		// Pipeline mocking
+		IData pipeline = IDataFactory.create();
+		ServiceStatus ss = mock(ServiceStatus.class);
+		Iterator<InvokeChainProcessor> chainIterator = new ArrayList<InvokeChainProcessor>().iterator();
+		
+		add(pipeline, "foo", 2);
+		cp.process(chainIterator, getBaseService("com.catlin.foo:bar"), pipeline, ss);
+		
 	}
 	
 	private AOPChainProcessor getConfiguredProcessor(String testXmlFileName) throws Exception {

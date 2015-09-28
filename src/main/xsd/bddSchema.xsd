@@ -52,12 +52,6 @@
     </xs:complexType>
   </xs:element>
 
-  <xs:element name="else">
-    <xs:complexType mixed="true">
-      <xs:attribute name="id" use="required"/>
-    </xs:complexType>
-  </xs:element>
-
   <xs:element name="return" type="xs:string"/>
   <xs:element name="throw" type="xs:string"/>
   <xs:element name="pipelineCapture" type="xs:string"/>
