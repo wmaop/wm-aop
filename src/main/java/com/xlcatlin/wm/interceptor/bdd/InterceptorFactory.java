@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import com.xlcatlin.wm.aop.chainprocessor.Interceptor;
 import com.xlcatlin.wm.interceptor.assertion.AssertionInterceptor;
+import com.xlcatlin.wm.interceptor.bdd.xsd.Assert;
 import com.xlcatlin.wm.interceptor.bdd.xsd.Then;
 import com.xlcatlin.wm.interceptor.mock.canned.CannedResponseInterceptor;
 import com.xlcatlin.wm.interceptor.mock.exception.ExceptionInterceptor;
@@ -13,7 +14,7 @@ public class InterceptorFactory {
 
 	public Interceptor getInterceptor(Then then) {
 		if (then.getAssert() != null) {
-			return getAssertInterceptor(then.getReturn());
+			return getAssertInterceptor(then.getAssert());
 		} else if (then.getReturn() != null) {
 			return getReturnInterceptor(then.getReturn());
 		} else if (then.getPipelineCapture() != null) {
@@ -45,8 +46,8 @@ public class InterceptorFactory {
 		}
 	}
 
-	public Interceptor getAssertInterceptor(String assertionName) {
-		return new AssertionInterceptor(assertionName);
+	public Interceptor getAssertInterceptor(Assert ass) {
+		return new AssertionInterceptor(ass.getId());
 	}
 
 }

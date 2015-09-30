@@ -39,6 +39,18 @@ public class BddInterceptor implements Interceptor {
 		iDataMatcher = new JexlIDataMatcher(exprs);
 	}
 
+	public List<Interceptor> getInterceptorsOfType(Class type) {
+		List<Interceptor> m = new ArrayList<>();
+		for (String id : interceptorMap.keySet()) {
+			for (Interceptor interceptor: interceptorMap.get(id)) {
+				if (type.isAssignableFrom(interceptor.getClass())) {
+					m.add(interceptor);
+				}
+			}
+		}
+		return m ;
+	}
+	
 	private void processWhen(Map<String, String> exprs, When when) {
 		InterceptorFactory intFactory = new InterceptorFactory();
 		String sid = when.getId();

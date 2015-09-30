@@ -23,6 +23,8 @@ import com.wm.util.ServerException;
 import com.xlcatlin.wm.aop.Advice;
 import com.xlcatlin.wm.aop.InterceptPoint;
 import com.xlcatlin.wm.aop.pipeline.FlowPosition;
+import com.xlcatlin.wm.interceptor.assertion.AspectAssertionObserver;
+import com.xlcatlin.wm.interceptor.assertion.AssertionManager;
 
 public class AOPChainProcessor extends Observable implements InvokeChainProcessor {
 
@@ -48,6 +50,9 @@ public class AOPChainProcessor extends Observable implements InvokeChainProcesso
 			ADVICES.put(ip, new ArrayList<Advice>());
 		}
 		AOPChainProcessor.instance = this;
+	
+		// This should be registered elsewhere though no other point of instantiation
+		addObserver(new AspectAssertionObserver());
 	}
 
 	public void setEnabled(boolean enabled) {
@@ -59,7 +64,8 @@ public class AOPChainProcessor extends Observable implements InvokeChainProcesso
 		return interceptingEnabled;
 	}
 
-	public void process(@SuppressWarnings("rawtypes") Iterator processorChain, BaseService baseService, IData idata, ServiceStatus serviceStatus) throws ServerException {
+	public void process(@SuppressWarnings("rawtypes") Iterator processorChain, BaseService baseService, IData idata,
+			ServiceStatus serviceStatus) throws ServerException {
 
 		if (interceptingEnabled) {
 			processIntercept(processorChain, baseService, idata, serviceStatus);
@@ -68,7 +74,8 @@ public class AOPChainProcessor extends Observable implements InvokeChainProcesso
 		}
 	}
 
-	private void processIntercept(@SuppressWarnings("rawtypes") Iterator processorChain, BaseService baseService, IData idata, ServiceStatus serviceStatus) throws ServerException {
+	private void processIntercept(@SuppressWarnings("rawtypes") Iterator processorChain, BaseService baseService,
+			IData idata, ServiceStatus serviceStatus) throws ServerException {
 		FlowPosition pipelinePosition = new FlowPosition(BEFORE, baseService.getNSName().getFullName());
 		processAdvice(false, pipelinePosition, idata, serviceStatus);
 
@@ -119,27 +126,22 @@ public class AOPChainProcessor extends Observable implements InvokeChainProcesso
 		return false;
 	}
 
-
-	public void clearAdvice() {
-		for (List<Advice> advs : ADVICES.values()) {
-			for (Advice adv : advs) {
-				unregisterAdvice(adv);
-			}
-		}
-		logger.info(PFX + "Cleared all Advice");
-	}
-
 	public void registerAdvice(Advice advice) {
 		ADVICES.get(advice.getPointCut().getInterceptPoint()).add(advice);
 		ID_ADVICE.put(advice.getId(), advice);
+		// Notify if new
+		if (advice.getAdviceState() == NEW) {
+			setChanged();
+			notifyObservers(advice);
+		}
+		advice.setAdviceState(ENABLED);
 		setChanged();
 		notifyObservers(advice);
-		advice.setAdviceState(ENABLED);
 		logger.info(PFX + "Registered advice " + advice);
 	}
 
 	public void unregisterAdvice(String adviceId) {
-		unregisterAdvice(ID_ADVICE.get(adviceId));
+		unregisterAdvice(getAdvice(adviceId));
 	}
 
 	public void unregisterAdvice(Advice advice) {
@@ -148,6 +150,16 @@ public class AOPChainProcessor extends Observable implements InvokeChainProcesso
 		advice.setAdviceState(DISPOSED);
 		setChanged();
 		notifyObservers(advice);
+	}
+
+	public void clearAdvice() {
+		for (List<Advice> advs : ADVICES.values()) {
+			List<Advice> advCopy = new ArrayList<>(advs);
+			for (Advice adv : advCopy) {
+				unregisterAdvice(adv);
+			}
+		}
+		logger.info(PFX + "Cleared all Advice");
 	}
 
 	public Advice getAdvice(String id) {

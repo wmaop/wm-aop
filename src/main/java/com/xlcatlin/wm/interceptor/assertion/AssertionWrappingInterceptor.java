@@ -9,9 +9,11 @@ public class AssertionWrappingInterceptor implements Interceptor, Assertion {
 
 	private int invocationCount;
 	private final Interceptor wrappedInterceptor;
+	private String name;
 	
-	AssertionWrappingInterceptor(Interceptor wrappedInterceptor) {
+	AssertionWrappingInterceptor(Interceptor wrappedInterceptor, String name) {
 		this.wrappedInterceptor =wrappedInterceptor;
+		this.name = name;
 	}
 	
 	@Override
@@ -26,6 +28,11 @@ public class AssertionWrappingInterceptor implements Interceptor, Assertion {
 	@Override
 	public int getInvokeCount() {
 		return invocationCount;
+	}
+
+	@Override
+	public String getName() {
+		return name;
 	}
 
 }

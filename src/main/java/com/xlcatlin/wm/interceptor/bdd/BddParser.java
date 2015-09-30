@@ -22,9 +22,6 @@ import com.xlcatlin.wm.interceptor.bdd.xsd.Scenario;
 import com.xlcatlin.wm.interceptor.bdd.xsd.Service;
 import com.xlcatlin.wm.interceptor.bdd.xsd.When;
 
-/**
- * Pay attention to the Advice class - one from the parse, one from aop
- */
 public class BddParser {
 
 	private static final Logger logger = Logger.getLogger(BddParser.class);

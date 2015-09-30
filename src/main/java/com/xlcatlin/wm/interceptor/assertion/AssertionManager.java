@@ -6,7 +6,7 @@ import java.util.Map;
 
 public class AssertionManager  {
 
-	private static AssertionManager instance = new AssertionManager();
+	private static final AssertionManager instance = new AssertionManager();
 	
 	private final Map<String, Assertion> assertions = new HashMap<String, Assertion>();
 	
@@ -20,20 +20,40 @@ public class AssertionManager  {
 		assertions.put(name, assertion);
 	}
 
-	public Assertion getAssetion(String name) {
+	public Assertion getAssertion(String name) {
 		return assertions.get(name);
 	}
 	
-	public Collection<Assertion> getAssetions() {
+	public Collection<Assertion> getAssertions() {
 		return assertions.values();
 	}
 
-	public Collection<String> getAssetionNames() {
+	public Collection<String> getAssertionNames() {
 		return assertions.keySet();
 	}
 
 	public void removeAssertion(String name) {
 		assertions.remove(name);
+	}
+
+	public boolean verifyOnceOnly(String name) {
+		return getAssertion(name).getInvokeCount() == 1;
+	}
+	
+	public boolean verifyAtLeastOnce(String name) {
+		return getAssertion(name).getInvokeCount() >= 1;
+	}
+	
+	public boolean verifyAtLeast(int count, String name) {
+		return getAssertion(name).getInvokeCount() >= count;
+	}
+	
+	public boolean verifyNever(String name) {
+		return getAssertion(name).getInvokeCount() == 0;
+	}
+
+	public boolean verifyAtMost(int count, String name) {
+		return getAssertion(name).getInvokeCount() <= count;
 	}
 
 }

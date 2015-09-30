@@ -5,6 +5,7 @@ import java.util.Observer;
 
 import com.xlcatlin.wm.aop.Advice;
 import com.xlcatlin.wm.aop.chainprocessor.Interceptor;
+import com.xlcatlin.wm.interceptor.bdd.BddInterceptor;
 
 public class AspectAssertionObserver implements Observer {
 
@@ -13,12 +14,25 @@ public class AspectAssertionObserver implements Observer {
 		Advice advice = (Advice)arg;
 		Interceptor interceptor = advice.getInterceptor();
 		if (interceptor instanceof Assertion) {
-			switch (advice.getAdviceState()) {
-			case NEW:
-				AssertionManager.getInstance().addAssertion(advice.getId(), (Assertion) interceptor);
-			case DISPOSED:
-				AssertionManager.getInstance().removeAssertion(advice.getId());
+			handleState(advice, (Assertion) interceptor);
+		}
+		if (interceptor instanceof BddInterceptor) {
+			for (Interceptor icpt : ((BddInterceptor)interceptor).getInterceptorsOfType(Assertion.class)) {
+				handleState(advice, (Assertion) icpt);
 			}
+		}
+	}
+
+	private void handleState(Advice advice, Assertion interceptor) {
+		switch (advice.getAdviceState()) {
+		case NEW:
+			AssertionManager.getInstance().addAssertion(interceptor.getName(), interceptor);
+			break;
+		case DISPOSED:
+			AssertionManager.getInstance().removeAssertion(interceptor.getName());
+			break;
+		default:
+			break;
 		}
 	}
 

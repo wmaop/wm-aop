@@ -6,7 +6,7 @@ import com.xlcatlin.wm.aop.chainprocessor.Interceptor;
 import com.xlcatlin.wm.aop.pipeline.FlowPosition;
 
 /**
- * @author Richard Default assertion. Counts the invokes and registers if one
+ * Default assertion. Counts the invokes and registers if one
  *         has asserted
  */
 public class AssertionInterceptor implements Interceptor, Assertion {
@@ -38,11 +38,12 @@ public class AssertionInterceptor implements Interceptor, Assertion {
 		return invokeCount;
 	}
 
-	public String getAssertionName() {
-		return assertionName;
-	}
-
 	public boolean hasAsserted() {
 		return asserted;
+	}
+
+	@Override
+	public String getName() {
+		return assertionName;
 	}
 }
