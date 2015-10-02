@@ -7,39 +7,50 @@
 	<version>1.0.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
+	<parent>
+		<groupId>org.wmaop</groupId>
+		<artifactId>wm-parent</artifactId>
+		<version>1.0.0</version>
+	</parent>
+
 	<name>wm-aop</name>
-	<url>http://maven.apache.org</url>
+	<url>https://bitbucket.org/sysgen/wm-aop.git</url>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<powermock.version>1.6.2</powermock.version>
 		<jaxb.version>2.2.7</jaxb.version> <!-- Must match jaxb2-maven-plugin dep version -->
-		<jexl.version>2.1.1</jexl.version>
+		<wm-aop-util.version>1.0.0-SNAPSHOT</wm-aop-util.version>
 		<commons-loggin.version>1.1.1</commons-loggin.version>
-		<commons-lang.version>2.3</commons-lang.version>
-		<mockito.version>1.10.19</mockito.version>
-		<log4j.version>1.2.16</log4j.version>
-		<junit.version>4.12</junit.version>
-		
+		<is.server.lib.dir>D:\SoftwareAG\IntegrationServer\instances\default\lib\jars</is.server.lib.dir>
 	</properties>
 
 	<dependencies>
 		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-jexl</artifactId>
-			<version>${jexl.version}</version>
+			<groupId>org.wmaop</groupId>
+			<artifactId>wm-aop-util</artifactId>
+			<version>${wm-aop-util.version}</version>
 		</dependency>
+
+		<dependency>
+			<!-- Proided by jexl in wm-aop-util so mark provided for exclusion in copy-->
+			<groupId>commons-logging</groupId>
+			<artifactId>commons-logging</artifactId>
+			<version>${commons-loggin.version}</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<!-- webMethods server JARs -->
 
 		<dependency>
 			<groupId>com.softwareag.webmethods</groupId>
 			<artifactId>wm-isserver</artifactId>
-			<version>9.0.1-1</version>
+			<version>${webMethods.version}</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.softwareag.webmethods</groupId>
 			<artifactId>wm-isclient</artifactId>
-			<version>9.0.1-1</version>
+			<version>${webMethods.version}</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
@@ -48,24 +59,10 @@
 			<version>9.0</version>
 			<scope>provided</scope>
 		</dependency>
-
 		<dependency>
 			<groupId>commons-lang</groupId>
 			<artifactId>commons-lang</artifactId>
 			<version>${commons-lang.version}</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<!-- Proided by jexl so mark for exclusion in copy-->
-			<groupId>commons-logging</groupId>
-			<artifactId>commons-logging</artifactId>
-			<version>${commons-loggin.version}</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.sun.xml.bind</groupId>
-			<artifactId>jaxb-impl</artifactId>
-			<version>${jaxb.version}</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
@@ -75,6 +72,16 @@
 			<scope>provided</scope>
 		</dependency>
 
+		<!-- Build JARs -->
+
+		<dependency>
+			<groupId>com.sun.xml.bind</groupId>
+			<artifactId>jaxb-impl</artifactId>
+			<version>${jaxb.version}</version> <!-- Must match jaxb2-maven-plugin dep version -->
+			<scope>provided</scope>
+		</dependency>
+
+		<!-- Testing JARs -->
 
 		<dependency>
 			<groupId>org.powermock</groupId>
@@ -94,7 +101,6 @@
 			<version>${mockito.version}</version>
 			<scope>test</scope>
 		</dependency>
-
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
@@ -105,14 +111,6 @@
 
 	<build>
 		<plugins>
-			<plugin>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.3</version>
-				<configuration>
-					<source>1.7</source>
-					<target>1.7</target>
-				</configuration>
-			</plugin>
 			<!-- Plugin required to build java classes from XSD using XJC -->
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
@@ -161,7 +159,7 @@
 						<artifactId>maven-jar-plugin</artifactId>
 						<version>2.6</version>
 						<configuration>
-							<outputDirectory>D:\SoftwareAG\IntegrationServer\instances\default\lib\jars</outputDirectory>
+							<outputDirectory>${is.server.lib.dir}</outputDirectory>
 						</configuration>
 					</plugin>
 
@@ -174,18 +172,12 @@
 									<goal>copy-dependencies</goal>
 								</goals>
 								<configuration>
-									<outputDirectory>D:\SoftwareAG\IntegrationServer\instances\default\lib\jars</outputDirectory>
+									<outputDirectory>${is.server.lib.dir}</outputDirectory>
 									<includeScope>runtime</includeScope>
 								</configuration>
 							</execution>
 						</executions>
 					</plugin>
-					<!-- <plugin> <groupId>org.codehaus.mojo</groupId> <artifactId>exec-maven-plugin</artifactId> 
-						<version>1.2</version> <executions> <execution> <id>drop DB => db_name</id> 
-						<phase>pre-integration-test</phase> <goals> <goal>exec</goal> </goals> <configuration> 
-						<executable>powershell</executable> <arguments> <argument>-s</argument> <argument>-S</argument> 
-						<argument>-X</argument> <argument>DELETE</argument> <argument>http://${db.server}:${db.port}/db_name</argument> 
-						</arguments> </configuration> </execution> </executions> </plugin> -->
 				</plugins>
 			</build>
 		</profile>
