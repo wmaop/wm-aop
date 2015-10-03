@@ -1,6 +1,8 @@
 package org.wmaop.aop.chainprocessor;
 
-import static org.wmaop.aop.AdviceState.*;
+import static org.wmaop.aop.AdviceState.DISPOSED;
+import static org.wmaop.aop.AdviceState.ENABLED;
+import static org.wmaop.aop.AdviceState.NEW;
 import static org.wmaop.aop.InterceptPoint.AFTER;
 import static org.wmaop.aop.InterceptPoint.BEFORE;
 import static org.wmaop.aop.InterceptPoint.INVOKE;
@@ -18,7 +20,6 @@ import org.wmaop.aop.Advice;
 import org.wmaop.aop.InterceptPoint;
 import org.wmaop.aop.pipeline.FlowPosition;
 import org.wmaop.interceptor.assertion.AspectAssertionObserver;
-import org.wmaop.interceptor.assertion.AssertionManager;
 
 import com.wm.app.b2b.server.BaseService;
 import com.wm.app.b2b.server.invoke.InvokeChainProcessor;
