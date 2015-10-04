@@ -18,9 +18,9 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<jaxb.version>2.2.7</jaxb.version> <!-- Must match jaxb2-maven-plugin dep version -->
 		<wm-aop-util.version>1.0.0-SNAPSHOT</wm-aop-util.version>
-		<commons-loggin.version>1.1.1</commons-loggin.version>
+		<jaxb.version>2.2.7</jaxb.version> <!-- Must match jaxb2-maven-plugin dep version -->
+		<commons-loggin.version>1.1.1</commons-loggin.version> <!-- JEXL version for exclusion -->
 		<is.server.lib.dir>G:\SoftwareAG\IntegrationServer\instances\default\lib\jars</is.server.lib.dir>
 	</properties>
 

@@ -29,7 +29,7 @@ public class JexlServiceNameMatcher implements Matcher<FlowPosition> {
 	}
 
 	private Expression createExpression(String name, String exprText) {
-		Expression compiledExpr = JexlExpressionFactory.createExpression(exprText);
+		Expression compiledExpr = JexlExpressionFactory.getEngine().createExpression(exprText);
 		Object result = compiledExpr.evaluate(new MapContext());
 		verifyExpressionResult(name, result);
 		return compiledExpr;
