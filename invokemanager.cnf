@@ -3,7 +3,7 @@ h<?xml version="1.0" encoding="UTF-8"?>
 <IDataXMLCoder version="1.0">
   <record javaclass="com.wm.data.ISMemDataImpl">
     <array name="processorArray" type="value" depth="1">
-      <value>com.xlcatlin.wm.aop.chainprocessor.AOPChainProcessor</value>
+      <value>org.wmaop.aop.chainprocessor.AOPChainProcessor</value>
     </array>
   </record>
 </IDataXMLCoder>

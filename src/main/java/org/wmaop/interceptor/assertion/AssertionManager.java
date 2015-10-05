@@ -32,6 +32,11 @@ public class AssertionManager  {
 		return assertions.keySet();
 	}
 
+	public int getInvokeCount(String name) {
+		Assertion assertion = assertions.get(name);
+		return assertion == null ? 0 : assertion.getInvokeCount();
+	}
+	
 	public void removeAssertion(String name) {
 		assertions.remove(name);
 	}

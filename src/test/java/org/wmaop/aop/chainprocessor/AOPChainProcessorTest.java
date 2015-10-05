@@ -48,10 +48,13 @@ public class AOPChainProcessorTest {
 		AssertionInterceptor assertion = new AssertionInterceptor("myAssertion");
 		Advice assertionAdvice = new Advice("adv1", new ServicePipelinePointCut(serviceNameMatcher, pipelineMatcher, InterceptPoint.BEFORE), assertion);
 		cp.registerAdvice(assertionAdvice);
+		assertEquals(1, cp.listAdvice().size());
 
 		CannedResponseInterceptor interceptor = new CannedResponseInterceptor(classLoader.getResourceAsStream("cannedResponse.xml"));
 		Advice interceptAdvice = new Advice("adv2", new ServicePipelinePointCut(serviceNameMatcher, pipelineMatcher, InterceptPoint.INVOKE), interceptor);
 		cp.registerAdvice(interceptAdvice);
+		
+		assertEquals(2, cp.listAdvice().size());
 
 		// Pipeline mocking
 		IData idata = new IDataXMLCoder().decode(classLoader.getResourceAsStream("pipeline.xml"));
@@ -66,6 +69,10 @@ public class AOPChainProcessorTest {
 
 		assertTrue(((AssertionInterceptor) cp.getAdvice("adv1").getInterceptor()).hasAsserted());
 		assertEquals(1, assertion.getInvokeCount());
+		
+		cp.clearAdvice();
+		assertEquals(0, cp.listAdvice().size());
+
 	}
 
 	@Test

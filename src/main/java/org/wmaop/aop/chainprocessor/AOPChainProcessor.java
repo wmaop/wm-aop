@@ -107,7 +107,7 @@ public class AOPChainProcessor extends Observable implements InvokeChainProcesso
 				}
 			}
 		} catch (Exception e) {
-			logger.error(PFX + "Error intercepting, behaviour at " + pos + " may be unknown", e);
+			logger.error(PFX + "Error intercepting. Behaviour at " + pos + " may be unknown", e);
 		}
 		return hasIntercepted;
 	}
@@ -115,8 +115,9 @@ public class AOPChainProcessor extends Observable implements InvokeChainProcesso
 	private boolean intercept(boolean exitOnIntercept, FlowPosition pos, IData idata, ServiceStatus serviceStatus,
 			Advice advice) {
 		Interceptor interceptor = advice.getInterceptor();
-		logger.info(PFX + "Intercepting " + pos);
 		InterceptResult interceptResult = interceptor.intercept(pos, idata);
+		logger.info(PFX + "Intercepting " + pos.getInterceptPoint() + ' ' + pos + " - " + interceptResult.hasIntercepted());
+		
 		if (interceptResult.hasIntercepted() && exitOnIntercept) {
 			Exception e = interceptResult.getException();
 			if (e != null) {

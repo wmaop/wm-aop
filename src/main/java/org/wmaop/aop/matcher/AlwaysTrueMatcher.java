@@ -12,7 +12,7 @@ public class AlwaysTrueMatcher<T> implements Matcher<T> {
 	
 	@Override
 	public String toString() {
-		return "AlwaysTrueMatcher for " + id;
+		return "AlwaysTrueMatcher[" + id + ']';
 	}
 
 	public MatchResult match(Object value) {

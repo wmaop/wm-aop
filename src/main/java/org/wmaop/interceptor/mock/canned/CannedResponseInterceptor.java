@@ -34,4 +34,9 @@ public class CannedResponseInterceptor implements Interceptor {
 		return InterceptResult.TRUE;
 	}
 
+	@Override
+	public String toString() {
+		return "CannedResponseInterceptor";
+	}
+
 }
