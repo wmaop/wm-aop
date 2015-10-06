@@ -20,6 +20,7 @@ import org.wmaop.aop.Advice;
 import org.wmaop.aop.InterceptPoint;
 import org.wmaop.aop.pipeline.FlowPosition;
 import org.wmaop.interceptor.assertion.AspectAssertionObserver;
+import org.wmaop.interceptor.assertion.AssertionManager;
 
 import com.wm.app.b2b.server.BaseService;
 import com.wm.app.b2b.server.invoke.InvokeChainProcessor;
@@ -39,6 +40,8 @@ public class AOPChainProcessor extends Observable implements InvokeChainProcesso
 	private final Map<String, Advice> ID_ADVICE = new HashMap<String, Advice>();
 	private boolean interceptingEnabled = false;
 
+	AssertionManager assertionManager = new AssertionManager();
+	
 	public static AOPChainProcessor getInstance() {
 		return instance;
 	}
@@ -53,9 +56,13 @@ public class AOPChainProcessor extends Observable implements InvokeChainProcesso
 		AOPChainProcessor.instance = this;
 	
 		// This should be registered elsewhere though no other point of instantiation
-		addObserver(new AspectAssertionObserver());
+		addObserver(new AspectAssertionObserver(assertionManager));
 	}
 
+	public AssertionManager getAssertionManager() {
+		return assertionManager;
+	}
+	
 	public void setEnabled(boolean enabled) {
 		interceptingEnabled = enabled;
 		logger.info(PFX + "Intercepting " + (enabled ? "enabled" : "disabled"));
@@ -116,7 +123,7 @@ public class AOPChainProcessor extends Observable implements InvokeChainProcesso
 			Advice advice) {
 		Interceptor interceptor = advice.getInterceptor();
 		InterceptResult interceptResult = interceptor.intercept(pos, idata);
-		logger.info(PFX + "Intercepting " + pos.getInterceptPoint() + ' ' + pos + " - " + interceptResult.hasIntercepted());
+		logger.info(PFX + "Intercepting " + advice.getId() + " " + pos.getInterceptPoint() + ' ' + pos + " - " + interceptResult.hasIntercepted());
 		
 		if (interceptResult.hasIntercepted() && exitOnIntercept) {
 			Exception e = interceptResult.getException();

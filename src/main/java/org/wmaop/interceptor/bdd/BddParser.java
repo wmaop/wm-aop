@@ -18,9 +18,9 @@ import org.wmaop.aop.matcher.jexl.JexlWrappingMatcher;
 import org.wmaop.aop.pointcut.ServicePipelinePointCut;
 
 import com.wm.data.IData;
-import com.xlcatlin.wm.interceptor.bdd.xsd.Scenario;
-import com.xlcatlin.wm.interceptor.bdd.xsd.Service;
-import com.xlcatlin.wm.interceptor.bdd.xsd.When;
+import org.wmaop.interceptor.bdd.xsd.Scenario;
+import org.wmaop.interceptor.bdd.xsd.Service;
+import org.wmaop.interceptor.bdd.xsd.When;
 
 public class BddParser {
 

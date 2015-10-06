@@ -2,7 +2,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>com.xlcatlin</groupId>
+	<groupId>org.wmaop</groupId>
 	<artifactId>wm-aop</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
@@ -21,7 +21,7 @@
 		<wm-aop-util.version>1.0.0-SNAPSHOT</wm-aop-util.version>
 		<jaxb.version>2.2.7</jaxb.version> <!-- Must match jaxb2-maven-plugin dep version -->
 		<commons-loggin.version>1.1.1</commons-loggin.version> <!-- JEXL version for exclusion -->
-		<is.server.lib.dir>G:\SoftwareAG\IntegrationServer\instances\default\lib\jars</is.server.lib.dir>
+		<is.server.lib.dir>D:\SoftwareAG\IntegrationServer\instances\default\lib\jars</is.server.lib.dir>
 	</properties>
 
 	<dependencies>
@@ -122,7 +122,7 @@
 							<goal>xjc</goal>
 						</goals>
 						<configuration>
-							<packageName>com.xlcatlin.wm.interceptor.bdd.xsd</packageName>
+							<packageName>org.wmaop.interceptor.bdd.xsd</packageName>
 						</configuration>
 					</execution>
 				</executions>

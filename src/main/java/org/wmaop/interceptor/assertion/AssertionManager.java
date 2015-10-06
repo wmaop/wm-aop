@@ -6,15 +6,9 @@ import java.util.Map;
 
 public class AssertionManager  {
 
-	private static final AssertionManager instance = new AssertionManager();
-	
 	private final Map<String, Assertion> assertions = new HashMap<String, Assertion>();
 	
-	public static AssertionManager getInstance() {
-		return instance;
-	}
-	
-	protected AssertionManager() {}
+	public AssertionManager() {}
 	
 	public void addAssertion(String name, Assertion assertion) {
 		assertions.put(name, assertion);

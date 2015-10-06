@@ -14,9 +14,9 @@ import org.wmaop.aop.matcher.jexl.JexlIDataMatcher;
 import org.wmaop.aop.pipeline.FlowPosition;
 
 import com.wm.data.IData;
-import com.xlcatlin.wm.interceptor.bdd.xsd.Scenario;
-import com.xlcatlin.wm.interceptor.bdd.xsd.Then;
-import com.xlcatlin.wm.interceptor.bdd.xsd.When;
+import org.wmaop.interceptor.bdd.xsd.Scenario;
+import org.wmaop.interceptor.bdd.xsd.Then;
+import org.wmaop.interceptor.bdd.xsd.When;
 
 public class BddInterceptor implements Interceptor {
 

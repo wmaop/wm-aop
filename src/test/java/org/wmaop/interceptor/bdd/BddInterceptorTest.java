@@ -53,32 +53,33 @@ public class BddInterceptorTest {
 		// Execute a service, no change to pipeline
 		cp.process(chainIterator, getBaseService("pub.test:svcA"), pipeline, ss);
 		
+		AssertionManager asm = cp.getAssertionManager();
 		// Correct service, condition doesnt match
 		cp.process(chainIterator, getBaseService("com.catlin.foo:bar"), pipeline, ss);
-		assertEquals(0, AssertionManager.getInstance().getAssertion("PreBarAssertion").getInvokeCount());
-		assertTrue(AssertionManager.getInstance().verifyNever("PreBarAssertion"));
-		assertFalse(AssertionManager.getInstance().verifyOnceOnly("PreBarAssertion"));
-		assertFalse(AssertionManager.getInstance().verifyAtLeast(1, "PreBarAssertion"));
-		assertFalse(AssertionManager.getInstance().verifyAtLeastOnce("PreBarAssertion"));
-		assertTrue(AssertionManager.getInstance().verifyAtMost(1, "PreBarAssertion"));
+		assertEquals(0, asm.getAssertion("PreBarAssertion").getInvokeCount());
+		assertTrue(asm.verifyNever("PreBarAssertion"));
+		assertFalse(asm.verifyOnceOnly("PreBarAssertion"));
+		assertFalse(asm.verifyAtLeast(1, "PreBarAssertion"));
+		assertFalse(asm.verifyAtLeastOnce("PreBarAssertion"));
+		assertTrue(asm.verifyAtMost(1, "PreBarAssertion"));
 		
 		// Correct service, condition  match
 		add(pipeline, "foo", 2);
 		cp.process(chainIterator, getBaseService("com.catlin.foo:bar"), pipeline, ss);
-		assertEquals(1, AssertionManager.getInstance().getAssertion("PreBarAssertion").getInvokeCount());
-		assertFalse(AssertionManager.getInstance().verifyNever("PreBarAssertion"));
-		assertTrue(AssertionManager.getInstance().verifyOnceOnly("PreBarAssertion"));
-		assertTrue(AssertionManager.getInstance().verifyAtLeast(1, "PreBarAssertion"));
-		assertTrue(AssertionManager.getInstance().verifyAtLeastOnce("PreBarAssertion"));
-		assertTrue(AssertionManager.getInstance().verifyAtMost(1, "PreBarAssertion"));
+		assertEquals(1, asm.getAssertion("PreBarAssertion").getInvokeCount());
+		assertFalse(asm.verifyNever("PreBarAssertion"));
+		assertTrue(asm.verifyOnceOnly("PreBarAssertion"));
+		assertTrue(asm.verifyAtLeast(1, "PreBarAssertion"));
+		assertTrue(asm.verifyAtLeastOnce("PreBarAssertion"));
+		assertTrue(asm.verifyAtMost(1, "PreBarAssertion"));
 
 		cp.process(chainIterator, getBaseService("com.catlin.foo:bar"), pipeline, ss);
-		assertEquals(2, AssertionManager.getInstance().getAssertion("PreBarAssertion").getInvokeCount());
-		assertFalse(AssertionManager.getInstance().verifyNever("PreBarAssertion"));
-		assertFalse(AssertionManager.getInstance().verifyOnceOnly("PreBarAssertion"));
-		assertTrue(AssertionManager.getInstance().verifyAtLeast(1, "PreBarAssertion"));
-		assertTrue(AssertionManager.getInstance().verifyAtLeastOnce("PreBarAssertion"));
-		assertFalse(AssertionManager.getInstance().verifyAtMost(1, "PreBarAssertion"));
+		assertEquals(2, asm.getAssertion("PreBarAssertion").getInvokeCount());
+		assertFalse(asm.verifyNever("PreBarAssertion"));
+		assertFalse(asm.verifyOnceOnly("PreBarAssertion"));
+		assertTrue(asm.verifyAtLeast(1, "PreBarAssertion"));
+		assertTrue(asm.verifyAtLeastOnce("PreBarAssertion"));
+		assertFalse(asm.verifyAtMost(1, "PreBarAssertion"));
 	
 	}
 

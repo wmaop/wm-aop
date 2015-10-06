@@ -20,7 +20,7 @@ import com.wm.data.IData;
 import com.wm.data.IDataCursor;
 import com.wm.data.IDataUtil;
 
-public abstract class FlowManager {
+public abstract class AbstractFlowManager {
 
 	public void mandatory(IData pipeline, String message, String... params) throws ServiceException {
 		IDataCursor pipelineCursor = pipeline.getCursor();

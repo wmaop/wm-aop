@@ -9,6 +9,12 @@ import org.wmaop.interceptor.bdd.BddInterceptor;
 
 public class AspectAssertionObserver implements Observer {
 
+	private AssertionManager assertionManager;
+
+	public AspectAssertionObserver(AssertionManager assertionManager) {
+		this.assertionManager = assertionManager;
+	}
+	
 	@Override
 	public void update(Observable o, Object arg) {
 		Advice advice = (Advice)arg;
@@ -26,10 +32,10 @@ public class AspectAssertionObserver implements Observer {
 	private void handleState(Advice advice, Assertion interceptor) {
 		switch (advice.getAdviceState()) {
 		case NEW:
-			AssertionManager.getInstance().addAssertion(interceptor.getName(), interceptor);
+			assertionManager.addAssertion(interceptor.getName(), interceptor);
 			break;
 		case DISPOSED:
-			AssertionManager.getInstance().removeAssertion(interceptor.getName());
+			assertionManager.removeAssertion(interceptor.getName());
 			break;
 		default:
 			break;

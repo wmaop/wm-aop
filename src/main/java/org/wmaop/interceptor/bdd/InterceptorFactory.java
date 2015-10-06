@@ -8,8 +8,8 @@ import org.wmaop.interceptor.mock.canned.CannedResponseInterceptor;
 import org.wmaop.interceptor.mock.exception.ExceptionInterceptor;
 import org.wmaop.interceptor.pipline.PipelineCaptureInterceptor;
 
-import com.xlcatlin.wm.interceptor.bdd.xsd.Assert;
-import com.xlcatlin.wm.interceptor.bdd.xsd.Then;
+import org.wmaop.interceptor.bdd.xsd.Assert;
+import org.wmaop.interceptor.bdd.xsd.Then;
 
 public class InterceptorFactory {
 
