@@ -19,18 +19,25 @@ import com.wm.data.IDataUtil;
 
 public class MockManager extends AbstractFlowManager {
 
+	static final String ADVICE_ID = "adviceId";
+	static final String RESPONSE = "response";
+	static final String INTERCEPT_POINT = "interceptPoint";
+	static final String SERVICE_NAME = "serviceName";
+	static final String CONDITION = "condition";
+
+	
 	private static final Logger logger = Logger.getLogger(MockManager.class);
 	
 	public void registerFixedResponseMock(IData pipeline) throws ServiceException {
 		IDataCursor pipelineCursor = pipeline.getCursor();
-		String adviceId = IDataUtil.getString(pipelineCursor, "adviceId");
-		String interceptPoint = IDataUtil.getString(pipelineCursor, "interceptPoint");
-		String serviceName = IDataUtil.getString(pipelineCursor, "serviceName");
-		String idata = IDataUtil.getString(pipelineCursor, "response");
-		String pipelineCondition = IDataUtil.getString(pipelineCursor, "pipelineCondition");
+		String adviceId = IDataUtil.getString(pipelineCursor, ADVICE_ID);
+		String interceptPoint = IDataUtil.getString(pipelineCursor, INTERCEPT_POINT);
+		String serviceName = IDataUtil.getString(pipelineCursor, SERVICE_NAME);
+		String idata = IDataUtil.getString(pipelineCursor, RESPONSE);
+		String pipelineCondition = IDataUtil.getString(pipelineCursor, CONDITION);
 		pipelineCursor.destroy();
 
-		mandatory(pipeline, "{0} must exist when creating a fixed response mock", "adviceId", "interceptPoint", "serviceName");
+		mandatory(pipeline, "{0} must exist when creating a fixed response mock", ADVICE_ID, INTERCEPT_POINT, SERVICE_NAME, RESPONSE);
 		
 		Interceptor interceptor;
 		try {
@@ -43,22 +50,22 @@ public class MockManager extends AbstractFlowManager {
 	
 	public void registerAssertion(IData pipeline) throws ServiceException {
 		IDataCursor pipelineCursor = pipeline.getCursor();
-		String adviceId = IDataUtil.getString(pipelineCursor, "adviceId");
-		String interceptPoint = IDataUtil.getString(pipelineCursor, "interceptPoint");
-		String serviceName = IDataUtil.getString(pipelineCursor, "serviceName");
-		String pipelineCondition = IDataUtil.getString(pipelineCursor, "pipelineCondition");
+		String adviceId = IDataUtil.getString(pipelineCursor, ADVICE_ID);
+		String interceptPoint = IDataUtil.getString(pipelineCursor, INTERCEPT_POINT);
+		String serviceName = IDataUtil.getString(pipelineCursor, SERVICE_NAME);
+		String pipelineCondition = IDataUtil.getString(pipelineCursor, CONDITION);
 		pipelineCursor.destroy();
 
-		mandatory(pipeline, "{0} must exist when creating an assertion", "adviceId", "interceptPoint", "serviceName");
+		mandatory(pipeline, "{0} must exist when creating an assertion", ADVICE_ID, INTERCEPT_POINT, SERVICE_NAME);
 		registerInterceptor(adviceId, interceptPoint, serviceName, pipelineCondition, new AssertionInterceptor(adviceId));
 	}
 	
 	public void getInvokeCount(IData pipeline) throws ServiceException {
 		IDataCursor pipelineCursor = pipeline.getCursor();
-		String adviceId = IDataUtil.getString(pipelineCursor, "adviceId");
+		String adviceId = IDataUtil.getString(pipelineCursor, ADVICE_ID);
 		pipelineCursor.destroy();
 
-		mandatory(pipeline, "{0} must exist when retrieving assertion count", "adviceId");
+		mandatory(pipeline, "{0} must exist when retrieving assertion count", ADVICE_ID);
 		logger.debug("Retrieving assertion " + adviceId);
 		Assertion assertion = AOPChainProcessor.getInstance().getAssertionManager().getAssertion(adviceId);
 		int invokeCount = 0;
