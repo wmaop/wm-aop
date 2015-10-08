@@ -33,12 +33,14 @@ public class JexlWrappingMatcherTest {
 		IData idata = IDataFactory.create();
 		assertFalse(matcher.match(idata).isMatch());
 		add(idata, "foo", 2);
+		
 		MatchResult match = matcher.match(idata);
 		assertEquals("foo", match.getId());
 		assertTrue(match.isMatch());
 		add(idata, "foo", 1);
 		assertFalse(matcher.match(idata).isMatch());
 		add(idata, "bar", 1);
+		
 		match = matcher.match(idata);
 		assertEquals("bar", match.getId());
 		assertTrue(match.isMatch());

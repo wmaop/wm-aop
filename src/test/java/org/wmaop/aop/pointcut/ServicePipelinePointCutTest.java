@@ -1,7 +1,6 @@
 package org.wmaop.aop.pointcut;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -48,5 +47,8 @@ public class ServicePipelinePointCutTest {
 		assertFalse(sppc.isApplicable(falsePipelinePosition, idataMock));
 		assertFalse(sppc.isApplicable(pipelinePosition, falseIdataMock));
 		assertTrue(sppc.isApplicable(pipelinePosition, idataMock));
+		
+		assertEquals(pipelineMatcher, sppc.getPipelineMatcher());
+		assertEquals(serviceNameMatcher, sppc.getServiceNameMatcher());
 	}
 }

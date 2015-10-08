@@ -26,6 +26,7 @@ public class AssertionInterceptor implements Interceptor, Assertion {
 
 	public void reset() {
 		invokeCount = 0;
+		asserted = false;
 	}
 
 	public final InterceptResult intercept(FlowPosition flowPosition, IData idata) {

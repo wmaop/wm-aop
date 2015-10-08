@@ -42,7 +42,7 @@ public class MockManager extends AbstractFlowManager {
 		Interceptor interceptor;
 		try {
 			interceptor = new CannedResponseInterceptor(idata);
-		} catch (IOException e) {
+		} catch (Exception e) {
 			throw new ServiceException("Unable to parse response IData for " + adviceId);
 		}
 		registerInterceptor(adviceId, interceptPoint.toUpperCase(), serviceName, pipelineCondition, interceptor);

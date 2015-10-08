@@ -37,11 +37,17 @@ public class AspectAssertionObserverTest {
 		verify(asm, times(1)).addAssertion("foo assertion", ai);
 		verify(asm, times(0)).removeAssertion("foo assertion");
 	
+		when(advice.getAdviceState()).thenReturn(AdviceState.ENABLED);
+		verify(asm, times(1)).addAssertion("foo assertion", ai);
+		verify(asm, times(0)).removeAssertion("foo assertion");
+		
+		
 		when(advice.getAdviceState()).thenReturn(AdviceState.DISPOSED);
 		aao.update(observable, advice);
 		verify(asm, times(1)).addAssertion("foo assertion", ai);
 		verify(asm, times(1)).removeAssertion("foo assertion");
 	
+
 	}
 
 }
