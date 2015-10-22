@@ -1,6 +1,7 @@
 package org.wmaop.interceptor.mock.canned;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -9,11 +10,9 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import org.wmaop.aop.chainprocessor.InterceptResult;
 import org.wmaop.aop.pipeline.FlowPosition;
-import org.wmaop.interceptor.mock.canned.CannedResponseInterceptor;
 
 import com.wm.data.IData;
 import com.wm.data.IDataCursor;
-import com.wm.data.IDataFactory;
 import com.wm.data.IDataUtil;
 import com.wm.data.ISMemDataImpl;
 
