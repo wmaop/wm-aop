@@ -39,7 +39,7 @@ public class BddInterceptor implements Interceptor {
 		iDataMatcher = new JexlIDataMatcher(exprs);
 	}
 
-	public List<Interceptor> getInterceptorsOfType(Class type) {
+	public List<Interceptor> getInterceptorsOfType(Class<?> type) {
 		List<Interceptor> m = new ArrayList<>();
 		for (String id : interceptorMap.keySet()) {
 			for (Interceptor interceptor: interceptorMap.get(id)) {
