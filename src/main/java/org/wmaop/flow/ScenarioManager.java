@@ -3,7 +3,7 @@ package org.wmaop.flow;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
-import org.wmaop.aop.Advice;
+import org.wmaop.aop.advice.Advice;
 import org.wmaop.aop.chainprocessor.AOPChainProcessor;
 import org.wmaop.interceptor.bdd.BddParser;
 
