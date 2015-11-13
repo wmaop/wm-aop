@@ -1,6 +1,11 @@
 package org.wmaop.flow;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static org.wmaop.flow.MockManager.ADVICE_ID;
+import static org.wmaop.flow.MockManager.INTERCEPT_POINT;
+import static org.wmaop.flow.MockManager.RESPONSE;
+import static org.wmaop.flow.MockManager.SERVICE_NAME;
 
 import org.junit.Test;
 
@@ -10,10 +15,6 @@ import com.wm.data.IDataCursor;
 import com.wm.data.IDataFactory;
 import com.wm.data.IDataUtil;
 import com.wm.util.coder.IDataXMLCoder;
-
-import static org.wmaop.flow.MockManager.*;
-
-import javax.security.auth.callback.Callback;
 
 public class MockManagerTest {
 
@@ -30,7 +31,7 @@ public class MockManagerTest {
 
 	@Test
 	public void shouldCheckInvalidParameters() throws Exception {
-		IData idata = new IDataFactory().create();
+		IData idata = IDataFactory.create();
 		IDataCursor cursor = idata.getCursor();
 		IDataUtil.put(cursor, ADVICE_ID, "id");
 		IDataUtil.put(cursor, INTERCEPT_POINT, "before");

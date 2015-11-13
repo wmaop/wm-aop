@@ -14,6 +14,7 @@ import com.wm.data.IData;
 
 public class ServicePipelinePointCutTest {
 
+	@SuppressWarnings("unchecked")
 	@Test
 	public void shouldBeApplicable() {
 		FlowPosition pipelinePosition = mock(FlowPosition.class);
@@ -27,6 +28,7 @@ public class ServicePipelinePointCutTest {
 		assertTrue(sppc.isApplicable(pipelinePosition, idataMock));
 	}
 
+	@SuppressWarnings("unchecked")
 	@Test
 	public void shouldNotBeApplicable() {
 		FlowPosition pipelinePosition = mock(FlowPosition.class);

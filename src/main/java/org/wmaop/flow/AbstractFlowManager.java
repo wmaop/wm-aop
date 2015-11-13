@@ -38,7 +38,8 @@ public abstract class AbstractFlowManager {
 	
 	}
 
-	public  <T> void oneof(String message, T input, T... values) throws ServiceException {
+	@SafeVarargs
+	public final <T> void oneof(String message, T input, T... values) throws ServiceException {
 		for (T v : values) {
 			if (v.equals(input)) {
 				return;

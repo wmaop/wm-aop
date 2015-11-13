@@ -28,7 +28,7 @@ public class JexlServiceNameMatcherTest {
 	@Test
 	public void shouldFail() {
 		try {
-			JexlServiceNameMatcher jsnm = new JexlServiceNameMatcher("alpha", "serviceName = 'foo'");
+			new JexlServiceNameMatcher("alpha", "serviceName = 'foo'");
 			fail();
 		} catch (Exception e) {
 			// NOOP

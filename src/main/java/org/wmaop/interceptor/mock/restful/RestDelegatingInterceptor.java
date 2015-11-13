@@ -29,6 +29,10 @@ public class RestDelegatingInterceptor implements org.wmaop.aop.chainprocessor.I
 		return InterceptResult.TRUE;
 	}
 
+	public String getName() {
+		return serviceName;
+	}
+	
 	private void sendPost(IData idata) {
 		try {
 			URL url = new URL(destinationUrl);
