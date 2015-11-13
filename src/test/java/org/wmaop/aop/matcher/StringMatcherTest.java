@@ -4,9 +4,9 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
-import org.wmaop.aop.InterceptPoint;
 import org.wmaop.aop.matcher.FlowPositionMatcher;
 import org.wmaop.aop.pipeline.FlowPosition;
+import org.wmaop.aop.pointcut.InterceptPoint;
 
 public class StringMatcherTest {
 

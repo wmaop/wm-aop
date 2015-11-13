@@ -6,19 +6,19 @@ import java.util.Map;
 
 public class AssertionManager  {
 
-	private final Map<String, Assertion> assertions = new HashMap<String, Assertion>();
+	private final Map<String, Assertable> assertions = new HashMap<String, Assertable>();
 	
 	public AssertionManager() {}
 	
-	public void addAssertion(String name, Assertion assertion) {
+	public void addAssertion(String name, Assertable assertion) {
 		assertions.put(name, assertion);
 	}
 
-	public Assertion getAssertion(String name) {
+	public Assertable getAssertion(String name) {
 		return assertions.get(name);
 	}
 	
-	public Collection<Assertion> getAssertions() {
+	public Collection<Assertable> getAssertions() {
 		return assertions.values();
 	}
 
@@ -27,7 +27,7 @@ public class AssertionManager  {
 	}
 
 	public int getInvokeCount(String name) {
-		Assertion assertion = assertions.get(name);
+		Assertable assertion = assertions.get(name);
 		return assertion == null ? 0 : assertion.getInvokeCount();
 	}
 	

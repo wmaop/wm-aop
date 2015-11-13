@@ -15,9 +15,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import org.junit.Test;
-import org.wmaop.aop.Advice;
+import org.wmaop.aop.advice.Advice;
 import org.wmaop.aop.chainprocessor.AOPChainProcessor;
-import org.wmaop.interceptor.assertion.Assertion;
+import org.wmaop.interceptor.assertion.Assertable;
 import org.wmaop.interceptor.assertion.AssertionManager;
 import org.wmaop.interceptor.bdd.BddInterceptor;
 import org.wmaop.interceptor.bdd.BddParser;
@@ -42,7 +42,7 @@ public class BddInterceptorTest {
 		cp.registerAdvice(advice);
 
 		BddInterceptor bddi = (BddInterceptor)advice.getInterceptor();
-		assertEquals(1, bddi.getInterceptorsOfType(Assertion.class).size());
+		assertEquals(1, bddi.getInterceptorsOfType(Assertable.class).size());
 		
 		// Pipeline mocking
 		IData pipeline = IDataFactory.create();

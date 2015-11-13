@@ -8,13 +8,13 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
 import org.apache.log4j.Logger;
-import org.wmaop.aop.Advice;
-import org.wmaop.aop.InterceptPoint;
+import org.wmaop.aop.advice.Advice;
 import org.wmaop.aop.chainprocessor.Interceptor;
 import org.wmaop.aop.matcher.AlwaysTrueMatcher;
 import org.wmaop.aop.matcher.FlowPositionMatcher;
 import org.wmaop.aop.matcher.Matcher;
 import org.wmaop.aop.matcher.jexl.JexlWrappingMatcher;
+import org.wmaop.aop.pointcut.InterceptPoint;
 import org.wmaop.aop.pointcut.ServicePipelinePointCut;
 
 import com.wm.data.IData;

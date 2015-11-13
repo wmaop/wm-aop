@@ -1,11 +1,11 @@
 package org.wmaop.aop.chainprocessor;
 
-import static org.wmaop.aop.AdviceState.DISPOSED;
-import static org.wmaop.aop.AdviceState.ENABLED;
-import static org.wmaop.aop.AdviceState.NEW;
-import static org.wmaop.aop.InterceptPoint.AFTER;
-import static org.wmaop.aop.InterceptPoint.BEFORE;
-import static org.wmaop.aop.InterceptPoint.INVOKE;
+import static org.wmaop.aop.advice.AdviceState.DISPOSED;
+import static org.wmaop.aop.advice.AdviceState.ENABLED;
+import static org.wmaop.aop.advice.AdviceState.NEW;
+import static org.wmaop.aop.pointcut.InterceptPoint.AFTER;
+import static org.wmaop.aop.pointcut.InterceptPoint.BEFORE;
+import static org.wmaop.aop.pointcut.InterceptPoint.INVOKE;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,10 +16,12 @@ import java.util.Observable;
 
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 import org.apache.log4j.Logger;
-import org.wmaop.aop.Advice;
-import org.wmaop.aop.InterceptPoint;
+import org.wmaop.aop.advice.Advice;
+import org.wmaop.aop.advice.AssertableAdvice;
 import org.wmaop.aop.pipeline.FlowPosition;
+import org.wmaop.aop.pointcut.InterceptPoint;
 import org.wmaop.interceptor.assertion.AspectAssertionObserver;
+import org.wmaop.interceptor.assertion.Assertable;
 import org.wmaop.interceptor.assertion.AssertionManager;
 
 import com.wm.app.b2b.server.BaseService;
@@ -136,6 +138,9 @@ public class AOPChainProcessor extends Observable implements InvokeChainProcesso
 	}
 
 	public void registerAdvice(Advice advice) {
+		if (!(advice.getInterceptor() instanceof Assertable)) {
+			advice = new AssertableAdvice(advice);
+		}
 		ADVICES.get(advice.getPointCut().getInterceptPoint()).add(advice);
 		ID_ADVICE.put(advice.getId(), advice);
 		// Notify if new

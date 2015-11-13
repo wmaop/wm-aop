@@ -1,6 +1,6 @@
 package org.wmaop.interceptor.assertion;
 
-public interface Assertion {
+public interface Assertable {
 	int getInvokeCount();
 	String getName();
 }

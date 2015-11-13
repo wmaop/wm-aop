@@ -1,4 +1,4 @@
-package org.wmaop.aop;
+package org.wmaop.aop.advice;
 
 public enum AdviceState {
 

@@ -5,7 +5,7 @@ import java.lang.reflect.InvocationTargetException;
 import org.apache.log4j.Logger;
 import org.wmaop.aop.chainprocessor.AOPChainProcessor;
 import org.wmaop.aop.chainprocessor.Interceptor;
-import org.wmaop.interceptor.assertion.Assertion;
+import org.wmaop.interceptor.assertion.Assertable;
 import org.wmaop.interceptor.assertion.AssertionInterceptor;
 import org.wmaop.interceptor.mock.canned.CannedResponseInterceptor;
 import org.wmaop.interceptor.mock.exception.ExceptionInterceptor;
@@ -66,7 +66,7 @@ public class MockManager extends AbstractFlowManager {
 
 		mandatory(pipeline, "{0} must exist when retrieving assertion count", ADVICE_ID);
 		logger.debug("Retrieving assertion " + adviceId);
-		Assertion assertion = AOPChainProcessor.getInstance().getAssertionManager().getAssertion(adviceId);
+		Assertable assertion = AOPChainProcessor.getInstance().getAssertionManager().getAssertion(adviceId);
 		int invokeCount = 0;
 		if (assertion == null) {
 			logger.warn("]>]> ** No assertion found for " + adviceId);

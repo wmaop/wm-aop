@@ -6,13 +6,13 @@ import org.wmaop.aop.pipeline.FlowPosition;
 
 import com.wm.data.IData;
 
-public class AssertionWrappingInterceptor implements Interceptor, Assertion {
+public class AssertionWrappingInterceptor implements Interceptor, Assertable {
 
 	private int invocationCount;
 	private final Interceptor wrappedInterceptor;
 	private String name;
 	
-	AssertionWrappingInterceptor(Interceptor wrappedInterceptor, String name) {
+	public AssertionWrappingInterceptor(Interceptor wrappedInterceptor, String name) {
 		this.wrappedInterceptor =wrappedInterceptor;
 		this.name = name;
 	}
@@ -20,9 +20,7 @@ public class AssertionWrappingInterceptor implements Interceptor, Assertion {
 	@Override
 	public InterceptResult intercept(FlowPosition flowPosition, IData idata) {
 		InterceptResult ir = wrappedInterceptor.intercept(flowPosition, idata);
-		if (ir.hasIntercepted()) {
-			invocationCount++;
-		}
+		invocationCount++;
 		return ir;
 	}
 

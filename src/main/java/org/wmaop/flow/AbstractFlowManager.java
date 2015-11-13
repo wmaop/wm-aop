@@ -3,9 +3,7 @@ package org.wmaop.flow;
 import java.text.MessageFormat;
 
 import org.apache.commons.lang.ArrayUtils;
-import org.wmaop.aop.Advice;
-import org.wmaop.aop.InterceptPoint;
-import org.wmaop.aop.PointCut;
+import org.wmaop.aop.advice.Advice;
 import org.wmaop.aop.chainprocessor.AOPChainProcessor;
 import org.wmaop.aop.chainprocessor.Interceptor;
 import org.wmaop.aop.matcher.AlwaysTrueMatcher;
@@ -13,6 +11,8 @@ import org.wmaop.aop.matcher.FlowPositionMatcher;
 import org.wmaop.aop.matcher.Matcher;
 import org.wmaop.aop.matcher.jexl.JexlIDataMatcher;
 import org.wmaop.aop.pipeline.FlowPosition;
+import org.wmaop.aop.pointcut.InterceptPoint;
+import org.wmaop.aop.pointcut.PointCut;
 import org.wmaop.aop.pointcut.ServicePipelinePointCut;
 
 import com.wm.app.b2b.server.ServiceException;

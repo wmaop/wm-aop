@@ -1,4 +1,4 @@
-package org.wmaop.aop;
+package org.wmaop.aop.pointcut;
 
 import org.wmaop.aop.pipeline.FlowPosition;
 

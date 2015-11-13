@@ -16,7 +16,7 @@ public class AssertionManagerTest {
 	@Test
 	public void shouldExerciseBasics() {
 		AssertionManager asm = new AssertionManager();
-		Assertion assertion = new AssertionInterceptor("foo intercepting assertion");
+		Assertable assertion = new AssertionInterceptor("foo intercepting assertion");
 		asm.addAssertion("foo", assertion);
 		assertEquals(1, asm.getAssertionNames().size());
 		assertEquals(1, asm.getAssertions().size());

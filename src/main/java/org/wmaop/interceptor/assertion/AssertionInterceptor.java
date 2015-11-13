@@ -10,7 +10,7 @@ import com.wm.data.IData;
  * Default assertion. Counts the invokes and registers if one
  *         has asserted
  */
-public class AssertionInterceptor implements Interceptor, Assertion {
+public class AssertionInterceptor implements Interceptor, Assertable {
 
 	private final String assertionName;
 	private int invokeCount = 0;
