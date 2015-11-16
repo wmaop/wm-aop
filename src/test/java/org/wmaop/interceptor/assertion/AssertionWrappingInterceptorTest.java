@@ -22,14 +22,15 @@ public class AssertionWrappingInterceptorTest {
 		
 		FlowPosition flowPosition = mock(FlowPosition.class);
 		IData idata = IDataFactory.create();
+		// Should not make a difference - counting invokes, not results
 		when(interceptor.intercept(flowPosition, idata)).thenReturn(InterceptResult.FALSE);
 		InterceptResult ir = awi.intercept(flowPosition, idata);
-		assertEquals(0, awi.getInvokeCount());
+		assertEquals(1, awi.getInvokeCount());
 		assertFalse(ir.hasIntercepted());
 		
 		when(interceptor.intercept(flowPosition, idata)).thenReturn(InterceptResult.TRUE);
 		ir = awi.intercept(flowPosition, idata);
-		assertEquals(1, awi.getInvokeCount());
+		assertEquals(2, awi.getInvokeCount());
 		assertTrue(ir.hasIntercepted());
 		
 	}

@@ -104,13 +104,16 @@ public class AOPChainProcessorTest {
 	public void shouldUnregister() {
 		AOPChainProcessor cp = new AOPChainProcessor();
 
+		Interceptor interceptor = mock(Interceptor.class);
 		PointCut pc = mock(PointCut.class);
 		when(pc.getInterceptPoint()).thenReturn(InterceptPoint.INVOKE);
-		Advice mockAdviceA = new Advice("a", pc, null);
+		Advice mockAdviceA = new Advice("a", pc, interceptor);
 		cp.registerAdvice(mockAdviceA);
+		assertEquals(1, cp.listAdvice().size());
 
-		Advice mockAdviceB = new Advice("b", pc, null);
+		Advice mockAdviceB = new Advice("b", pc, interceptor);
 		cp.registerAdvice(mockAdviceB);
+		assertEquals(2, cp.listAdvice().size());
 
 		List<Advice> advices = cp.listAdvice();
 		assertEquals("a", advices.get(0).getId());
@@ -122,6 +125,8 @@ public class AOPChainProcessorTest {
 		assertEquals("b", advices.get(0).getId());
 
 		cp.registerAdvice(mockAdviceA);
+		assertEquals(2, cp.listAdvice().size());
+		
 		cp.unregisterAdvice(mockAdviceA);
 		advices = cp.listAdvice();
 		assertEquals(1, advices.size());

@@ -23,6 +23,7 @@ import org.wmaop.aop.pointcut.InterceptPoint;
 import org.wmaop.interceptor.assertion.AspectAssertionObserver;
 import org.wmaop.interceptor.assertion.Assertable;
 import org.wmaop.interceptor.assertion.AssertionManager;
+import org.wmaop.interceptor.bdd.BddInterceptor;
 
 import com.wm.app.b2b.server.BaseService;
 import com.wm.app.b2b.server.invoke.InvokeChainProcessor;
@@ -138,7 +139,7 @@ public class AOPChainProcessor extends Observable implements InvokeChainProcesso
 	}
 
 	public void registerAdvice(Advice advice) {
-		if (!(advice.getInterceptor() instanceof Assertable)) {
+		if (!(advice.getInterceptor() instanceof Assertable || advice.getInterceptor() instanceof BddInterceptor)) {
 			advice = new AssertableAdvice(advice);
 		}
 		ADVICES.get(advice.getPointCut().getInterceptPoint()).add(advice);
@@ -159,7 +160,14 @@ public class AOPChainProcessor extends Observable implements InvokeChainProcesso
 	}
 
 	public void unregisterAdvice(Advice advice) {
-		ADVICES.get(advice.getPointCut().getInterceptPoint()).remove(advice);
+		// Possibly wrapped so base the removal on the id
+		List<Advice> advcs = ADVICES.get(advice.getPointCut().getInterceptPoint());
+		for (Advice advc : advcs) {
+			if (advc.getId().equals(advice.getId())) {
+				advcs.remove(advc);
+				break;
+			}
+		}
 		ID_ADVICE.remove(advice.getId());
 		advice.setAdviceState(DISPOSED);
 		setChanged();

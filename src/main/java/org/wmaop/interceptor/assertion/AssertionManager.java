@@ -35,6 +35,10 @@ public class AssertionManager  {
 		assertions.remove(name);
 	}
 
+	public void removeAssertions() {
+		assertions.clear();
+	}
+	
 	public boolean verifyOnceOnly(String name) {
 		return getAssertion(name).getInvokeCount() == 1;
 	}
