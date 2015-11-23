@@ -3,9 +3,9 @@ package org.wmaop.flow;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
-import org.wmaop.aop.advice.Advice;
 import org.wmaop.aop.chainprocessor.AOPChainProcessor;
 import org.wmaop.interceptor.bdd.BddParser;
+import org.wmaop.interceptor.bdd.ParsedScenario;
 
 import com.wm.app.b2b.server.ServiceException;
 import com.wm.data.IData;
@@ -40,9 +40,10 @@ public class ScenarioManager {
 			throw new ServiceException("Must specify the advice xml as an input");
 		}
 		try {
-			Advice advice = new BddParser().parse(scenarioStream);
+			ParsedScenario scenario = new BddParser().parse(scenarioStream);
 			AOPChainProcessor aop = AOPChainProcessor.getInstance();
-			aop.registerAdvice(advice);
+			aop.registerAdvice(scenario.getAdvice());
+			aop.getStubManager().registerStubService(scenario.getServiceNames());
 			aop.setEnabled(true);
 		} catch (Exception e) {
 			e.printStackTrace();

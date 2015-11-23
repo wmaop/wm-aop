@@ -7,7 +7,7 @@ import org.wmaop.aop.advice.Advice;
 import org.wmaop.aop.chainprocessor.AOPChainProcessor;
 import org.wmaop.aop.chainprocessor.Interceptor;
 import org.wmaop.aop.matcher.AlwaysTrueMatcher;
-import org.wmaop.aop.matcher.FlowPositionMatcher;
+import org.wmaop.aop.matcher.FlowPositionMatcherImpl;
 import org.wmaop.aop.matcher.Matcher;
 import org.wmaop.aop.matcher.jexl.JexlIDataMatcher;
 import org.wmaop.aop.pipeline.FlowPosition;
@@ -49,24 +49,27 @@ public abstract class AbstractFlowManager {
 		throw new ServiceException(mf.format(ArrayUtils.addAll(new Object[]{input}, values)));
 	}
 
-	protected void registerInterceptor(String adviceId, String interceptPoint, String serviceName, String pipelineCondition, Interceptor interceptor)
-			throws ServiceException {
-				interceptPoint = interceptPoint.toUpperCase();
-				oneof("interceptPoint {0} must be either {1}, {2} or {3}", interceptPoint, "BEFORE", "INVOKE", "AFTER");
-				InterceptPoint ip = InterceptPoint.valueOf(interceptPoint);
-			
-				Matcher<FlowPosition> servicePositionMatcher = new FlowPositionMatcher(serviceName, serviceName);
-				Matcher<IData> pipelineMatcher;
-				if (pipelineCondition != null && pipelineCondition.length() > 0) {
-					pipelineMatcher = new JexlIDataMatcher(serviceName, pipelineCondition);
-				} else {
-					pipelineMatcher = new AlwaysTrueMatcher<IData>(serviceName);
-				}
-				PointCut joinPoint = new ServicePipelinePointCut(servicePositionMatcher, pipelineMatcher, ip);
-				Advice advice = new Advice(adviceId, joinPoint, interceptor);
-				AOPChainProcessor aop = AOPChainProcessor.getInstance();
-				aop.registerAdvice(advice);
-				aop.setEnabled(true);
-				
-			}
+	protected void registerInterceptor(String adviceId, String interceptPoint, String serviceName, String pipelineCondition, Interceptor interceptor) throws ServiceException {
+		interceptPoint = interceptPoint.toUpperCase();
+		oneof("interceptPoint {0} must be either {1}, {2} or {3}", interceptPoint, "BEFORE", "INVOKE", "AFTER");
+		InterceptPoint ip = InterceptPoint.valueOf(interceptPoint);
+	
+		Matcher<FlowPosition> servicePositionMatcher = new FlowPositionMatcherImpl(serviceName, serviceName);
+		Matcher<IData> pipelineMatcher;
+		if (pipelineCondition != null && pipelineCondition.length() > 0) {
+			pipelineMatcher = new JexlIDataMatcher(serviceName, pipelineCondition);
+		} else {
+			pipelineMatcher = new AlwaysTrueMatcher<IData>(serviceName);
+		}
+		PointCut joinPoint = new ServicePipelinePointCut(servicePositionMatcher, pipelineMatcher, ip);
+		Advice advice = new Advice(adviceId, joinPoint, interceptor);
+		AOPChainProcessor aop = AOPChainProcessor.getInstance();
+		aop.registerAdvice(advice);
+		aop.setEnabled(true);
+	}
+	
+	protected void registerStub(String serviceName) throws ServiceException {
+		AOPChainProcessor aop = AOPChainProcessor.getInstance();
+		aop.getStubManager().registerStubService(serviceName);
+	}
 }

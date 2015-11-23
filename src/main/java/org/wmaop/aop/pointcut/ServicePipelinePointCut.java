@@ -7,22 +7,22 @@ import com.wm.data.IData;
 
 public class ServicePipelinePointCut implements PointCut {
 
-	final Matcher<FlowPosition> serviceNameMatcher;
+	final Matcher<FlowPosition> flowPositionMatcher;
 	final Matcher<? super IData> pipelineMatcher;
 	private InterceptPoint interceptPoint;
 
-	public ServicePipelinePointCut(Matcher<FlowPosition> matcher, Matcher<? super IData> pipelineMatcher, InterceptPoint interceptPoint) {
-		this.serviceNameMatcher = matcher;
+	public ServicePipelinePointCut(Matcher<FlowPosition> flowPositionMatcher, Matcher<? super IData> pipelineMatcher, InterceptPoint interceptPoint) {
+		this.flowPositionMatcher = flowPositionMatcher;
 		this.pipelineMatcher = pipelineMatcher;
 		this.interceptPoint = interceptPoint;
 	}
 
 	public boolean isApplicable(FlowPosition pipelinePosition, IData idata) {
-		return serviceNameMatcher.match(pipelinePosition).isMatch() && pipelineMatcher.match(idata).isMatch();
+		return flowPositionMatcher.match(pipelinePosition).isMatch() && pipelineMatcher.match(idata).isMatch();
 	}
 
-	public Matcher<FlowPosition> getServiceNameMatcher() {
-		return serviceNameMatcher;
+	public Matcher<FlowPosition> getFlowPositionMatcher() {
+		return flowPositionMatcher;
 	}
 
 	public Matcher<? super IData> getPipelineMatcher() {
@@ -31,7 +31,7 @@ public class ServicePipelinePointCut implements PointCut {
 
 	@Override
 	public String toString() {
-		return "ServicePipelinePointCut[" + serviceNameMatcher + " & " + pipelineMatcher + ']';
+		return "ServicePipelinePointCut[" + flowPositionMatcher + " & " + pipelineMatcher + ']';
 	}
 
 	@Override

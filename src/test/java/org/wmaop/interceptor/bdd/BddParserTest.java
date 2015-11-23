@@ -10,9 +10,7 @@ import org.junit.runner.RunWith;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-import org.wmaop.aop.advice.Advice;
 import org.wmaop.aop.chainprocessor.AOPChainProcessor;
-import org.wmaop.interceptor.bdd.BddParser;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(AOPChainProcessor.class)
@@ -26,8 +24,8 @@ public class BddParserTest {
 		PowerMockito.when(AOPChainProcessor.getInstance()).thenReturn(mockProcessor);
 
 		InputStream bddstream = this.getClass().getResourceAsStream("/bdd/multipleReturnBdd.xml");
-		Advice advice = new BddParser().parse(bddstream);
+		ParsedScenario scenario = new BddParser().parse(bddstream);
 		
-		assertEquals("aspect id",advice.getId());
+		assertEquals("aspect id",scenario.getAdvice().getId());
 	}
 }

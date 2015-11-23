@@ -11,8 +11,9 @@ import org.apache.log4j.Logger;
 import org.wmaop.aop.advice.Advice;
 import org.wmaop.aop.chainprocessor.Interceptor;
 import org.wmaop.aop.matcher.AlwaysTrueMatcher;
-import org.wmaop.aop.matcher.FlowPositionMatcher;
+import org.wmaop.aop.matcher.FlowPositionMatcherImpl;
 import org.wmaop.aop.matcher.Matcher;
+import org.wmaop.aop.matcher.jexl.JexlIDataMatcher;
 import org.wmaop.aop.matcher.jexl.JexlWrappingMatcher;
 import org.wmaop.aop.pointcut.InterceptPoint;
 import org.wmaop.aop.pointcut.ServicePipelinePointCut;
@@ -32,11 +33,11 @@ public class BddParser {
 		String assertionid;
 	}
 
-	public Advice parse(InputStream bddstream) throws JAXBException, IOException {
+	public ParsedScenario parse(InputStream bddstream) throws JAXBException, IOException {
 		JAXBContext jaxbContext = JAXBContext.newInstance(Scenario.class);
 		Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
 		Scenario scenario = (Scenario) jaxbUnmarshaller.unmarshal(bddstream);
-		return processAdvice(scenario);
+		return new ParsedScenario(processAdvice(scenario), scenario.getGiven().getService().getValue());
 	}
 
 	private Advice processAdvice(Scenario scenario) {
@@ -54,7 +55,7 @@ public class BddParser {
 		Service service = scenario.getGiven().getService();
 		When when = scenario.getGiven().getWhen();
 
-		FlowPositionMatcher flowPositionMatcher = new FlowPositionMatcher(service.getValue() + '_' + service.getIntercepted(), service.getValue());
+		FlowPositionMatcherImpl flowPositionMatcher = new FlowPositionMatcherImpl(service.getValue() + '_' + service.getIntercepted(), service.getValue());
 		logger.info("Created flow position matcher: " + flowPositionMatcher);
 
 		ServicePipelinePointCut joinPoint = new ServicePipelinePointCut(flowPositionMatcher, getMatcher(when), getInterceptPoint(scenario));
@@ -70,7 +71,7 @@ public class BddParser {
 		}
 		Matcher<? super IData> pipelineMatcher;
 		if (condition != null && condition.length() > 0) {
-			pipelineMatcher = new JexlWrappingMatcher(id, condition);
+			pipelineMatcher = new JexlIDataMatcher(id, condition);
 		} else {
 			pipelineMatcher = new AlwaysTrueMatcher<IData>(id);
 		}

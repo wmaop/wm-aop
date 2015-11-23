@@ -18,6 +18,8 @@ import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 import org.apache.log4j.Logger;
 import org.wmaop.aop.advice.Advice;
 import org.wmaop.aop.advice.AssertableAdvice;
+import org.wmaop.aop.matcher.FlowPositionMatcher;
+import org.wmaop.aop.matcher.Matcher;
 import org.wmaop.aop.pipeline.FlowPosition;
 import org.wmaop.aop.pointcut.InterceptPoint;
 import org.wmaop.interceptor.assertion.AspectAssertionObserver;
@@ -26,9 +28,11 @@ import org.wmaop.interceptor.assertion.AssertionManager;
 import org.wmaop.interceptor.bdd.BddInterceptor;
 
 import com.wm.app.b2b.server.BaseService;
+import com.wm.app.b2b.server.ServiceException;
 import com.wm.app.b2b.server.invoke.InvokeChainProcessor;
 import com.wm.app.b2b.server.invoke.ServiceStatus;
 import com.wm.data.IData;
+import com.wm.lang.ns.NSException;
 import com.wm.util.ServerException;
 
 public class AOPChainProcessor extends Observable implements InvokeChainProcessor {
@@ -44,6 +48,7 @@ public class AOPChainProcessor extends Observable implements InvokeChainProcesso
 	private boolean interceptingEnabled = false;
 
 	AssertionManager assertionManager = new AssertionManager();
+	StubManager stubManager = new StubManager();
 	
 	public static AOPChainProcessor getInstance() {
 		return instance;
@@ -75,6 +80,11 @@ public class AOPChainProcessor extends Observable implements InvokeChainProcesso
 		return interceptingEnabled;
 	}
 
+	/*
+	 * ************* Interception ************* 
+	 */
+	
+	@Override
 	public void process(@SuppressWarnings("rawtypes") Iterator processorChain, BaseService baseService, IData idata,
 			ServiceStatus serviceStatus) throws ServerException {
 
@@ -138,6 +148,10 @@ public class AOPChainProcessor extends Observable implements InvokeChainProcesso
 		return false;
 	}
 
+	/*
+	 * ************* Advice handling ************* 
+	 */
+	
 	public void registerAdvice(Advice advice) {
 		if (!(advice.getInterceptor() instanceof Assertable || advice.getInterceptor() instanceof BddInterceptor)) {
 			advice = new AssertableAdvice(advice);
@@ -172,6 +186,7 @@ public class AOPChainProcessor extends Observable implements InvokeChainProcesso
 		advice.setAdviceState(DISPOSED);
 		setChanged();
 		notifyObservers(advice);
+		stubManager.unregisterStub(advice);
 	}
 
 	public void clearAdvice() {
@@ -182,6 +197,7 @@ public class AOPChainProcessor extends Observable implements InvokeChainProcesso
 			}
 		}
 		logger.info(PFX + "Cleared all Advice");
+		stubManager.clearStubs();
 	}
 
 	public Advice getAdvice(String id) {
@@ -194,5 +210,12 @@ public class AOPChainProcessor extends Observable implements InvokeChainProcesso
 			list.addAll(adv);
 		}
 		return list;
+	}
+	
+	/*
+	 * ************* Stub handling ************* 
+	 */
+	public StubManager getStubManager() {
+		return stubManager;
 	}
 }

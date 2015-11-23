@@ -14,6 +14,7 @@ import org.wmaop.util.jexl.JexlExpressionFactory;
 
 import com.wm.data.IData;
 
+@Deprecated
 public class JexlWrappingMatcher implements Matcher<IData> {
 
 	private final Map<String, Expression> expressions = new LinkedHashMap<String, Expression>();

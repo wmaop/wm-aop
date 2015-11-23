@@ -50,6 +50,6 @@ public class ServicePipelinePointCutTest {
 		assertTrue(sppc.isApplicable(pipelinePosition, idataMock));
 		
 		assertEquals(pipelineMatcher, sppc.getPipelineMatcher());
-		assertEquals(serviceNameMatcher, sppc.getServiceNameMatcher());
+		assertEquals(serviceNameMatcher, sppc.getFlowPositionMatcher());
 	}
 }

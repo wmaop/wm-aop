@@ -18,7 +18,7 @@ import org.wmaop.aop.advice.Advice;
 import org.wmaop.aop.chainprocessor.AOPChainProcessor;
 import org.wmaop.aop.chainprocessor.Interceptor;
 import org.wmaop.aop.matcher.AlwaysTrueMatcher;
-import org.wmaop.aop.matcher.FlowPositionMatcher;
+import org.wmaop.aop.matcher.FlowPositionMatcherImpl;
 import org.wmaop.aop.matcher.Matcher;
 import org.wmaop.aop.matcher.jexl.JexlIDataMatcher;
 import org.wmaop.aop.pointcut.InterceptPoint;
@@ -43,7 +43,7 @@ public class AOPChainProcessorTest {
 		AOPChainProcessor cp = new AOPChainProcessor();
 		cp.setEnabled(true);
 
-		FlowPositionMatcher serviceNameMatcher = new FlowPositionMatcher("my id", "pre:foo");
+		FlowPositionMatcherImpl serviceNameMatcher = new FlowPositionMatcherImpl("my id", "pre:foo");
 		Matcher<IData> pipelineMatcher = new JexlIDataMatcher("doc", "documentName == 'iso'");
 		AssertionInterceptor assertion = new AssertionInterceptor("myAssertion");
 		Advice assertionAdvice = new Advice("adv1", new ServicePipelinePointCut(serviceNameMatcher, pipelineMatcher, InterceptPoint.BEFORE), assertion);
@@ -81,7 +81,7 @@ public class AOPChainProcessorTest {
 		AOPChainProcessor cp = new AOPChainProcessor();
 		cp.setEnabled(true);
 
-		FlowPositionMatcher serviceNameMatcher = new FlowPositionMatcher("my id", "pre:foo");
+		FlowPositionMatcherImpl serviceNameMatcher = new FlowPositionMatcherImpl("my id", "pre:foo");
 		CannedResponseInterceptor interceptor = new CannedResponseInterceptor(classLoader.getResourceAsStream("cannedResponse.xml"));
 		ServicePipelinePointCut pointCut = new ServicePipelinePointCut(serviceNameMatcher, new AlwaysTrueMatcher<IData>("my id"), InterceptPoint.INVOKE);
 		Advice advice = new Advice("intercept", pointCut, interceptor);
@@ -169,7 +169,7 @@ public class AOPChainProcessorTest {
 		AOPChainProcessor cp = new AOPChainProcessor();
 		cp.setEnabled(true);
 
-		FlowPositionMatcher serviceNameMatcher = new FlowPositionMatcher("my id", "pre:foo");
+		FlowPositionMatcherImpl serviceNameMatcher = new FlowPositionMatcherImpl("my id", "pre:foo");
 		Exception exception = new Exception();
 		Interceptor interceptor = new ExceptionInterceptor(exception );
 		ServicePipelinePointCut pointCut = new ServicePipelinePointCut(serviceNameMatcher, new AlwaysTrueMatcher<IData>("my id"), InterceptPoint.INVOKE);

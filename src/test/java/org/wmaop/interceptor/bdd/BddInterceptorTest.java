@@ -15,12 +15,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import org.junit.Test;
-import org.wmaop.aop.advice.Advice;
 import org.wmaop.aop.chainprocessor.AOPChainProcessor;
 import org.wmaop.interceptor.assertion.Assertable;
 import org.wmaop.interceptor.assertion.AssertionManager;
-import org.wmaop.interceptor.bdd.BddInterceptor;
-import org.wmaop.interceptor.bdd.BddParser;
 
 import com.wm.app.b2b.server.BaseService;
 import com.wm.app.b2b.server.invoke.InvokeChainProcessor;
@@ -38,10 +35,10 @@ public class BddInterceptorTest {
 		ClassLoader classLoader = this.getClass().getClassLoader();
 		AOPChainProcessor cp = new AOPChainProcessor();
 		cp.setEnabled(true);
-		Advice advice = new BddParser().parse(classLoader.getResourceAsStream("bdd/assertionBdd.xml"));
-		cp.registerAdvice(advice);
+		ParsedScenario scenario = new BddParser().parse(classLoader.getResourceAsStream("bdd/assertionBdd.xml"));
+		cp.registerAdvice(scenario.getAdvice());
 
-		BddInterceptor bddi = (BddInterceptor)advice.getInterceptor();
+		BddInterceptor bddi = (BddInterceptor)scenario.getAdvice().getInterceptor();
 		assertEquals(1, bddi.getInterceptorsOfType(Assertable.class).size());
 		
 		// Pipeline mocking
@@ -223,8 +220,8 @@ public class BddInterceptorTest {
 		AOPChainProcessor cp = new AOPChainProcessor();
 		cp.setEnabled(true);
 		
-		Advice advice = new BddParser().parse(classLoader.getResourceAsStream(testXmlFileName));
-		cp.registerAdvice(advice);
+		ParsedScenario scenario = new BddParser().parse(classLoader.getResourceAsStream(testXmlFileName));
+		cp.registerAdvice(scenario.getAdvice());
 		return cp;
 	}
 

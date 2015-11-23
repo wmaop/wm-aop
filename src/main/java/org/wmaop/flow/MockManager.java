@@ -45,6 +45,7 @@ public class MockManager extends AbstractFlowManager {
 			throw new ServiceException("Unable to parse response IData for " + adviceId);
 		}
 		registerInterceptor(adviceId, interceptPoint.toUpperCase(), serviceName, pipelineCondition, interceptor);
+		registerStub(serviceName);
 	}
 	
 	public void registerAssertion(IData pipeline) throws ServiceException {
@@ -94,6 +95,7 @@ public class MockManager extends AbstractFlowManager {
 		try {
 			Exception e = (Exception) Class.forName(exception).getDeclaredConstructor(String.class).newInstance("WMAOP " + serviceName);
 			registerInterceptor(adviceId, interceptPoint, serviceName, pipelineCondition, new ExceptionInterceptor(e));
+			registerStub(serviceName);
 		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
 			throw new ServiceException(e);
 		}
