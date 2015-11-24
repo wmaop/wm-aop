@@ -27,7 +27,7 @@ import com.wm.lang.ns.NSServiceType;
 
 public class StubManager {
 
-	private static final String SUPPORTING_PKG = "OrgWmaopStubs";
+	protected static final String SUPPORTING_PKG = "OrgWmaopStubs";
 
 	public void registerStubService(String... svcNames) {
 		createStubPackage(); // Ensure package exists

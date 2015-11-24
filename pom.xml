@@ -70,6 +70,19 @@
 			<version>${log4j.version}</version>
 			<scope>provided</scope>
 		</dependency>
+		<!-- Required for XMLCoder  -->
+		<dependency>
+			<groupId>javax.mail</groupId>
+			<artifactId>mail</artifactId>
+			<version>1.4.4</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.axis2</groupId>
+			<artifactId>axis2-kernel</artifactId>
+			<version>1.6.2</version>
+			<scope>provided</scope>
+		</dependency>
 
 		<!-- Build JARs -->
 
