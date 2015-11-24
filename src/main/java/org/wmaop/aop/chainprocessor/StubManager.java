@@ -80,8 +80,9 @@ public class StubManager {
 	}	
 
 	protected void deleteStubPackage() {
-		if (PackageManager.getPackage(SUPPORTING_PKG) != null) {
-			PackageManager.flushPackage(new Package(SUPPORTING_PKG));
+		Package pkg = PackageManager.getPackage(SUPPORTING_PKG);
+		if (pkg != null) {
+			PackageManager.flushPackage(pkg);
 		}
 	}
 
@@ -116,7 +117,7 @@ public class StubManager {
 		return svcName;
 	}
 
-	protected static boolean deleteFolder(String location) throws IOException {
+	protected boolean deleteFolder(String location) throws IOException {
 		java.nio.file.Path path = Paths.get(location);
 		Files.walkFileTree(path, new SimpleFileVisitor<java.nio.file.Path>() {
 			@Override

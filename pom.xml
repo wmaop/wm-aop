@@ -37,9 +37,13 @@
 			<version>${commons-loggin.version}</version>
 			<scope>provided</scope>
 		</dependency>
-
+		<dependency>
+			<groupId>com.softwareag.webmethods</groupId>
+			<artifactId>deployer-api</artifactId>
+			<version>9.0.1</version>
+			<scope>provided</scope>
+		</dependency>
 		<!-- webMethods server JARs -->
-
 		<dependency>
 			<groupId>com.softwareag.webmethods</groupId>
 			<artifactId>wm-isserver</artifactId>
@@ -56,6 +60,19 @@
 			<groupId>com.softwareag.webmethods</groupId>
 			<artifactId>wm-g11nutils</artifactId>
 			<version>9.0</version>
+			<scope>provided</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>com.softwareag.webmethods.wsstack</groupId>
+			<artifactId>client-api</artifactId>
+			<version>${webMethods.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.softwareag.webmethods.wsstack</groupId>
+			<artifactId>wsstack-commons</artifactId>
+			<version>${webMethods.version}</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
