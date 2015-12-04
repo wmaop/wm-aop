@@ -111,6 +111,11 @@ public class AOPChainProcessorTest {
 		cp.registerAdvice(mockAdviceA);
 		assertEquals(1, cp.listAdvice().size());
 
+		Advice mockAdviceAnotherA = new Advice("a", pc, interceptor);
+		cp.registerAdvice(mockAdviceAnotherA);
+		assertEquals(1, cp.listAdvice().size());
+		
+		
 		Advice mockAdviceB = new Advice("b", pc, interceptor);
 		cp.registerAdvice(mockAdviceB);
 		assertEquals(2, cp.listAdvice().size());

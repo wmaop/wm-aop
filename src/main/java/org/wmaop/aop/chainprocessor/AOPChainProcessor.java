@@ -156,6 +156,11 @@ public class AOPChainProcessor extends Observable implements InvokeChainProcesso
 		if (!(advice.getInterceptor() instanceof Assertable || advice.getInterceptor() instanceof BddInterceptor)) {
 			advice = new AssertableAdvice(advice);
 		}
+		
+		Advice oldAdvice = getAdvice(advice.getId());
+		if (oldAdvice != null) {
+			unregisterAdvice(oldAdvice);
+		}
 		ADVICES.get(advice.getPointCut().getInterceptPoint()).add(advice);
 		ID_ADVICE.put(advice.getId(), advice);
 		// Notify if new
