@@ -1,0 +1,28 @@
+<scenario xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../main/xsd/bddSchema.xsd" id="aspect id">
+    <given>
+        <service intercepted="invoke">com.catlin.foo:bar</service>
+    </given>
+    <when id="sequentialReturn">
+        <then>
+            <return><![CDATA[<IDataXMLCoder version="1.0">
+                <record javaclass="com.wm.data.ISMemDataImpl">
+                    <value name="a">alpha</value>
+                </record>
+                </IDataXMLCoder>]]>
+            </return>
+            <return><![CDATA[<IDataXMLCoder version="1.0">
+                <record javaclass="com.wm.data.ISMemDataImpl">
+                    <value name="b">beta</value>
+                </record>
+                </IDataXMLCoder>]]>
+            </return>
+            <return><![CDATA[<IDataXMLCoder version="1.0">
+                <record javaclass="com.wm.data.ISMemDataImpl">
+                    <value name="c">gamma</value>
+                </record>
+            </IDataXMLCoder>]]>
+            </return>
+        </then>
+    </when>
+</scenario>

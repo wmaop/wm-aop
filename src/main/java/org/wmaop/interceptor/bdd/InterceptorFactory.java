@@ -1,10 +1,12 @@
 package org.wmaop.interceptor.bdd;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.wmaop.aop.chainprocessor.Interceptor;
 import org.wmaop.interceptor.assertion.AssertionInterceptor;
 import org.wmaop.interceptor.mock.canned.CannedResponseInterceptor;
+import org.wmaop.interceptor.mock.canned.CannedResponseInterceptor.ResponseSequence;
 import org.wmaop.interceptor.mock.exception.ExceptionInterceptor;
 import org.wmaop.interceptor.pipline.PipelineCaptureInterceptor;
 
@@ -16,7 +18,7 @@ public class InterceptorFactory {
 	public Interceptor getInterceptor(Then then) {
 		if (then.getAssert() != null) {
 			return getAssertInterceptor(then.getAssert());
-		} else if (then.getReturn() != null) {
+		} else if (then.getReturn() != null && then.getReturn().size() != 0) {
 			return getReturnInterceptor(then.getReturn());
 		} else if (then.getPipelineCapture() != null) {
 			return getPipelineCaptureInterceptor(then.getPipelineCapture());
@@ -27,9 +29,9 @@ public class InterceptorFactory {
 		}
 	}
 
-	public Interceptor getReturnInterceptor(String content) {
+	public Interceptor getReturnInterceptor(List<String> list) {
 		try {
-			return new CannedResponseInterceptor(content);
+			return new CannedResponseInterceptor(ResponseSequence.SEQUENTIAL, list);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}

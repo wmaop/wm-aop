@@ -34,11 +34,19 @@
   <xs:element name="then">
     <xs:complexType>
       <xs:choice>
-        <xs:element ref="return"/>
+        <xs:element ref="return" maxOccurs="unbounded"/>
         <xs:element ref="pipelineCapture"/>
         <xs:element ref="assert"/>
         <xs:element ref="throw"/>
       </xs:choice>
+      <xs:attribute name="dispatch" default="sequential">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="random" />
+            <xs:enumeration value="sequential" />
+          </xs:restriction>
+        </xs:simpleType>        
+      </xs:attribute>
     </xs:complexType>
   </xs:element>
 

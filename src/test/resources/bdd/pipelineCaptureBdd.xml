@@ -5,7 +5,7 @@
     </given>
     <when id="capture pipeline">
         <then>
-            <pipelineCapture>target/testCapture.xml</pipelineCapture>
+            <pipelineCapture>{{fl}}</pipelineCapture>
         </then>
     </when>
 </scenario>
