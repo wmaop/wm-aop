@@ -1,8 +1,11 @@
 package org.wmaop.flow;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.wmaop.aop.advice.Advice;
 import org.wmaop.aop.chainprocessor.AOPChainProcessor;
 import org.wmaop.aop.chainprocessor.Interceptor;
 import org.wmaop.interceptor.assertion.Assertable;
@@ -26,6 +29,53 @@ public class MockManager extends AbstractFlowManager {
 			
 	
 	private static final Logger logger = Logger.getLogger(MockManager.class);
+	
+	public void reset() {
+		AOPChainProcessor.getInstance().reset();
+	}
+	
+	public void enableInterception(IData pipeline) {
+		IDataCursor pipelineCursor = pipeline.getCursor();
+		String	$resourceID = IDataUtil.getString( pipelineCursor, "enabled" );
+		
+		boolean enabled;
+		if ($resourceID == null || $resourceID.length() == 0) {
+			enabled = AOPChainProcessor.getInstance().isEnabled();
+		} else {
+			enabled = Boolean.valueOf($resourceID);
+			AOPChainProcessor.getInstance().setEnabled(enabled);
+		}
+		
+		// pipeline
+		IDataUtil.put( pipelineCursor, "enabled", Boolean.toString(enabled) );
+		pipelineCursor.destroy();
+	}
+	
+	public void getAdvice(IData pipeline) {
+		IDataCursor pipelineCursor = pipeline.getCursor();
+		String	adviceId = IDataUtil.getString( pipelineCursor, "id" );
+	
+		List<Advice> advs;
+		if (adviceId == null || adviceId.length() == 0) {
+			advs = AOPChainProcessor.getInstance().getAdviceManager().listAdvice();
+		} else {
+			advs = new ArrayList<Advice>();
+			advs.add(AOPChainProcessor.getInstance().getAdviceManager().getAdvice(adviceId));
+		}
+		//TODO: Better textual representation of advice for pipeline		
+		
+		// to document and set into pipeline
+		IDataUtil.put(pipelineCursor, "advices", advs.size());
+		pipelineCursor.destroy();
+	}
+
+	public void removeAdvice(IData pipeline) {
+		IDataCursor pipelineCursor = pipeline.getCursor();
+		String	id = IDataUtil.getString( pipelineCursor, "id" );
+		pipelineCursor.destroy();
+		
+		AOPChainProcessor.getInstance().getAdviceManager().unregisterAdvice(id);
+	}
 	
 	public void registerFixedResponseMock(IData pipeline) throws ServiceException {
 		IDataCursor pipelineCursor = pipeline.getCursor();

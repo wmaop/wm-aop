@@ -42,7 +42,7 @@ public class ScenarioManager {
 		try {
 			ParsedScenario scenario = new BddParser().parse(scenarioStream);
 			AOPChainProcessor aop = AOPChainProcessor.getInstance();
-			aop.registerAdvice(scenario.getAdvice());
+			aop.getAdviceManager().registerAdvice(scenario.getAdvice());
 			aop.getStubManager().registerStubService(scenario.getServiceNames());
 			aop.setEnabled(true);
 		} catch (Exception e) {

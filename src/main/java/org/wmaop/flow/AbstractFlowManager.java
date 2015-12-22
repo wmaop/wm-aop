@@ -64,7 +64,7 @@ public abstract class AbstractFlowManager {
 		PointCut joinPoint = new ServicePipelinePointCut(servicePositionMatcher, pipelineMatcher, ip);
 		Advice advice = new Advice(adviceId, joinPoint, interceptor);
 		AOPChainProcessor aop = AOPChainProcessor.getInstance();
-		aop.registerAdvice(advice);
+		aop.getAdviceManager().registerAdvice(advice);
 		aop.setEnabled(true);
 	}
 	

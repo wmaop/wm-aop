@@ -47,7 +47,7 @@ public class BddInterceptorTest {
 		AOPChainProcessor cp = new AOPChainProcessor();
 		cp.setEnabled(true);
 		ParsedScenario scenario = new BddParser().parse(classLoader.getResourceAsStream("bdd/assertionBdd.xml"));
-		cp.registerAdvice(scenario.getAdvice());
+		cp.getAdviceManager().registerAdvice(scenario.getAdvice());
 
 		BddInterceptor bddi = (BddInterceptor)scenario.getAdvice().getInterceptor();
 		assertEquals(1, bddi.getInterceptorsOfType(Assertable.class).size());
@@ -255,7 +255,7 @@ public class BddInterceptorTest {
 		AOPChainProcessor cp = new AOPChainProcessor();
 		cp.setEnabled(true);
 		ParsedScenario scenario = new BddParser().parse(bais);
-		cp.registerAdvice(scenario.getAdvice());
+		cp.getAdviceManager().registerAdvice(scenario.getAdvice());
 		
 		// Pipeline mocking
 		IData pipeline = IDataFactory.create();
@@ -279,7 +279,7 @@ public class BddInterceptorTest {
 		cp.setEnabled(true);
 		
 		ParsedScenario scenario = new BddParser().parse(classLoader.getResourceAsStream(testXmlFileName));
-		cp.registerAdvice(scenario.getAdvice());
+		cp.getAdviceManager().registerAdvice(scenario.getAdvice());
 		return cp;
 	}
 

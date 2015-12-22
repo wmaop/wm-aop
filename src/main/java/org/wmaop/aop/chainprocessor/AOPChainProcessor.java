@@ -1,41 +1,26 @@
 package org.wmaop.aop.chainprocessor;
 
-import static org.wmaop.aop.advice.AdviceState.DISPOSED;
 import static org.wmaop.aop.advice.AdviceState.ENABLED;
-import static org.wmaop.aop.advice.AdviceState.NEW;
 import static org.wmaop.aop.pointcut.InterceptPoint.AFTER;
 import static org.wmaop.aop.pointcut.InterceptPoint.BEFORE;
 import static org.wmaop.aop.pointcut.InterceptPoint.INVOKE;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Observable;
 
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 import org.apache.log4j.Logger;
 import org.wmaop.aop.advice.Advice;
-import org.wmaop.aop.advice.AssertableAdvice;
-import org.wmaop.aop.matcher.FlowPositionMatcher;
-import org.wmaop.aop.matcher.Matcher;
 import org.wmaop.aop.pipeline.FlowPosition;
-import org.wmaop.aop.pointcut.InterceptPoint;
 import org.wmaop.interceptor.assertion.AspectAssertionObserver;
-import org.wmaop.interceptor.assertion.Assertable;
 import org.wmaop.interceptor.assertion.AssertionManager;
-import org.wmaop.interceptor.bdd.BddInterceptor;
 
 import com.wm.app.b2b.server.BaseService;
-import com.wm.app.b2b.server.ServiceException;
 import com.wm.app.b2b.server.invoke.InvokeChainProcessor;
 import com.wm.app.b2b.server.invoke.ServiceStatus;
 import com.wm.data.IData;
-import com.wm.lang.ns.NSException;
 import com.wm.util.ServerException;
 
-public class AOPChainProcessor extends Observable implements InvokeChainProcessor {
+public class AOPChainProcessor implements InvokeChainProcessor {
 
 	private static final Logger logger = Logger.getLogger(AOPChainProcessor.class);
 
@@ -43,12 +28,11 @@ public class AOPChainProcessor extends Observable implements InvokeChainProcesso
 
 	private static AOPChainProcessor instance;
 
-	private final Map<InterceptPoint, List<Advice>> ADVICES = new HashMap<InterceptPoint, List<Advice>>();
-	private final Map<String, Advice> ID_ADVICE = new HashMap<String, Advice>();
 	private boolean interceptingEnabled = false;
 
-	AssertionManager assertionManager = new AssertionManager();
-	StubManager stubManager = new StubManager();
+	private final AssertionManager assertionManager = new AssertionManager();
+	private final StubManager stubManager = new StubManager();
+	private final AdviceManager adviceManager = new AdviceManager();
 	
 	public static AOPChainProcessor getInstance() {
 		return instance;
@@ -56,15 +40,10 @@ public class AOPChainProcessor extends Observable implements InvokeChainProcesso
 
 	public AOPChainProcessor() {
 		logger.info(PFX + "Initialising " + this.getClass().getName());
-		ADVICES.clear();
-		ID_ADVICE.clear();
-		for (InterceptPoint ip : InterceptPoint.values()) {
-			ADVICES.put(ip, new ArrayList<Advice>());
-		}
+		adviceManager.reset();
 		AOPChainProcessor.instance = this;
 	
-		// This should be registered elsewhere though no other point of instantiation
-		addObserver(new AspectAssertionObserver(assertionManager));
+		adviceManager.addObserver(new AspectAssertionObserver(assertionManager));
 	}
 
 	public AssertionManager getAssertionManager() {
@@ -118,7 +97,7 @@ public class AOPChainProcessor extends Observable implements InvokeChainProcesso
 	private boolean processAdvice(boolean exitOnIntercept, FlowPosition pos, IData idata, ServiceStatus serviceStatus) {
 		boolean hasIntercepted = false;
 		try {
-			for (Advice advice : ADVICES.get(pos.getInterceptPoint())) {
+			for (Advice advice : adviceManager.getAdvicesForInterceptPoint(pos.getInterceptPoint())) {
 				if (advice.getAdviceState() == ENABLED && advice.getPointCut().isApplicable(pos, idata)) {
 					hasIntercepted = intercept(exitOnIntercept, pos, idata, serviceStatus, advice);
 					if (hasIntercepted) {
@@ -148,73 +127,19 @@ public class AOPChainProcessor extends Observable implements InvokeChainProcesso
 		return false;
 	}
 
+	public void reset() {
+		adviceManager.reset();
+		stubManager.clearStubs();
+		assertionManager.removeAssertions();
+		setEnabled(false);
+	}
+	
 	/*
 	 * ************* Advice handling ************* 
 	 */
-	
-	public void registerAdvice(Advice advice) {
-		if (!(advice.getInterceptor() instanceof Assertable || advice.getInterceptor() instanceof BddInterceptor)) {
-			advice = new AssertableAdvice(advice);
-		}
-		
-		Advice oldAdvice = getAdvice(advice.getId());
-		if (oldAdvice != null) {
-			unregisterAdvice(oldAdvice);
-		}
-		ADVICES.get(advice.getPointCut().getInterceptPoint()).add(advice);
-		ID_ADVICE.put(advice.getId(), advice);
-		// Notify if new
-		if (advice.getAdviceState() == NEW) {
-			setChanged();
-			notifyObservers(advice);
-		}
-		advice.setAdviceState(ENABLED);
-		setChanged();
-		notifyObservers(advice);
-		logger.info(PFX + "Registered advice " + advice);
-	}
 
-	public void unregisterAdvice(String adviceId) {
-		unregisterAdvice(getAdvice(adviceId));
-	}
-
-	public void unregisterAdvice(Advice advice) {
-		// Possibly wrapped so base the removal on the id
-		List<Advice> advcs = ADVICES.get(advice.getPointCut().getInterceptPoint());
-		for (Advice advc : advcs) {
-			if (advc.getId().equals(advice.getId())) {
-				advcs.remove(advc);
-				break;
-			}
-		}
-		ID_ADVICE.remove(advice.getId());
-		advice.setAdviceState(DISPOSED);
-		setChanged();
-		notifyObservers(advice);
-		stubManager.unregisterStub(advice);
-	}
-
-	public void clearAdvice() {
-		for (List<Advice> advs : ADVICES.values()) {
-			List<Advice> advCopy = new ArrayList<>(advs);
-			for (Advice adv : advCopy) {
-				unregisterAdvice(adv);
-			}
-		}
-		logger.info(PFX + "Cleared all Advice");
-		stubManager.clearStubs();
-	}
-
-	public Advice getAdvice(String id) {
-		return ID_ADVICE.get(id);
-	}
-
-	public List<Advice> listAdvice() {
-		List<Advice> list = new ArrayList<Advice>();
-		for (List<Advice> adv : ADVICES.values()) {
-			list.addAll(adv);
-		}
-		return list;
+	public AdviceManager getAdviceManager() {
+		return adviceManager;
 	}
 	
 	/*
