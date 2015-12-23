@@ -3,7 +3,7 @@
 <IDataXMLCoder version="1.0">
   <record javaclass="com.wm.data.ISMemDataImpl">
     <array name="processorArray" type="value" depth="1">
-      <value>com.catlin.webmethods.server.chainprocessor.InterceptingChainProcessor</value>
+      <value>org.wmaop.aop.chainprocessor.AOPChainProcessor</value>
     </array>
   </record>
 </IDataXMLCoder>
