@@ -1,17 +1,18 @@
-package org.wmaop.aop.chainprocessor;
+package org.wmaop.aop.stub;
 
 import java.util.Observable;
 import java.util.Observer;
 
 import org.wmaop.aop.advice.Advice;
+import org.wmaop.aop.chainprocessor.Interceptor;
 import org.wmaop.interceptor.assertion.Assertable;
 import org.wmaop.interceptor.bdd.BddInterceptor;
 
-public class AspectAdviceObserver implements Observer {
+public class StubLifecycleObserver implements Observer {
 
 	private StubManager stubManager;
 
-	public AspectAdviceObserver(StubManager stubManager) {
+	public StubLifecycleObserver(StubManager stubManager) {
 		this.stubManager = stubManager;
 	}
 	

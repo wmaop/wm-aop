@@ -1,4 +1,4 @@
-package org.wmaop.aop.chainprocessor;
+package org.wmaop.aop.stub;
 
 import java.io.File;
 import java.io.IOException;

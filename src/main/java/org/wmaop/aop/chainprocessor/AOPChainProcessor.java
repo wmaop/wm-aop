@@ -10,7 +10,9 @@ import java.util.Iterator;
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 import org.apache.log4j.Logger;
 import org.wmaop.aop.advice.Advice;
+import org.wmaop.aop.advice.AdviceManager;
 import org.wmaop.aop.pipeline.FlowPosition;
+import org.wmaop.aop.stub.StubManager;
 import org.wmaop.interceptor.assertion.AspectAssertionObserver;
 import org.wmaop.interceptor.assertion.AssertionManager;
 

@@ -1,4 +1,4 @@
-package org.wmaop.aop.chainprocessor;
+package org.wmaop.aop.advice;
 
 import static org.wmaop.aop.advice.AdviceState.DISPOSED;
 import static org.wmaop.aop.advice.AdviceState.ENABLED;
@@ -11,8 +11,6 @@ import java.util.Map;
 import java.util.Observable;
 
 import org.apache.log4j.Logger;
-import org.wmaop.aop.advice.Advice;
-import org.wmaop.aop.advice.AssertableAdvice;
 import org.wmaop.aop.pointcut.InterceptPoint;
 import org.wmaop.interceptor.assertion.Assertable;
 import org.wmaop.interceptor.bdd.BddInterceptor;

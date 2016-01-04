@@ -1,4 +1,4 @@
-package org.wmaop.aop.chainprocessor;
+package org.wmaop.aop.stub;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -17,8 +17,10 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.wmaop.aop.advice.Advice;
+import org.wmaop.aop.chainprocessor.Interceptor;
 import org.wmaop.aop.matcher.FlowPositionMatcher;
 import org.wmaop.aop.pointcut.PointCut;
+import org.wmaop.aop.stub.StubManager;
 
 import com.wm.app.b2b.server.BaseService;
 import com.wm.app.b2b.server.Package;
