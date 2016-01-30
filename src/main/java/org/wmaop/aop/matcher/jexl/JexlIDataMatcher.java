@@ -45,7 +45,7 @@ public class JexlIDataMatcher implements Matcher<IData> {
 	}
 
 	private void createExpression(String name, String exprText) {
-		Expression compiledExpr = JexlExpressionFactory.getEngine().createExpression(exprText);
+		Expression compiledExpr = JexlExpressionFactory.createExpression(exprText);
 		Object result = compiledExpr.evaluate(new MapContext());
 		verifyExpressionResult(name, result);
 		expressions.put(name, compiledExpr);

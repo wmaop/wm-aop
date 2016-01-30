@@ -23,7 +23,7 @@ public class JexlWrappingMatcher implements Matcher<IData> {
 	
 	
 	public JexlWrappingMatcher(String id, String expression) {
-		expressions.put(id, JexlExpressionFactory.getEngine().createExpression(expression));
+		expressions.put(id, JexlExpressionFactory.createExpression(expression));
 		this.id = id;
 		this.exprs = expression;
 	}
@@ -31,7 +31,7 @@ public class JexlWrappingMatcher implements Matcher<IData> {
 	public JexlWrappingMatcher(Map<String, String> exprs) {
 		StringBuilder sb = new StringBuilder(); 
 		for (Entry<String, String> expr : exprs.entrySet()) {
-			expressions.put(expr.getKey(), JexlExpressionFactory.getEngine().createExpression(expr.getValue()));
+			expressions.put(expr.getKey(), JexlExpressionFactory.createExpression(expr.getValue()));
 			sb.append('{').append(expr.getKey()).append(':').append(expr.getValue()).append('}');
 		}
 		this.id = "";

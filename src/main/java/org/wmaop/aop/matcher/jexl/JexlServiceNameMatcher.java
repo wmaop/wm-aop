@@ -3,16 +3,16 @@ package org.wmaop.aop.matcher.jexl;
 import org.apache.commons.jexl2.Expression;
 import org.apache.commons.jexl2.JexlContext;
 import org.apache.commons.jexl2.MapContext;
-import org.wmaop.aop.matcher.FlowPositionMatcher;
 import org.wmaop.aop.matcher.MatchResult;
+import org.wmaop.aop.matcher.Matcher;
 import org.wmaop.aop.pipeline.FlowPosition;
 import org.wmaop.util.jexl.JexlExpressionFactory;
 
-public class JexlFlowPositionMatcher implements FlowPositionMatcher {
+public class JexlServiceNameMatcher implements Matcher<FlowPosition> {
 
 	private final Expression expression;
 	private final String sid;
-	public JexlFlowPositionMatcher(String sid, String expr) {
+	public JexlServiceNameMatcher(String sid, String expr) {
 		this.sid = sid;
 		expression = createExpression(sid, expr);
 	}
@@ -40,10 +40,5 @@ public class JexlFlowPositionMatcher implements FlowPositionMatcher {
 			throw new RuntimeException("Cannot parse expression named '" + name
 					+ "' to get boolean, instead got " + result.getClass().getSimpleName() + ": " + result);
 		}
-	}
-
-	@Override
-	public String getServiceName() {
-		return null; // Cant state the exact service because its expression based
 	}
 }
