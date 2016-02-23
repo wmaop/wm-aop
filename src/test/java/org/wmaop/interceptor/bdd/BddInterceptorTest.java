@@ -265,7 +265,7 @@ public class BddInterceptorTest {
 		add(pipeline, "foo", 2);
 		cp.process(chainIterator, getBaseService("com.catlin.foo:bar"), pipeline, ss);
 		
-		System.out.println(folder.getRoot().listFiles()[0].getAbsolutePath());
+		//System.out.println(folder.getRoot().listFiles()[0].getAbsolutePath());
 		
 		File f = new File(actual);
 		assertTrue(f.exists());

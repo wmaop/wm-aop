@@ -10,18 +10,17 @@ public class AssertionWrappingInterceptor implements Interceptor, Assertable {
 
 	private int invocationCount;
 	private final Interceptor wrappedInterceptor;
-	private String name;
-	
+	private final String name;
+
 	public AssertionWrappingInterceptor(Interceptor wrappedInterceptor, String name) {
-		this.wrappedInterceptor =wrappedInterceptor;
+		this.wrappedInterceptor = wrappedInterceptor;
 		this.name = name;
 	}
-	
+
 	@Override
 	public InterceptResult intercept(FlowPosition flowPosition, IData idata) {
-		InterceptResult ir = wrappedInterceptor.intercept(flowPosition, idata);
 		invocationCount++;
-		return ir;
+		return wrappedInterceptor.intercept(flowPosition, idata);
 	}
 
 	@Override

@@ -21,8 +21,7 @@ public class AspectAssertionObserver implements Observer {
 		Interceptor interceptor = advice.getInterceptor();
 		if (interceptor instanceof Assertable) {
 			handleState(advice, (Assertable) interceptor);
-		}
-		if (interceptor instanceof BddInterceptor) {
+		} else if (interceptor instanceof BddInterceptor) {
 			for (Interceptor icpt : ((BddInterceptor)interceptor).getInterceptorsOfType(Assertable.class)) {
 				handleState(advice, (Assertable) icpt);
 			}

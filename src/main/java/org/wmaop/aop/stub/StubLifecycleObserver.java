@@ -20,6 +20,7 @@ public class StubLifecycleObserver implements Observer {
 	public void update(Observable o, Object arg) {
 		Advice advice = (Advice)arg;
 		Interceptor interceptor = advice.getInterceptor();
+		//TODO code smell: the assumption of assertable == stub
 		if (interceptor instanceof Assertable) {
 			handleState(advice, (Assertable) interceptor);
 		}

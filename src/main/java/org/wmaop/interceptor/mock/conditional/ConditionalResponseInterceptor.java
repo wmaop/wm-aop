@@ -27,7 +27,7 @@ public class ConditionalResponseInterceptor implements Interceptor {
 	private final String defaultId;
 	private final boolean ignoreNoMatch;
 
-	public ConditionalResponseInterceptor(List<ConditionResponse> conditionResponses, ConditionResponse dr, boolean ignoreNoMatch) throws IOException {
+	public ConditionalResponseInterceptor(List<ConditionResponse> conditionResponses, ConditionResponse defaultResponse, boolean ignoreNoMatch) throws IOException {
 		Map<String, String> exprs = new LinkedHashMap<String, String>();
 		this.ignoreNoMatch = ignoreNoMatch;
 		for (ConditionResponse cr : conditionResponses) {
@@ -36,12 +36,12 @@ public class ConditionalResponseInterceptor implements Interceptor {
 			responses.put(sid, new IDataXMLCoder().decodeFromBytes(cr.getResponse().getBytes()));
 			logger.info("]>]> Adding response id " + sid + " length " + cr.getResponse().length() + " for expression " + cr.getExpression());
 		}
-		if (dr != null && dr.getResponse() != null) {
-			defaultResponse = new IDataXMLCoder().decodeFromBytes(dr.getResponse().getBytes());
-			defaultId = dr.getId();
+		if (defaultResponse != null && defaultResponse.getResponse() != null) {
+			this.defaultResponse = new IDataXMLCoder().decodeFromBytes(defaultResponse.getResponse().getBytes());
+			defaultId = defaultResponse.getId();
 		} else {
 			defaultId = null;
-			defaultResponse = null;
+			this.defaultResponse = null;
 		}
 		evaluator = new JexlIDataMatcher(exprs);
 	}

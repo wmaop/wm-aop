@@ -24,6 +24,7 @@ public class AdviceManager extends Observable {
 	protected final Map<String, Advice> ID_ADVICE = new HashMap<String, Advice>();
 
 	public void registerAdvice(Advice advice) {
+		// Register interceptor as assertable to track invocation count, unless it is already
 		if (!(advice.getInterceptor() instanceof Assertable || advice.getInterceptor() instanceof BddInterceptor)) {
 			advice = new AssertableAdvice(advice);
 		}
@@ -34,11 +35,13 @@ public class AdviceManager extends Observable {
 		}
 		ADVICES.get(advice.getPointCut().getInterceptPoint()).add(advice);
 		ID_ADVICE.put(advice.getId(), advice);
+		
 		// Notify if new
 		if (advice.getAdviceState() == NEW) {
 			setChanged();
 			notifyObservers(advice);
 		}
+		
 		advice.setAdviceState(ENABLED);
 		setChanged();
 		notifyObservers(advice);
