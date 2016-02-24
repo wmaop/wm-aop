@@ -7,6 +7,8 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.wmaop.aop.advice.Advice;
 import org.wmaop.aop.matcher.FlowPositionMatcher;
@@ -27,6 +29,8 @@ import com.wm.lang.ns.NSServiceType;
 
 public class StubManager {
 
+	private final Set<String> stubbedServices = new HashSet<String>(); 
+	
 	protected static final String SUPPORTING_PKG = "OrgWmaopStubs";
 
 	public void registerStubService(String... svcNames) {
@@ -39,6 +43,7 @@ public class StubManager {
 				NSName name = NSName.create(svcName);
 				NSServiceType serviceType = NSServiceType.create("flow", "unknown");
 				ServerAPI.registerService(SUPPORTING_PKG, name, true, serviceType , null, null, null);
+				stubbedServices.add(svcName);
 			} catch (ServiceSetupException e) {
 				throw new RuntimeException("Error creating stub service for " + svcName, e);
 			}
@@ -52,6 +57,7 @@ public class StubManager {
 			BaseService svc = Namespace.getService(name);
 			if (svc != null && SUPPORTING_PKG.equals(svc.getPackageName())) {
 				Namespace.current().deleteNode(name, true, pkg);
+				stubbedServices.remove(svcName);
 			}
 		}
 	}
@@ -68,9 +74,18 @@ public class StubManager {
 				throw new RuntimeException(e);
 			}
 		}
+		stubbedServices.clear();;
 	}
 
-	protected void unregisterStub(Advice advice)  {
+	public boolean hasStub(String svcName) {
+		return stubbedServices.contains(svcName);
+	}
+	
+	public boolean hasStub(Advice advice) {
+		return hasStub(getServiceName(advice));
+	}
+	
+	protected void unregisterStubService(Advice advice)  {
 		String svcName = getServiceName(advice);
 		try {
 			unregisterStubService(svcName);

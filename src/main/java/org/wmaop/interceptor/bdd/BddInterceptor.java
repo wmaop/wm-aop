@@ -23,6 +23,7 @@ public class BddInterceptor implements Interceptor {
 	private static final Logger logger = Logger.getLogger(BddInterceptor.class);
 
 	private final JexlIDataMatcher iDataMatcher;
+	/* Locally held and not registered.  Interceptors here are actioned within and not by the chain processor */
 	private final Map<String, List<Interceptor>> interceptorMap = new HashMap<String, List<Interceptor>>();
 	private final List<Interceptor> defaultInterceptors = new ArrayList<Interceptor>();
 	private final boolean ignoreNoMatch;

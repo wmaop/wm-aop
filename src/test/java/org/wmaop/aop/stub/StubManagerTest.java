@@ -98,7 +98,7 @@ public class StubManagerTest {
 	@Test
 	public void testUnregisterStub() {
 		Advice advice = createAdviceMock();
-		stubManager.unregisterStub(advice);
+		stubManager.unregisterStubService(advice);
 	}
 
 	@Test

@@ -4,9 +4,6 @@ import java.util.Observable;
 import java.util.Observer;
 
 import org.wmaop.aop.advice.Advice;
-import org.wmaop.aop.chainprocessor.Interceptor;
-import org.wmaop.interceptor.assertion.Assertable;
-import org.wmaop.interceptor.bdd.BddInterceptor;
 
 public class StubLifecycleObserver implements Observer {
 
@@ -19,22 +16,15 @@ public class StubLifecycleObserver implements Observer {
 	@Override
 	public void update(Observable o, Object arg) {
 		Advice advice = (Advice)arg;
-		Interceptor interceptor = advice.getInterceptor();
-		//TODO code smell: the assumption of assertable == stub
-		if (interceptor instanceof Assertable) {
-			handleState(advice, (Assertable) interceptor);
-		}
-		if (interceptor instanceof BddInterceptor) {
-			for (Interceptor icpt : ((BddInterceptor)interceptor).getInterceptorsOfType(Assertable.class)) {
-				handleState(advice, (Assertable) icpt);
-			}
-		}
+		handleState(advice);
 	}
 
-	private void handleState(Advice advice, Assertable interceptor) {
+	private void handleState(Advice advice) {
 		switch (advice.getAdviceState()) {
 		case DISPOSED:
-			stubManager.unregisterStub(advice);
+			if (stubManager.hasStub(advice)) {
+				stubManager.unregisterStubService(advice);
+			}
 			break;
 		default:
 			break;
