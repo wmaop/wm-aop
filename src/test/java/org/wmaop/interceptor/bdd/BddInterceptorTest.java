@@ -63,7 +63,7 @@ public class BddInterceptorTest {
 		
 		AssertionManager asm = cp.getAssertionManager();
 		// Correct service, condition doesnt match
-		cp.process(chainIterator, getBaseService("com.catlin.foo:bar"), pipeline, ss);
+		cp.process(chainIterator, getBaseService("org.wmaop.foo:bar"), pipeline, ss);
 		assertEquals(0, asm.getAssertion("PreBarAssertion").getInvokeCount());
 		assertTrue(asm.verifyNever("PreBarAssertion"));
 		assertFalse(asm.verifyOnceOnly("PreBarAssertion"));
@@ -73,7 +73,7 @@ public class BddInterceptorTest {
 		
 		// Correct service, condition  match
 		add(pipeline, "foo", 2);
-		cp.process(chainIterator, getBaseService("com.catlin.foo:bar"), pipeline, ss);
+		cp.process(chainIterator, getBaseService("org.wmaop.foo:bar"), pipeline, ss);
 		assertEquals(1, asm.getAssertion("PreBarAssertion").getInvokeCount());
 		assertFalse(asm.verifyNever("PreBarAssertion"));
 		assertTrue(asm.verifyOnceOnly("PreBarAssertion"));
@@ -81,7 +81,7 @@ public class BddInterceptorTest {
 		assertTrue(asm.verifyAtLeastOnce("PreBarAssertion"));
 		assertTrue(asm.verifyAtMost(1, "PreBarAssertion"));
 
-		cp.process(chainIterator, getBaseService("com.catlin.foo:bar"), pipeline, ss);
+		cp.process(chainIterator, getBaseService("org.wmaop.foo:bar"), pipeline, ss);
 		assertEquals(2, asm.getAssertion("PreBarAssertion").getInvokeCount());
 		assertFalse(asm.verifyNever("PreBarAssertion"));
 		assertFalse(asm.verifyOnceOnly("PreBarAssertion"));
@@ -126,12 +126,12 @@ public class BddInterceptorTest {
 		Iterator<InvokeChainProcessor> chainIterator = new ArrayList<InvokeChainProcessor>().iterator();
 
 		// Execute a service, no change to pipeline
-		cp.process(chainIterator, getBaseService("com.catlin.foo:bar"), pipeline, ss);
+		cp.process(chainIterator, getBaseService("org.wmaop.foo:bar"), pipeline, ss);
 		verify(ss, times(0)).setException(isA(Exception.class));
 		
 		// Execute mocked service, pipeline changed
 		add(alpha, "beta", "hello");
-		cp.process(chainIterator, getBaseService("com.catlin.foo:bar"), pipeline, ss);
+		cp.process(chainIterator, getBaseService("org.wmaop.foo:bar"), pipeline, ss);
 		verify(ss, times(1)).setException(isA(Exception.class));
 	}
 
@@ -145,20 +145,20 @@ public class BddInterceptorTest {
 		Iterator<InvokeChainProcessor> chainIterator = new ArrayList<InvokeChainProcessor>().iterator();
 
 		// No change to pipeline, not fired
-		cp.process(chainIterator, getBaseService("com.catlin.foo:bar"), pipeline, ss);
+		cp.process(chainIterator, getBaseService("org.wmaop.foo:bar"), pipeline, ss);
 		assertEquals(null, get(pipeline, "apple"));
 
 		// Service condition so should set default
 		add(pipeline, "foo", 2);
-		cp.process(chainIterator, getBaseService("com.catlin.foo:bar"), pipeline, ss);
+		cp.process(chainIterator, getBaseService("org.wmaop.foo:bar"), pipeline, ss);
 		assertEquals("gamma", get(pipeline, "apple"));
 
 		add(pipeline, "input", 1);
-		cp.process(chainIterator, getBaseService("com.catlin.foo:bar"), pipeline, ss);
+		cp.process(chainIterator, getBaseService("org.wmaop.foo:bar"), pipeline, ss);
 		assertEquals("alpha", get(pipeline, "apple"));
 
 		add(pipeline, "input", 2);
-		cp.process(chainIterator, getBaseService("com.catlin.foo:bar"), pipeline, ss);
+		cp.process(chainIterator, getBaseService("org.wmaop.foo:bar"), pipeline, ss);
 		assertEquals("beta", get(pipeline, "apple"));
 	}
 	
@@ -170,15 +170,15 @@ public class BddInterceptorTest {
 		ServiceStatus ss = mock(ServiceStatus.class);
 		Iterator<InvokeChainProcessor> chainIterator = new ArrayList<InvokeChainProcessor>().iterator();
 
-		cp.process(chainIterator, getBaseService("com.catlin.foo:bar"), pipeline, ss);
+		cp.process(chainIterator, getBaseService("org.wmaop.foo:bar"), pipeline, ss);
 		assertEquals("gamma", get(pipeline, "apple"));
 
 		add(pipeline, "input", 1);
-		cp.process(chainIterator, getBaseService("com.catlin.foo:bar"), pipeline, ss);
+		cp.process(chainIterator, getBaseService("org.wmaop.foo:bar"), pipeline, ss);
 		assertEquals("alpha", get(pipeline, "apple"));
 
 		add(pipeline, "input", 2);
-		cp.process(chainIterator, getBaseService("com.catlin.foo:bar"), pipeline, ss);
+		cp.process(chainIterator, getBaseService("org.wmaop.foo:bar"), pipeline, ss);
 		assertEquals("beta", get(pipeline, "apple"));
 	}
 	
@@ -192,15 +192,15 @@ public class BddInterceptorTest {
 		Iterator<InvokeChainProcessor> chainIterator = new ArrayList<InvokeChainProcessor>().iterator();
 
 		// No change to pipeline, not fired
-		cp.process(chainIterator, getBaseService("com.catlin.foo:bar"), pipeline, ss);
+		cp.process(chainIterator, getBaseService("org.wmaop.foo:bar"), pipeline, ss);
 		assertEquals(null, get(pipeline, "apple"));
 
 		add(pipeline, "input", 1);
-		cp.process(chainIterator, getBaseService("com.catlin.foo:bar"), pipeline, ss);
+		cp.process(chainIterator, getBaseService("org.wmaop.foo:bar"), pipeline, ss);
 		assertEquals("alpha", get(pipeline, "apple"));
 
 		add(pipeline, "input", 2);
-		cp.process(chainIterator, getBaseService("com.catlin.foo:bar"), pipeline, ss);
+		cp.process(chainIterator, getBaseService("org.wmaop.foo:bar"), pipeline, ss);
 		assertEquals("beta", get(pipeline, "apple"));
 	}
 	
@@ -213,16 +213,16 @@ public class BddInterceptorTest {
 		ServiceStatus ss = mock(ServiceStatus.class);
 		Iterator<InvokeChainProcessor> chainIterator = new ArrayList<InvokeChainProcessor>().iterator();
 
-		cp.process(chainIterator, getBaseService("com.catlin.foo:bar"), pipeline, ss);
+		cp.process(chainIterator, getBaseService("org.wmaop.foo:bar"), pipeline, ss);
 		assertEquals("alpha", get(pipeline, "a"));
 
-		cp.process(chainIterator, getBaseService("com.catlin.foo:bar"), pipeline, ss);
+		cp.process(chainIterator, getBaseService("org.wmaop.foo:bar"), pipeline, ss);
 		assertEquals("beta", get(pipeline, "b"));
 
-		cp.process(chainIterator, getBaseService("com.catlin.foo:bar"), pipeline, ss);
+		cp.process(chainIterator, getBaseService("org.wmaop.foo:bar"), pipeline, ss);
 		assertEquals("gamma", get(pipeline, "c"));
 
-		cp.process(chainIterator, getBaseService("com.catlin.foo:bar"), pipeline, ss);
+		cp.process(chainIterator, getBaseService("org.wmaop.foo:bar"), pipeline, ss);
 		assertEquals("alpha", get(pipeline, "a"));
 	}
 
@@ -236,7 +236,7 @@ public class BddInterceptorTest {
 		Iterator<InvokeChainProcessor> chainIterator = new ArrayList<InvokeChainProcessor>().iterator();
 
 		for (int i = 0; i < 20; i++) {
-			cp.process(chainIterator, getBaseService("com.catlin.foo:bar"), pipeline, ss);
+			cp.process(chainIterator, getBaseService("org.wmaop.foo:bar"), pipeline, ss);
 		}
 		
 		assertEquals("beta", get(pipeline, "b"));
@@ -263,7 +263,7 @@ public class BddInterceptorTest {
 		Iterator<InvokeChainProcessor> chainIterator = new ArrayList<InvokeChainProcessor>().iterator();
 		
 		add(pipeline, "foo", 2);
-		cp.process(chainIterator, getBaseService("com.catlin.foo:bar"), pipeline, ss);
+		cp.process(chainIterator, getBaseService("org.wmaop.foo:bar"), pipeline, ss);
 		
 		//System.out.println(folder.getRoot().listFiles()[0].getAbsolutePath());
 		

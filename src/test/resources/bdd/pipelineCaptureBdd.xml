@@ -1,7 +1,7 @@
 <scenario xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../main/xsd/bddSchema.xsd" id="advice id">
     <given>
-        <service intercepted="before">com.catlin.foo:bar</service>
+        <service intercepted="before">org.wmaop.foo:bar</service>
     </given>
     <when id="capture pipeline">
         <then>
