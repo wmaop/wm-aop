@@ -9,3 +9,5 @@ This project offers an Aspect Oriented style framework for Software AG webMethod
 * Create assertions that can apply before or after a service so that its possible to prove a service has been executed.   Assertions can also have conditions to verify that the pipeline had the expected content.
 * Return either random or sequenced content from a mock to very its output every time its called
 * Use the [wm-jbehave](https://github.com/wmaop/wm-jbehave/wiki) functionality for Behaviour Driven Unit Testing within Designer and execute tests with the in-built JUnit
+
+See [the wiki](https://github.com/wmaop/wm-aop/wiki) for more information on installation and use.
