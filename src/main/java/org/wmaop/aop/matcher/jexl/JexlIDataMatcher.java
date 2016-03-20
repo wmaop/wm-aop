@@ -17,7 +17,7 @@ import com.wm.data.IData;
 
 public class JexlIDataMatcher implements Matcher<IData> {
 
-	private final Map<String, Expression> expressions = new LinkedHashMap<String, Expression>();;
+	private final Map<String, Expression> expressions = new LinkedHashMap<>();
 	private final String EXPRESSION;
 	
 	public JexlIDataMatcher(String sid, String expression) {

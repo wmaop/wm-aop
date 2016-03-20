@@ -17,7 +17,7 @@ import com.wm.data.IData;
 @Deprecated
 public class JexlWrappingMatcher implements Matcher<IData> {
 
-	private final Map<String, Expression> expressions = new LinkedHashMap<String, Expression>();
+	private final Map<String, Expression> expressions = new LinkedHashMap<>();
 	private final String id;
 	private final String exprs;
 	
@@ -38,6 +38,7 @@ public class JexlWrappingMatcher implements Matcher<IData> {
 		this.exprs = sb.toString();
 	}
 
+	@Override
 	public MatchResult match(IData idata) {
 		JexlContext ctx = new ObjectContext<IDataJexlContext>(JexlExpressionFactory.getEngine(), new IDataJexlContext(idata));
 		for (Entry<String, Expression> expr : expressions.entrySet()) {
@@ -47,6 +48,7 @@ public class JexlWrappingMatcher implements Matcher<IData> {
 		return MatchResult.FALSE;
 	}
 
+	@Override
 	public String toString() {
 		return "JexlWrappingMatcher["+id+','+exprs+']';
 	}

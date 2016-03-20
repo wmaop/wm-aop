@@ -59,7 +59,7 @@ public class MockManager extends AbstractFlowManager {
 		if (adviceId == null || adviceId.length() == 0) {
 			advs = AOPChainProcessor.getInstance().getAdviceManager().listAdvice();
 		} else {
-			advs = new ArrayList<Advice>();
+			advs = new ArrayList<>();
 			advs.add(AOPChainProcessor.getInstance().getAdviceManager().getAdvice(adviceId));
 		}
 		//TODO: Better textual representation of advice for pipeline		
