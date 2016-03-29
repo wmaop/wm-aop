@@ -80,7 +80,10 @@ public class AOPChainProcessor implements InvokeChainProcessor {
 			IData idata, ServiceStatus serviceStatus) throws ServerException {
 		FlowPosition pipelinePosition = new FlowPosition(BEFORE, baseService.getNSName().getFullName());
 		processAdvice(false, pipelinePosition, idata, serviceStatus);
-
+		if (serviceStatus.getException() != null) {
+			return; // Exception in before to prevent execution of service/mock
+		}
+		
 		pipelinePosition.setInterceptPoint(INVOKE);
 		boolean hasIntercepted = processAdvice(true, pipelinePosition, idata, serviceStatus);
 
@@ -119,7 +122,7 @@ public class AOPChainProcessor implements InvokeChainProcessor {
 		InterceptResult interceptResult = interceptor.intercept(pos, idata);
 		logger.info(PFX + "Intercepting " + advice.getId() + " " + pos.getInterceptPoint() + ' ' + pos + " - " + interceptResult.hasIntercepted());
 		
-		if (interceptResult.hasIntercepted() && exitOnIntercept) {
+		if (interceptResult.hasIntercepted()) {
 			Exception e = interceptResult.getException();
 			if (e != null) {
 				serviceStatus.setException(e);

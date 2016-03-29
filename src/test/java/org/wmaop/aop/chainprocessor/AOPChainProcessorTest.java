@@ -191,8 +191,18 @@ public class AOPChainProcessorTest {
 
 		// Execute
 		cp.process(chainIterator, baseService, idata, ss);
-
 		verify(ss, times(1)).setException(exception);
+
+		cp.getAdviceManager().unregisterAdvice(advice);
+		pointCut = new ServicePipelinePointCut(serviceNameMatcher, new AlwaysTrueMatcher<IData>("my id"), InterceptPoint.BEFORE);
+		advice = new Advice("intercept", pointCut, interceptor);
+		cp.getAdviceManager().registerAdvice(advice);
+		
+		// Execute
+		cp.process(chainIterator, baseService, idata, ss);
+		verify(ss, times(2)).setException(exception);
+		
+	
 	}
 
 	@Test
