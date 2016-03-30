@@ -26,7 +26,6 @@ public class MockManager extends AbstractFlowManager {
 	public static final String SERVICE_NAME = "serviceName";
 	public static final String CONDITION = "condition";
 	public static final String EXCEPTION = "exception";
-			
 	
 	private static final Logger logger = Logger.getLogger(MockManager.class);
 	
@@ -117,13 +116,7 @@ public class MockManager extends AbstractFlowManager {
 
 		mandatory(pipeline, "{0} must exist when retrieving assertion count", ADVICE_ID);
 		logger.debug("Retrieving assertion " + adviceId);
-		Assertable assertion = AOPChainProcessor.getInstance().getAssertionManager().getAssertion(adviceId);
-		int invokeCount = 0;
-		if (assertion == null) {
-			logger.warn("]>]> ** No assertion found for " + adviceId);
-		} else {
-			invokeCount = assertion.getInvokeCount();
-		}
+		int invokeCount = AOPChainProcessor.getInstance().getAssertionManager().getInvokeCountForPrefix(adviceId);
 		
 		pipelineCursor = pipeline.getCursor();
 		IDataUtil.put(pipelineCursor, "invokeCount", invokeCount);
