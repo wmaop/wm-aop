@@ -9,17 +9,39 @@
 	<parent>
 		<groupId>org.wmaop</groupId>
 		<artifactId>wm-parent</artifactId>
-		<version>1.0.0</version>
+		<version>1.0.1-SNAPSHOT</version>
 	</parent>
 
 	<name>wm-aop</name>
 	<url>https://github.com/wmaop/wm-aop</url>
 
+	<issueManagement>
+		<url>https://github.com/wmaop/wm-aop/issues</url>
+		<system>GitHub Issues</system>
+	</issueManagement>
+
+	<licenses>
+		<license>
+			<name>GNU General Public License, Version 3</name>
+			<url>http://www.gnu.org/licenses/gpl-3.0.html</url>
+			<distribution>manual</distribution>
+		</license>
+	</licenses>
+
+	<developers>
+		<developer>
+			<name>Richard Tomlinson</name>
+			<url>https://uk.linkedin.com/in/richard-tomlinson-b7b6581</url>
+		</developer>
+	</developers>
+	
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<wm-aop-util.version>1.0.0-SNAPSHOT</wm-aop-util.version>
 		<jaxb.version>2.2.7</jaxb.version> <!-- Must match jaxb2-maven-plugin dep version -->
-		<commons-loggin.version>1.1.1</commons-loggin.version> <!-- JEXL version for exclusion -->
+		<commons-logging.version>1.1.1</commons-logging.version> <!-- JEXL version for exclusion -->
+		<apache.axis2.version>1.6.2</apache.axis2.version>
+		<javax.mail.version>1.4.4</javax.mail.version>
 	</properties>
 
 	<dependencies>
@@ -33,13 +55,13 @@
 			<!-- Proided by jexl in wm-aop-util so mark provided for exclusion in copy-->
 			<groupId>commons-logging</groupId>
 			<artifactId>commons-logging</artifactId>
-			<version>${commons-loggin.version}</version>
+			<version>${commons-logging.version}</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.softwareag.webmethods</groupId>
 			<artifactId>deployer-api</artifactId>
-			<version>9.0.1</version>
+			<version>${webMethods.version}</version>
 			<scope>provided</scope>
 		</dependency>
 		<!-- webMethods server JARs -->
@@ -58,7 +80,7 @@
 		<dependency>
 			<groupId>com.softwareag.webmethods</groupId>
 			<artifactId>wm-g11nutils</artifactId>
-			<version>9.0</version>
+			<version>${webMethods.version}</version>
 			<scope>provided</scope>
 		</dependency>
 		
@@ -86,17 +108,18 @@
 			<version>${log4j.version}</version>
 			<scope>provided</scope>
 		</dependency>
+		
 		<!-- Required for XMLCoder  -->
 		<dependency>
 			<groupId>javax.mail</groupId>
 			<artifactId>mail</artifactId>
-			<version>1.4.4</version>
+			<version>${javax.mail.version}</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.axis2</groupId>
 			<artifactId>axis2-kernel</artifactId>
-			<version>1.6.2</version>
+			<version>${apache.axis2.version}</version>
 			<scope>provided</scope>
 		</dependency>
 
