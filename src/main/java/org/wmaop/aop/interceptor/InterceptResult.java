@@ -1,4 +1,4 @@
-package org.wmaop.aop.chainprocessor;
+package org.wmaop.aop.interceptor;
 
 public class InterceptResult {
 	

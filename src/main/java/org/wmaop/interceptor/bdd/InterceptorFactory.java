@@ -3,7 +3,7 @@ package org.wmaop.interceptor.bdd;
 import java.io.IOException;
 import java.util.List;
 
-import org.wmaop.aop.chainprocessor.Interceptor;
+import org.wmaop.aop.interceptor.Interceptor;
 import org.wmaop.interceptor.assertion.AssertionInterceptor;
 import org.wmaop.interceptor.mock.canned.CannedResponseInterceptor;
 import org.wmaop.interceptor.mock.canned.CannedResponseInterceptor.ResponseSequence;
@@ -50,7 +50,7 @@ public class InterceptorFactory {
 	}
 
 	public Interceptor getAssertInterceptor(Assert ass) {
-		return new AssertionInterceptor(ass.getId());
+		return (Interceptor) new AssertionInterceptor(ass.getId());
 	}
 
 }

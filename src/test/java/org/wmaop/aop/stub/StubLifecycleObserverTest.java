@@ -12,7 +12,7 @@ import java.util.List;
 import org.junit.Test;
 import org.wmaop.aop.advice.Advice;
 import org.wmaop.aop.advice.AdviceState;
-import org.wmaop.aop.chainprocessor.Interceptor;
+import org.wmaop.aop.interceptor.Interceptor;
 import org.wmaop.interceptor.assertion.AssertionWrappingInterceptor;
 
 public class StubLifecycleObserverTest {

@@ -1,6 +1,4 @@
-package org.wmaop.aop.pipeline;
-
-import org.wmaop.aop.pointcut.InterceptPoint;
+package org.wmaop.aop.interceptor;
 
 public class FlowPosition {
 

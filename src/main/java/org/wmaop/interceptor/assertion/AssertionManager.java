@@ -7,24 +7,24 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.log4j.Logger;
-import org.wmaop.flow.MockManager;
+import org.wmaop.aop.interceptor.AssertableInterceptor;
 
 public class AssertionManager  {
 
 	private static final Logger logger = Logger.getLogger(AssertionManager.class);
-	private final Map<String, Assertable> assertions = new HashMap<String, Assertable>();
+	private final Map<String, AssertableInterceptor> assertions = new HashMap<String, AssertableInterceptor>();
 	
 	public AssertionManager() {}
 	
-	public void addAssertion(String name, Assertable assertion) {
+	public void addAssertion(String name, AssertableInterceptor assertion) {
 		assertions.put(name, assertion);
 	}
 
-	public Assertable getAssertion(String name) {
+	public AssertableInterceptor getAssertion(String name) {
 		return assertions.get(name);
 	}
 	
-	public Collection<Assertable> getAssertions() {
+	public Collection<AssertableInterceptor> getAssertions() {
 		return assertions.values();
 	}
 
@@ -33,14 +33,14 @@ public class AssertionManager  {
 	}
 
 	public int getInvokeCount(String name) {
-		Assertable assertion = assertions.get(name);
+		AssertableInterceptor assertion = assertions.get(name);
 		return assertion == null ? 0 : assertion.getInvokeCount();
 	}
 	
 	public int getInvokeCountForPrefix(String prefix) {
 		int invokeCount = 0;
-		Collection <Assertable> assertables = new HashSet<>();
-		for (Entry<String, Assertable> e : assertions.entrySet()) {
+		Collection <AssertableInterceptor> assertables = new HashSet<>();
+		for (Entry<String, AssertableInterceptor> e : assertions.entrySet()) {
 			if (e.getKey().startsWith(prefix)) {
 				assertables.add(e.getValue());
 			}
@@ -48,7 +48,7 @@ public class AssertionManager  {
 		if (assertables.isEmpty()) {
 			logger.warn("]>]> ** No assertion found for prefix " + prefix);
 		} else {
-			for (Assertable a : assertables) {
+			for (AssertableInterceptor a : assertables) {
 				invokeCount += a.getInvokeCount();
 			}
 		}

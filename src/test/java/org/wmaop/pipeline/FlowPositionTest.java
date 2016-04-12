@@ -3,8 +3,8 @@ package org.wmaop.pipeline;
 import static org.junit.Assert.*;
 
 import org.junit.Test;
-import org.wmaop.aop.pipeline.FlowPosition;
-import org.wmaop.aop.pointcut.InterceptPoint;
+import org.wmaop.aop.interceptor.FlowPosition;
+import org.wmaop.aop.interceptor.InterceptPoint;
 
 public class FlowPositionTest {
 

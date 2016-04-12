@@ -11,15 +11,14 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.wmaop.aop.advice.Advice;
+import org.wmaop.aop.interceptor.FlowPosition;
 import org.wmaop.aop.matcher.FlowPositionMatcher;
 import org.wmaop.aop.matcher.Matcher;
-import org.wmaop.aop.pipeline.FlowPosition;
 
 import com.wm.app.b2b.server.BaseService;
 import com.wm.app.b2b.server.Package;
 import com.wm.app.b2b.server.PackageManager;
 import com.wm.app.b2b.server.ServerAPI;
-import com.wm.app.b2b.server.ServiceException;
 import com.wm.app.b2b.server.ServiceSetupException;
 import com.wm.app.b2b.server.ns.Namespace;
 import com.wm.lang.ns.NSException;

@@ -7,18 +7,20 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.wmaop.aop.chainprocessor.InterceptResult;
-import org.wmaop.aop.chainprocessor.Interceptor;
+import org.wmaop.aop.interceptor.CompositeInterceptor;
+import org.wmaop.aop.interceptor.FlowPosition;
+import org.wmaop.aop.interceptor.InterceptResult;
+import org.wmaop.aop.interceptor.Interceptor;
 import org.wmaop.aop.matcher.MatchResult;
 import org.wmaop.aop.matcher.jexl.JexlIDataMatcher;
-import org.wmaop.aop.pipeline.FlowPosition;
 
 import com.wm.data.IData;
+
 import org.wmaop.interceptor.bdd.xsd.Scenario;
 import org.wmaop.interceptor.bdd.xsd.Then;
 import org.wmaop.interceptor.bdd.xsd.When;
 
-public class BddInterceptor implements Interceptor {
+public class BddInterceptor implements CompositeInterceptor {
 
 	private static final Logger logger = Logger.getLogger(BddInterceptor.class);
 
@@ -40,16 +42,18 @@ public class BddInterceptor implements Interceptor {
 		iDataMatcher = new JexlIDataMatcher(exprs);
 	}
 
-	public List<Interceptor> getInterceptorsOfType(Class<?> type) {
-		List<Interceptor> m = new ArrayList<>();
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T extends Interceptor> List<T> getInterceptorsOfType(Class<T> type) {
+		List<T> m = new ArrayList<>();
 		for (String id : interceptorMap.keySet()) {
-			for (Interceptor interceptor: interceptorMap.get(id)) {
+			for (T interceptor: (Iterable<T>)interceptorMap.get(id)) {
 				if (type.isAssignableFrom(interceptor.getClass())) {
 					m.add(interceptor);
 				}
 			}
 		}
-		return m ;
+		return m;
 	}
 	
 	private void processWhen(Map<String, String> exprs, When when) {

@@ -17,7 +17,7 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.wmaop.aop.advice.Advice;
-import org.wmaop.aop.chainprocessor.Interceptor;
+import org.wmaop.aop.interceptor.Interceptor;
 import org.wmaop.aop.matcher.FlowPositionMatcher;
 import org.wmaop.aop.pointcut.PointCut;
 import org.wmaop.aop.stub.StubManager;

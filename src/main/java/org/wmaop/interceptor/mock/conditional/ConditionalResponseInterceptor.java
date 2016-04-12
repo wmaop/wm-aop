@@ -7,11 +7,11 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.wmaop.aop.chainprocessor.InterceptResult;
-import org.wmaop.aop.chainprocessor.Interceptor;
+import org.wmaop.aop.interceptor.FlowPosition;
+import org.wmaop.aop.interceptor.InterceptResult;
+import org.wmaop.aop.interceptor.Interceptor;
 import org.wmaop.aop.matcher.MatchResult;
 import org.wmaop.aop.matcher.jexl.JexlIDataMatcher;
-import org.wmaop.aop.pipeline.FlowPosition;
 
 import com.wm.data.IData;
 import com.wm.data.IDataUtil;

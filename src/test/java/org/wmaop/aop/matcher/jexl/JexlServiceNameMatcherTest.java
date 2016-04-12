@@ -5,9 +5,9 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import org.junit.Test;
+import org.wmaop.aop.interceptor.FlowPosition;
+import org.wmaop.aop.interceptor.InterceptPoint;
 import org.wmaop.aop.matcher.jexl.JexlFlowPositionMatcher;
-import org.wmaop.aop.pipeline.FlowPosition;
-import org.wmaop.aop.pointcut.InterceptPoint;
 
 public class JexlServiceNameMatcherTest {
 

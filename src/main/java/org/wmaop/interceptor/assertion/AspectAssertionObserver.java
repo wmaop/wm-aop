@@ -4,8 +4,9 @@ import java.util.Observable;
 import java.util.Observer;
 
 import org.wmaop.aop.advice.Advice;
-import org.wmaop.aop.chainprocessor.Interceptor;
-import org.wmaop.interceptor.bdd.BddInterceptor;
+import org.wmaop.aop.interceptor.AssertableInterceptor;
+import org.wmaop.aop.interceptor.CompositeInterceptor;
+import org.wmaop.aop.interceptor.Interceptor;
 
 public class AspectAssertionObserver implements Observer {
 
@@ -19,16 +20,16 @@ public class AspectAssertionObserver implements Observer {
 	public void update(Observable o, Object arg) {
 		Advice advice = (Advice)arg;
 		Interceptor interceptor = advice.getInterceptor();
-		if (interceptor instanceof Assertable) {
-			handleState(advice, (Assertable) interceptor);
-		} else if (interceptor instanceof BddInterceptor) {
-			for (Interceptor icpt : ((BddInterceptor)interceptor).getInterceptorsOfType(Assertable.class)) {
-				handleState(advice, (Assertable) icpt);
+		if (interceptor instanceof AssertableInterceptor) {
+			handleState(advice, (AssertableInterceptor) interceptor);
+		} else if (interceptor instanceof CompositeInterceptor) {
+			for (AssertableInterceptor icpt : ((CompositeInterceptor)interceptor).getInterceptorsOfType(AssertableInterceptor.class)) {
+				handleState(advice, icpt);
 			}
 		}
 	}
 
-	private void handleState(Advice advice, Assertable interceptor) {
+	private void handleState(Advice advice, AssertableInterceptor interceptor) {
 		switch (advice.getAdviceState()) {
 		case NEW:
 			assertionManager.addAssertion(interceptor.getName(), interceptor);

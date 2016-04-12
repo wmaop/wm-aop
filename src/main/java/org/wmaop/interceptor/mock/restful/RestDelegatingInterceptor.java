@@ -5,14 +5,14 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-import org.wmaop.aop.chainprocessor.InterceptResult;
-import org.wmaop.aop.pipeline.FlowPosition;
+import org.wmaop.aop.interceptor.FlowPosition;
+import org.wmaop.aop.interceptor.InterceptResult;
 
 import com.wm.data.IData;
 import com.wm.data.IDataUtil;
 import com.wm.util.coder.IDataXMLCoder;
 
-public class RestDelegatingInterceptor implements org.wmaop.aop.chainprocessor.Interceptor {
+public class RestDelegatingInterceptor implements org.wmaop.aop.interceptor.Interceptor {
 
 	public static final String APPLICATION_XML = "application/xml";
 

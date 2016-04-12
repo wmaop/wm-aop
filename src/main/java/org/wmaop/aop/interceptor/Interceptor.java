@@ -1,6 +1,4 @@
-package org.wmaop.aop.chainprocessor;
-
-import org.wmaop.aop.pipeline.FlowPosition;
+package org.wmaop.aop.interceptor;
 
 import com.wm.data.IData;
 

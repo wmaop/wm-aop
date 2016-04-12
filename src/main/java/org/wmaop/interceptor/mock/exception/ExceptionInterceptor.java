@@ -1,8 +1,8 @@
 package org.wmaop.interceptor.mock.exception;
 
-import org.wmaop.aop.chainprocessor.InterceptResult;
-import org.wmaop.aop.chainprocessor.Interceptor;
-import org.wmaop.aop.pipeline.FlowPosition;
+import org.wmaop.aop.interceptor.FlowPosition;
+import org.wmaop.aop.interceptor.InterceptResult;
+import org.wmaop.aop.interceptor.Interceptor;
 
 import com.wm.data.IData;
 
