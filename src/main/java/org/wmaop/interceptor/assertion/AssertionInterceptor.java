@@ -1,8 +1,8 @@
 package org.wmaop.interceptor.assertion;
 
-import org.wmaop.aop.interceptor.AssertableInterceptor;
-import org.wmaop.aop.interceptor.FlowPosition;
-import org.wmaop.aop.interceptor.InterceptResult;
+import org.wmaop.aop.chainprocessor.InterceptResult;
+import org.wmaop.aop.chainprocessor.Interceptor;
+import org.wmaop.aop.pipeline.FlowPosition;
 
 import com.wm.data.IData;
 
@@ -10,7 +10,7 @@ import com.wm.data.IData;
  * Default assertion. Counts the invokes and registers if one
  *         has asserted
  */
-public class AssertionInterceptor implements AssertableInterceptor {
+public class AssertionInterceptor implements Interceptor, Assertable {
 
 	private final String assertionName;
 	private int invokeCount = 0;

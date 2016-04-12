@@ -1,13 +1,12 @@
 package org.wmaop.interceptor.assertion;
 
-import org.wmaop.aop.interceptor.AssertableInterceptor;
-import org.wmaop.aop.interceptor.FlowPosition;
-import org.wmaop.aop.interceptor.InterceptResult;
-import org.wmaop.aop.interceptor.Interceptor;
+import org.wmaop.aop.chainprocessor.InterceptResult;
+import org.wmaop.aop.chainprocessor.Interceptor;
+import org.wmaop.aop.pipeline.FlowPosition;
 
 import com.wm.data.IData;
 
-public class AssertionWrappingInterceptor implements AssertableInterceptor {
+public class AssertionWrappingInterceptor implements Interceptor, Assertable {
 
 	private int invocationCount;
 	private final Interceptor wrappedInterceptor;
@@ -18,6 +17,7 @@ public class AssertionWrappingInterceptor implements AssertableInterceptor {
 		this.name = name;
 	}
 
+	@Override
 	public InterceptResult intercept(FlowPosition flowPosition, IData idata) {
 		invocationCount++;
 		return wrappedInterceptor.intercept(flowPosition, idata);

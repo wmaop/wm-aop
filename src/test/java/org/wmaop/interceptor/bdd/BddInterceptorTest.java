@@ -24,7 +24,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.wmaop.aop.chainprocessor.AOPChainProcessor;
-import org.wmaop.aop.interceptor.AssertableInterceptor;
+import org.wmaop.interceptor.assertion.Assertable;
 import org.wmaop.interceptor.assertion.AssertionManager;
 
 import com.wm.app.b2b.server.BaseService;
@@ -50,7 +50,7 @@ public class BddInterceptorTest {
 		cp.getAdviceManager().registerAdvice(scenario.getAdvice());
 
 		BddInterceptor bddi = (BddInterceptor)scenario.getAdvice().getInterceptor();
-		assertEquals(1, bddi.getInterceptorsOfType(AssertableInterceptor.class).size());
+		assertEquals(1, bddi.getInterceptorsOfType(Assertable.class).size());
 		
 		// Pipeline mocking
 		IData pipeline = IDataFactory.create();

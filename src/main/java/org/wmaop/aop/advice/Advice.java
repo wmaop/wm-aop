@@ -1,6 +1,6 @@
 package org.wmaop.aop.advice;
 
-import org.wmaop.aop.interceptor.Interceptor;
+import org.wmaop.aop.chainprocessor.Interceptor;
 import org.wmaop.aop.pointcut.PointCut;
 
 public class Advice {

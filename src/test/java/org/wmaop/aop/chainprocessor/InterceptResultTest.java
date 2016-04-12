@@ -3,7 +3,7 @@ package org.wmaop.aop.chainprocessor;
 import static org.junit.Assert.*;
 
 import org.junit.Test;
-import org.wmaop.aop.interceptor.InterceptResult;
+import org.wmaop.aop.chainprocessor.InterceptResult;
 
 public class InterceptResultTest {
 

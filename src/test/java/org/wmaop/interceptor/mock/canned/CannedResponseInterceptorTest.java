@@ -10,8 +10,8 @@ import java.util.Set;
 
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.wmaop.aop.interceptor.FlowPosition;
-import org.wmaop.aop.interceptor.InterceptResult;
+import org.wmaop.aop.chainprocessor.InterceptResult;
+import org.wmaop.aop.pipeline.FlowPosition;
 import org.wmaop.interceptor.mock.canned.CannedResponseInterceptor.ResponseSequence;
 
 import com.wm.data.IData;

@@ -3,7 +3,7 @@ package org.wmaop.interceptor.assertion;
 import static org.junit.Assert.*;
 
 import org.junit.Test;
-import org.wmaop.aop.interceptor.FlowPosition;
+import org.wmaop.aop.pipeline.FlowPosition;
 
 import com.wm.data.IData;
 

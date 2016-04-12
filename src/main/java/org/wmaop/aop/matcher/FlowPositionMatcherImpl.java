@@ -1,6 +1,6 @@
 package org.wmaop.aop.matcher;
 
-import org.wmaop.aop.interceptor.FlowPosition;
+import org.wmaop.aop.pipeline.FlowPosition;
 
 public class FlowPositionMatcherImpl implements FlowPositionMatcher {
 

@@ -11,8 +11,8 @@ import java.util.Map;
 import java.util.Observable;
 
 import org.apache.log4j.Logger;
-import org.wmaop.aop.interceptor.AssertableInterceptor;
-import org.wmaop.aop.interceptor.InterceptPoint;
+import org.wmaop.aop.pointcut.InterceptPoint;
+import org.wmaop.interceptor.assertion.Assertable;
 import org.wmaop.interceptor.bdd.BddInterceptor;
 
 public class AdviceManager extends Observable {
@@ -25,7 +25,7 @@ public class AdviceManager extends Observable {
 
 	public void registerAdvice(Advice advice) {
 		// Register interceptor as assertable to track invocation count, unless it is already
-		if (!(advice.getInterceptor() instanceof AssertableInterceptor || advice.getInterceptor() instanceof BddInterceptor)) {
+		if (!(advice.getInterceptor() instanceof Assertable || advice.getInterceptor() instanceof BddInterceptor)) {
 			advice = new AssertableAdvice(advice);
 		}
 		

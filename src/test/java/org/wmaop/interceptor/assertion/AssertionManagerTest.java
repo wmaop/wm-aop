@@ -5,10 +5,8 @@ import static org.junit.Assert.assertEquals;
 import java.util.ArrayList;
 
 import org.junit.Test;
-import org.wmaop.aop.interceptor.AssertableInterceptor;
-import org.wmaop.aop.interceptor.FlowPosition;
-import org.wmaop.aop.interceptor.Interceptor;
-
+import org.wmaop.aop.chainprocessor.Interceptor;
+import org.wmaop.aop.pipeline.FlowPosition;
 import static org.mockito.Mockito.*;
 
 import com.wm.data.IDataFactory;
@@ -18,7 +16,7 @@ public class AssertionManagerTest {
 	@Test
 	public void shouldExerciseBasics() {
 		AssertionManager asm = new AssertionManager();
-		AssertableInterceptor assertion = new AssertionInterceptor("foo intercepting assertion");
+		Assertable assertion = new AssertionInterceptor("foo intercepting assertion");
 		asm.addAssertion("foo", assertion);
 		assertEquals(1, asm.getAssertionNames().size());
 		assertEquals(1, asm.getAssertions().size());

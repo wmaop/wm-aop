@@ -3,9 +3,9 @@ package org.wmaop.aop.matcher.jexl;
 import org.apache.commons.jexl2.Expression;
 import org.apache.commons.jexl2.JexlContext;
 import org.apache.commons.jexl2.MapContext;
-import org.wmaop.aop.interceptor.FlowPosition;
 import org.wmaop.aop.matcher.FlowPositionMatcher;
 import org.wmaop.aop.matcher.MatchResult;
+import org.wmaop.aop.pipeline.FlowPosition;
 import org.wmaop.util.jexl.JexlExpressionFactory;
 
 public class JexlFlowPositionMatcher implements FlowPositionMatcher {

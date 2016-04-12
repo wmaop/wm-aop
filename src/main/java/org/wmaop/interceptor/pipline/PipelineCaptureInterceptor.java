@@ -5,9 +5,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import org.wmaop.aop.interceptor.FlowPosition;
-import org.wmaop.aop.interceptor.InterceptResult;
-import org.wmaop.aop.interceptor.Interceptor;
+import org.wmaop.aop.chainprocessor.InterceptResult;
+import org.wmaop.aop.chainprocessor.Interceptor;
+import org.wmaop.aop.pipeline.FlowPosition;
 
 import com.wm.data.IData;
 import com.wm.util.coder.IDataXMLCoder;
