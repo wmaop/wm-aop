@@ -7,18 +7,19 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.wmaop.aop.chainprocessor.InterceptResult;
-import org.wmaop.aop.chainprocessor.Interceptor;
+import org.wmaop.aop.interceptor.FlowPosition;
+import org.wmaop.aop.interceptor.InterceptResult;
+import org.wmaop.aop.interceptor.Interceptor;
 import org.wmaop.aop.matcher.MatchResult;
 import org.wmaop.aop.matcher.jexl.JexlIDataMatcher;
-import org.wmaop.aop.pipeline.FlowPosition;
-
-import com.wm.data.IData;
+import org.wmaop.interceptor.BaseInterceptor;
 import org.wmaop.interceptor.bdd.xsd.Scenario;
 import org.wmaop.interceptor.bdd.xsd.Then;
 import org.wmaop.interceptor.bdd.xsd.When;
 
-public class BddInterceptor implements Interceptor {
+import com.wm.data.IData;
+
+public class BddInterceptor extends BaseInterceptor {
 
 	private static final Logger logger = Logger.getLogger(BddInterceptor.class);
 
@@ -31,6 +32,7 @@ public class BddInterceptor implements Interceptor {
 	private boolean hasExpressions;
 	
 	public BddInterceptor(Scenario scenario, boolean ignoreNoMatch) {
+		super("Scenario:"+scenario.getId());
 		Map<String, String> exprs = new LinkedHashMap<String, String>();
 		this.ignoreNoMatch = ignoreNoMatch;
 		for (When when : scenario.getWhen()) {
@@ -77,6 +79,7 @@ public class BddInterceptor implements Interceptor {
 	}
 
 	public InterceptResult intercept(FlowPosition flowPosition, IData idata) {
+		invokeCount++;
 		MatchResult result = hasExpressions ? iDataMatcher.match(idata) : null;
 		logger.info("]>]> Evaluated " + result);
 

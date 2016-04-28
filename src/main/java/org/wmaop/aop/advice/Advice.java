@@ -1,7 +1,10 @@
 package org.wmaop.aop.advice;
 
-import org.wmaop.aop.chainprocessor.Interceptor;
+import org.wmaop.aop.interceptor.FlowPosition;
+import org.wmaop.aop.interceptor.Interceptor;
 import org.wmaop.aop.pointcut.PointCut;
+
+import com.wm.data.IData;
 
 public class Advice {
 
@@ -20,6 +23,10 @@ public class Advice {
 		return pointCut;
 	}
 
+	public boolean isApplicable(FlowPosition pipelinePosition, IData idata){
+		return pointCut.isApplicable(pipelinePosition, idata);
+	}
+	
 	public Interceptor getInterceptor() {
 		return interceptor;
 	}

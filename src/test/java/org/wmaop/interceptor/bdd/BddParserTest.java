@@ -10,7 +10,7 @@ import org.junit.runner.RunWith;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-import org.wmaop.aop.chainprocessor.AOPChainProcessor;
+import org.wmaop.chainprocessor.AOPChainProcessor;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(AOPChainProcessor.class)

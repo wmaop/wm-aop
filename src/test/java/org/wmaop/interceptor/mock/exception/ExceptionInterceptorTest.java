@@ -3,8 +3,7 @@ package org.wmaop.interceptor.mock.exception;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
-import org.wmaop.aop.chainprocessor.InterceptResult;
-import org.wmaop.interceptor.mock.exception.ExceptionInterceptor;
+import org.wmaop.aop.interceptor.InterceptResult;
 
 public class ExceptionInterceptorTest {
 

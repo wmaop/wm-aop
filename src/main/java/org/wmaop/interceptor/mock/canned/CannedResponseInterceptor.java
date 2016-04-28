@@ -7,15 +7,15 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
-import org.wmaop.aop.chainprocessor.InterceptResult;
-import org.wmaop.aop.chainprocessor.Interceptor;
-import org.wmaop.aop.pipeline.FlowPosition;
+import org.wmaop.aop.interceptor.FlowPosition;
+import org.wmaop.aop.interceptor.InterceptResult;
+import org.wmaop.interceptor.BaseInterceptor;
 
 import com.wm.data.IData;
 import com.wm.data.IDataUtil;
 import com.wm.util.coder.IDataXMLCoder;
 
-public class CannedResponseInterceptor implements Interceptor {
+public class CannedResponseInterceptor extends BaseInterceptor {
 
 	public enum ResponseSequence{ 
 		SEQUENTIAL, RANDOM;
@@ -31,6 +31,7 @@ public class CannedResponseInterceptor implements Interceptor {
 	}
 
 	public CannedResponseInterceptor(ResponseSequence seq, List<String> list) throws IOException {
+		super("CannedResponse:");
 		sequence = seq;
 		cannedIdata = new ArrayList<>();
 		for (String idataXml : list) {
@@ -43,16 +44,19 @@ public class CannedResponseInterceptor implements Interceptor {
 	}
 
 	public CannedResponseInterceptor(IData idata) {
+		super("CannedResponse:");
 		cannedIdata = Arrays.asList(idata);
 		sequence = ResponseSequence.SEQUENTIAL;
 	}
 
 	public CannedResponseInterceptor(ResponseSequence seq, IData... idata) {
+		super("CannedResponse:");
 		cannedIdata = Arrays.asList(idata);
 		sequence = seq;
 	}
 
 	public InterceptResult intercept(FlowPosition flowPosition, IData pipeline) {
+		invokeCount++;
 		if (cannedIdata != null) {
 			IDataUtil.merge(getResponse(), pipeline);
 		}

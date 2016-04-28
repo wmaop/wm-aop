@@ -1,9 +1,9 @@
-package org.wmaop.aop.chainprocessor;
+package org.wmaop.chainprocessor;
 
 import static org.wmaop.aop.advice.AdviceState.ENABLED;
-import static org.wmaop.aop.pointcut.InterceptPoint.AFTER;
-import static org.wmaop.aop.pointcut.InterceptPoint.BEFORE;
-import static org.wmaop.aop.pointcut.InterceptPoint.INVOKE;
+import static org.wmaop.aop.interceptor.InterceptPoint.AFTER;
+import static org.wmaop.aop.interceptor.InterceptPoint.BEFORE;
+import static org.wmaop.aop.interceptor.InterceptPoint.INVOKE;
 
 import java.util.Iterator;
 
@@ -11,10 +11,12 @@ import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 import org.apache.log4j.Logger;
 import org.wmaop.aop.advice.Advice;
 import org.wmaop.aop.advice.AdviceManager;
-import org.wmaop.aop.pipeline.FlowPosition;
+import org.wmaop.aop.assertion.AspectAssertionObserver;
+import org.wmaop.aop.assertion.AssertionManager;
+import org.wmaop.aop.interceptor.FlowPosition;
+import org.wmaop.aop.interceptor.InterceptResult;
+import org.wmaop.aop.interceptor.Interceptor;
 import org.wmaop.aop.stub.StubManager;
-import org.wmaop.interceptor.assertion.AspectAssertionObserver;
-import org.wmaop.interceptor.assertion.AssertionManager;
 
 import com.wm.app.b2b.server.BaseService;
 import com.wm.app.b2b.server.invoke.InvokeChainProcessor;
@@ -103,7 +105,7 @@ public class AOPChainProcessor implements InvokeChainProcessor {
 		boolean hasIntercepted = false;
 		try {
 			for (Advice advice : adviceManager.getAdvicesForInterceptPoint(pos.getInterceptPoint())) {
-				if (advice.getAdviceState() == ENABLED && advice.getPointCut().isApplicable(pos, idata)) {
+				if (advice.getAdviceState() == ENABLED && advice.isApplicable(pos, idata)) {
 					hasIntercepted = intercept(exitOnIntercept, pos, idata, serviceStatus, advice);
 					if (hasIntercepted) {
 						break;

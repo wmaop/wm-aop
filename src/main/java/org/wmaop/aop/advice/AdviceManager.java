@@ -11,9 +11,7 @@ import java.util.Map;
 import java.util.Observable;
 
 import org.apache.log4j.Logger;
-import org.wmaop.aop.pointcut.InterceptPoint;
-import org.wmaop.interceptor.assertion.Assertable;
-import org.wmaop.interceptor.bdd.BddInterceptor;
+import org.wmaop.aop.interceptor.InterceptPoint;
 
 public class AdviceManager extends Observable {
 
@@ -24,10 +22,6 @@ public class AdviceManager extends Observable {
 	protected final Map<String, Advice> ID_ADVICE = new HashMap<String, Advice>();
 
 	public void registerAdvice(Advice advice) {
-		// Register interceptor as assertable to track invocation count, unless it is already
-		if (!(advice.getInterceptor() instanceof Assertable || advice.getInterceptor() instanceof BddInterceptor)) {
-			advice = new AssertableAdvice(advice);
-		}
 		
 		Advice oldAdvice = getAdvice(advice.getId());
 		if (oldAdvice != null) {
@@ -36,15 +30,12 @@ public class AdviceManager extends Observable {
 		ADVICES.get(advice.getPointCut().getInterceptPoint()).add(advice);
 		ID_ADVICE.put(advice.getId(), advice);
 		
-		// Notify if new
 		if (advice.getAdviceState() == NEW) {
-			setChanged();
-			notifyObservers(advice);
+			notify(advice);
 		}
 		
 		advice.setAdviceState(ENABLED);
-		setChanged();
-		notifyObservers(advice);
+		notify(advice);
 		logger.info(PFX + "Registered advice " + advice);
 	}
 
@@ -63,9 +54,7 @@ public class AdviceManager extends Observable {
 		}
 		ID_ADVICE.remove(advice.getId());
 		advice.setAdviceState(DISPOSED);
-		setChanged();
-		notifyObservers(advice);
-		//stubManager.unregisterStub(advice);
+		notify(advice);
 	}
 
 	public void clearAdvice() {
@@ -76,7 +65,6 @@ public class AdviceManager extends Observable {
 			}
 		}
 		logger.info(PFX + "Cleared all Advice");
-		//stubManager.clearStubs();
 	}
 
 	public Advice getAdvice(String id) {
@@ -101,5 +89,10 @@ public class AdviceManager extends Observable {
 
 	public List<Advice> getAdvicesForInterceptPoint(InterceptPoint interceptPoint) {
 		return ADVICES.get(interceptPoint);
+	}
+
+	void notify(Advice advice) {
+		setChanged();
+		notifyObservers(advice);
 	}
 }

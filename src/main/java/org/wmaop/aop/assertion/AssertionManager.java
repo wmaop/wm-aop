@@ -1,4 +1,4 @@
-package org.wmaop.interceptor.assertion;
+package org.wmaop.aop.assertion;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -7,7 +7,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.log4j.Logger;
-import org.wmaop.flow.MockManager;
 
 public class AssertionManager  {
 

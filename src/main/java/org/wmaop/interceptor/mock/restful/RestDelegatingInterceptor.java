@@ -5,14 +5,15 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-import org.wmaop.aop.chainprocessor.InterceptResult;
-import org.wmaop.aop.pipeline.FlowPosition;
+import org.wmaop.aop.interceptor.FlowPosition;
+import org.wmaop.aop.interceptor.InterceptResult;
+import org.wmaop.interceptor.BaseInterceptor;
 
 import com.wm.data.IData;
 import com.wm.data.IDataUtil;
 import com.wm.util.coder.IDataXMLCoder;
 
-public class RestDelegatingInterceptor implements org.wmaop.aop.chainprocessor.Interceptor {
+public class RestDelegatingInterceptor extends BaseInterceptor {
 
 	public static final String APPLICATION_XML = "application/xml";
 
@@ -20,11 +21,13 @@ public class RestDelegatingInterceptor implements org.wmaop.aop.chainprocessor.I
 	private final String serviceName;
 
 	public RestDelegatingInterceptor(String serviceName, String destinationUrl) {
+		super("Restful:"+serviceName+'-'+destinationUrl);
 		this.serviceName = serviceName;
 		this.destinationUrl = destinationUrl;
 	}
 
 	public InterceptResult intercept(FlowPosition flowPosition, IData idata) {
+		invokeCount++;
 		sendPost(idata);
 		return InterceptResult.TRUE;
 	}

@@ -4,16 +4,16 @@ import java.text.MessageFormat;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.wmaop.aop.advice.Advice;
-import org.wmaop.aop.chainprocessor.AOPChainProcessor;
-import org.wmaop.aop.chainprocessor.Interceptor;
+import org.wmaop.aop.interceptor.FlowPosition;
+import org.wmaop.aop.interceptor.InterceptPoint;
+import org.wmaop.aop.interceptor.Interceptor;
 import org.wmaop.aop.matcher.AlwaysTrueMatcher;
 import org.wmaop.aop.matcher.FlowPositionMatcherImpl;
 import org.wmaop.aop.matcher.Matcher;
 import org.wmaop.aop.matcher.jexl.JexlIDataMatcher;
-import org.wmaop.aop.pipeline.FlowPosition;
-import org.wmaop.aop.pointcut.InterceptPoint;
 import org.wmaop.aop.pointcut.PointCut;
 import org.wmaop.aop.pointcut.ServicePipelinePointCut;
+import org.wmaop.chainprocessor.AOPChainProcessor;
 
 import com.wm.app.b2b.server.ServiceException;
 import com.wm.data.IData;

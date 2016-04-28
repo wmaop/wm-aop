@@ -1,13 +1,16 @@
 package org.wmaop.interceptor.assertion;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
 
 import java.util.ArrayList;
 
 import org.junit.Test;
-import org.wmaop.aop.chainprocessor.Interceptor;
-import org.wmaop.aop.pipeline.FlowPosition;
-import static org.mockito.Mockito.*;
+import org.wmaop.aop.assertion.Assertable;
+import org.wmaop.aop.assertion.AssertionInterceptor;
+import org.wmaop.aop.assertion.AssertionManager;
+import org.wmaop.aop.interceptor.FlowPosition;
+import org.wmaop.aop.interceptor.Interceptor;
 
 import com.wm.data.IDataFactory;
 

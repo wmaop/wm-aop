@@ -12,6 +12,9 @@ import org.junit.runner.RunWith;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.wmaop.aop.advice.Advice;
 import org.wmaop.aop.advice.AdviceState;
+import org.wmaop.aop.assertion.AspectAssertionObserver;
+import org.wmaop.aop.assertion.AssertionInterceptor;
+import org.wmaop.aop.assertion.AssertionManager;
 
 @RunWith(PowerMockRunner.class)
 public class AspectAssertionObserverTest {

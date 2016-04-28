@@ -1,13 +1,15 @@
 package org.wmaop.interceptor.assertion;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
 
 import org.junit.Test;
-import org.wmaop.aop.pipeline.FlowPosition;
+import org.wmaop.aop.assertion.AssertionInterceptor;
+import org.wmaop.aop.interceptor.FlowPosition;
 
 import com.wm.data.IData;
-
-import static org.mockito.Mockito.*;
 
 public class AssertionInterceptorTest {
 

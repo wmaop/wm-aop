@@ -1,10 +1,10 @@
-package org.wmaop.interceptor.assertion;
+package org.wmaop.aop.assertion;
 
 import java.util.Observable;
 import java.util.Observer;
 
 import org.wmaop.aop.advice.Advice;
-import org.wmaop.aop.chainprocessor.Interceptor;
+import org.wmaop.aop.interceptor.Interceptor;
 import org.wmaop.interceptor.bdd.BddInterceptor;
 
 public class AspectAssertionObserver implements Observer {

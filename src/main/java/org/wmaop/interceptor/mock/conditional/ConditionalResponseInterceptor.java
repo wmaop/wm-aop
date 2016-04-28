@@ -7,17 +7,17 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.wmaop.aop.chainprocessor.InterceptResult;
-import org.wmaop.aop.chainprocessor.Interceptor;
+import org.wmaop.aop.interceptor.FlowPosition;
+import org.wmaop.aop.interceptor.InterceptResult;
 import org.wmaop.aop.matcher.MatchResult;
 import org.wmaop.aop.matcher.jexl.JexlIDataMatcher;
-import org.wmaop.aop.pipeline.FlowPosition;
+import org.wmaop.interceptor.BaseInterceptor;
 
 import com.wm.data.IData;
 import com.wm.data.IDataUtil;
 import com.wm.util.coder.IDataXMLCoder;
 
-public class ConditionalResponseInterceptor implements Interceptor {
+public class ConditionalResponseInterceptor extends BaseInterceptor {
 
 	private static final Logger logger = Logger.getLogger(ConditionalResponseInterceptor.class);
 
@@ -28,6 +28,7 @@ public class ConditionalResponseInterceptor implements Interceptor {
 	private final boolean ignoreNoMatch;
 
 	public ConditionalResponseInterceptor(List<ConditionResponse> conditionResponses, ConditionResponse defaultResponse, boolean ignoreNoMatch) throws IOException {
+		super("ConditionalResponse:");
 		Map<String, String> exprs = new LinkedHashMap<String, String>();
 		this.ignoreNoMatch = ignoreNoMatch;
 		for (ConditionResponse cr : conditionResponses) {
@@ -47,6 +48,7 @@ public class ConditionalResponseInterceptor implements Interceptor {
 	}
 
 	public InterceptResult intercept(FlowPosition flowPosition, IData idata) {
+		invokeCount++;
 		MatchResult result = evaluator.match(idata);
 		logger.info("]>]> Evaluated " + result);
 		if (result != null) {

@@ -1,14 +1,16 @@
 package org.wmaop.aop.pointcut;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import org.junit.Test;
+import org.wmaop.aop.interceptor.FlowPosition;
+import org.wmaop.aop.interceptor.InterceptPoint;
 import org.wmaop.aop.matcher.MatchResult;
 import org.wmaop.aop.matcher.Matcher;
-import org.wmaop.aop.pipeline.FlowPosition;
-import org.wmaop.aop.pointcut.ServicePipelinePointCut;
 
 import com.wm.data.IData;
 

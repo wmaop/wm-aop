@@ -3,15 +3,14 @@ package org.wmaop.interceptor.bdd;
 import java.io.IOException;
 import java.util.List;
 
-import org.wmaop.aop.chainprocessor.Interceptor;
-import org.wmaop.interceptor.assertion.AssertionInterceptor;
+import org.wmaop.aop.assertion.AssertionInterceptor;
+import org.wmaop.aop.interceptor.Interceptor;
+import org.wmaop.interceptor.bdd.xsd.Assert;
+import org.wmaop.interceptor.bdd.xsd.Then;
 import org.wmaop.interceptor.mock.canned.CannedResponseInterceptor;
 import org.wmaop.interceptor.mock.canned.CannedResponseInterceptor.ResponseSequence;
 import org.wmaop.interceptor.mock.exception.ExceptionInterceptor;
 import org.wmaop.interceptor.pipline.PipelineCaptureInterceptor;
-
-import org.wmaop.interceptor.bdd.xsd.Assert;
-import org.wmaop.interceptor.bdd.xsd.Then;
 
 public class InterceptorFactory {
 

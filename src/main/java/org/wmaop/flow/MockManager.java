@@ -6,10 +6,9 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.wmaop.aop.advice.Advice;
-import org.wmaop.aop.chainprocessor.AOPChainProcessor;
-import org.wmaop.aop.chainprocessor.Interceptor;
-import org.wmaop.interceptor.assertion.Assertable;
-import org.wmaop.interceptor.assertion.AssertionInterceptor;
+import org.wmaop.aop.assertion.AssertionInterceptor;
+import org.wmaop.aop.interceptor.Interceptor;
+import org.wmaop.chainprocessor.AOPChainProcessor;
 import org.wmaop.interceptor.mock.canned.CannedResponseInterceptor;
 import org.wmaop.interceptor.mock.exception.ExceptionInterceptor;
 

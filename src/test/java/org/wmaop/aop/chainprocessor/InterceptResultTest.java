@@ -1,9 +1,12 @@
 package org.wmaop.aop.chainprocessor;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
-import org.wmaop.aop.chainprocessor.InterceptResult;
+import org.wmaop.aop.interceptor.InterceptResult;
 
 public class InterceptResultTest {
 

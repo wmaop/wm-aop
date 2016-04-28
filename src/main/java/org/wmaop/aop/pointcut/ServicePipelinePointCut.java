@@ -1,7 +1,8 @@
 package org.wmaop.aop.pointcut;
 
+import org.wmaop.aop.interceptor.FlowPosition;
+import org.wmaop.aop.interceptor.InterceptPoint;
 import org.wmaop.aop.matcher.Matcher;
-import org.wmaop.aop.pipeline.FlowPosition;
 
 import com.wm.data.IData;
 

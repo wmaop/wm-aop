@@ -11,15 +11,14 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.wmaop.aop.advice.Advice;
+import org.wmaop.aop.interceptor.FlowPosition;
 import org.wmaop.aop.matcher.FlowPositionMatcher;
 import org.wmaop.aop.matcher.Matcher;
-import org.wmaop.aop.pipeline.FlowPosition;
 
 import com.wm.app.b2b.server.BaseService;
 import com.wm.app.b2b.server.Package;
 import com.wm.app.b2b.server.PackageManager;
 import com.wm.app.b2b.server.ServerAPI;
-import com.wm.app.b2b.server.ServiceException;
 import com.wm.app.b2b.server.ServiceSetupException;
 import com.wm.app.b2b.server.ns.Namespace;
 import com.wm.lang.ns.NSException;
@@ -74,7 +73,7 @@ public class StubManager {
 				throw new RuntimeException(e);
 			}
 		}
-		stubbedServices.clear();;
+		stubbedServices.clear();
 	}
 
 	public boolean hasStub(String svcName) {
@@ -125,9 +124,9 @@ public class StubManager {
 
 	protected String getServiceName(Advice advice) {
 		String svcName = null;
-		Matcher<FlowPosition> flowPositionMatcher = advice.getPointCut().getFlowPositionMatcher();
-		if (flowPositionMatcher instanceof FlowPositionMatcher) {
-			svcName = ((FlowPositionMatcher)flowPositionMatcher).getServiceName();
+		Matcher<FlowPosition> matcher = advice.getPointCut().getFlowPositionMatcher();
+		if (matcher instanceof FlowPositionMatcher) {
+			svcName = ((FlowPositionMatcher)matcher).getServiceName();
 		}
 		return svcName;
 	}

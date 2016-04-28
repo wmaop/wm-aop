@@ -15,16 +15,16 @@ import java.util.List;
 
 import org.junit.Test;
 import org.wmaop.aop.advice.Advice;
-import org.wmaop.aop.chainprocessor.AOPChainProcessor;
-import org.wmaop.aop.chainprocessor.Interceptor;
+import org.wmaop.aop.assertion.AssertionInterceptor;
+import org.wmaop.aop.interceptor.InterceptPoint;
+import org.wmaop.aop.interceptor.Interceptor;
 import org.wmaop.aop.matcher.AlwaysTrueMatcher;
 import org.wmaop.aop.matcher.FlowPositionMatcherImpl;
 import org.wmaop.aop.matcher.Matcher;
 import org.wmaop.aop.matcher.jexl.JexlIDataMatcher;
-import org.wmaop.aop.pointcut.InterceptPoint;
 import org.wmaop.aop.pointcut.PointCut;
 import org.wmaop.aop.pointcut.ServicePipelinePointCut;
-import org.wmaop.interceptor.assertion.AssertionInterceptor;
+import org.wmaop.chainprocessor.AOPChainProcessor;
 import org.wmaop.interceptor.mock.canned.CannedResponseInterceptor;
 import org.wmaop.interceptor.mock.exception.ExceptionInterceptor;
 
