@@ -9,7 +9,7 @@
 	<parent>
 		<groupId>org.wmaop</groupId>
 		<artifactId>wm-parent</artifactId>
-		<version>1.0.1-SNAPSHOT</version>
+		<version>1.0.3-SNAPSHOT</version>
 	</parent>
 
 	<name>wm-aop</name>

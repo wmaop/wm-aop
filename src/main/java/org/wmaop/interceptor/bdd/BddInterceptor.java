@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.wmaop.aop.interceptor.CompositeInterceptor;
 import org.wmaop.aop.interceptor.FlowPosition;
 import org.wmaop.aop.interceptor.InterceptResult;
 import org.wmaop.aop.interceptor.Interceptor;
@@ -19,7 +20,7 @@ import org.wmaop.interceptor.bdd.xsd.When;
 
 import com.wm.data.IData;
 
-public class BddInterceptor extends BaseInterceptor {
+public class BddInterceptor extends BaseInterceptor implements CompositeInterceptor {
 
 	private static final Logger logger = Logger.getLogger(BddInterceptor.class);
 
@@ -42,12 +43,13 @@ public class BddInterceptor extends BaseInterceptor {
 		iDataMatcher = new JexlIDataMatcher(exprs);
 	}
 
-	public List<Interceptor> getInterceptorsOfType(Class<?> type) {
-		List<Interceptor> m = new ArrayList<>();
+	@Override
+	public <T extends Interceptor> List<T> getInterceptorsOfType(Class<T> type) {
+		List<T> m = new ArrayList<>();
 		for (String id : interceptorMap.keySet()) {
 			for (Interceptor interceptor: interceptorMap.get(id)) {
 				if (type.isAssignableFrom(interceptor.getClass())) {
-					m.add(interceptor);
+					m.add((T) interceptor);
 				}
 			}
 		}
@@ -105,4 +107,5 @@ public class BddInterceptor extends BaseInterceptor {
 		}
 		return result;
 	}
+
 }
