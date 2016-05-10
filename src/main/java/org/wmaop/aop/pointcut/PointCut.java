@@ -13,4 +13,6 @@ public interface PointCut {
 	InterceptPoint getInterceptPoint();
 
 	Matcher<FlowPosition> getFlowPositionMatcher();
+
+	Object toMap();
 }

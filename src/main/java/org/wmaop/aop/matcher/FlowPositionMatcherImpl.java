@@ -1,5 +1,8 @@
 package org.wmaop.aop.matcher;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.wmaop.aop.interceptor.FlowPosition;
 
 public class FlowPositionMatcherImpl implements FlowPositionMatcher {
@@ -26,5 +29,13 @@ public class FlowPositionMatcherImpl implements FlowPositionMatcher {
 	@Override
 	public String getServiceName() {
 		return serviceName;
+	}
+
+	@Override
+	public Map<String, Object> toMap() {
+		Map<String, Object> am = new HashMap<>();
+		am.put("type", "FlowPositionMatcher");
+		am.put("serviceName", serviceName);
+		return am;
 	}
 }

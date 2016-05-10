@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Map;
 
 import org.wmaop.aop.interceptor.FlowPosition;
 import org.wmaop.aop.interceptor.InterceptResult;
@@ -21,7 +22,7 @@ public class RestDelegatingInterceptor extends BaseInterceptor {
 	private final String serviceName;
 
 	public RestDelegatingInterceptor(String serviceName, String destinationUrl) {
-		super("Restful:"+serviceName+'-'+destinationUrl);
+		super("Restful:"+serviceName);
 		this.serviceName = serviceName;
 		this.destinationUrl = destinationUrl;
 	}
@@ -56,5 +57,11 @@ public class RestDelegatingInterceptor extends BaseInterceptor {
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
+	}
+
+	@Override
+	protected void addMap(Map<String, Object> am) {
+		am.put("type", "RestDelegatingInterceptor");
+		am.put("destinationUrl", destinationUrl);
 	}
 }

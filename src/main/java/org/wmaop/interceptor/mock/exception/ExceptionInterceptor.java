@@ -1,5 +1,7 @@
 package org.wmaop.interceptor.mock.exception;
 
+import java.util.Map;
+
 import org.wmaop.aop.interceptor.FlowPosition;
 import org.wmaop.aop.interceptor.InterceptResult;
 import org.wmaop.interceptor.BaseInterceptor;
@@ -21,6 +23,13 @@ public class ExceptionInterceptor extends BaseInterceptor {
 	public InterceptResult intercept(FlowPosition flowPosition, IData idata) {
 		invokeCount++;
 		return interceptResult;
+	}
+
+	@Override
+	protected void addMap(Map<String, Object> am) {
+		am.put("type", "ExceptionInterceptor");
+		am.put("exception", interceptResult.getException().getClass().getName());
+		
 	}
 
 }

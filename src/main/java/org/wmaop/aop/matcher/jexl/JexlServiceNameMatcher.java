@@ -1,5 +1,8 @@
 package org.wmaop.aop.matcher.jexl;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.commons.jexl2.Expression;
 import org.apache.commons.jexl2.JexlContext;
 import org.apache.commons.jexl2.MapContext;
@@ -12,6 +15,7 @@ public class JexlServiceNameMatcher implements Matcher<FlowPosition> {
 
 	private final Expression expression;
 	private final String sid;
+
 	public JexlServiceNameMatcher(String sid, String expr) {
 		this.sid = sid;
 		expression = createExpression(sid, expr);
@@ -34,11 +38,21 @@ public class JexlServiceNameMatcher implements Matcher<FlowPosition> {
 		verifyExpressionResult(name, result);
 		return compiledExpr;
 	}
-	
+
 	private void verifyExpressionResult(String name, Object result) {
 		if (!(result instanceof Boolean)) {
-			throw new RuntimeException("Cannot parse expression named '" + name
-					+ "' to get boolean, instead got " + result.getClass().getSimpleName() + ": " + result);
+			throw new RuntimeException("Cannot parse expression named '" + name + "' to get boolean, instead got "
+					+ result.getClass().getSimpleName() + ": " + result);
 		}
 	}
+
+	@Override
+	public Map<String, Object> toMap() {
+		Map<String, Object> am = new HashMap<>();
+		am.put("type", "JexlServiceNameMatcher");
+		am.put("id", sid);
+		am.put("expression", expression.toString());
+		return am;
+	}
+
 }

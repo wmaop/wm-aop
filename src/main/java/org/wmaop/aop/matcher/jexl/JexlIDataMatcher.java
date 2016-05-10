@@ -1,6 +1,7 @@
 package org.wmaop.aop.matcher.jexl;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -62,6 +63,16 @@ public class JexlIDataMatcher implements Matcher<IData> {
 	public String toString() {
 		return "JexlMatcher["+EXPRESSION+']';
 	}
-	
+
+	@Override
+	public Map<String, Object> toMap() {
+		Map<String, Object> am = new HashMap<>();
+		am.put("type", "JexlIDataMatcher");
+		for (Entry<String, Expression> e : expressions.entrySet()) {
+			am.put(e.getKey(), e.getValue().toString());
+		}
+		return am;
+	}
+
 	
 }

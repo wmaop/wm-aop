@@ -1,5 +1,8 @@
 package org.wmaop.aop.advice;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.wmaop.aop.interceptor.FlowPosition;
 import org.wmaop.aop.interceptor.Interceptor;
 import org.wmaop.aop.pointcut.PointCut;
@@ -46,6 +49,15 @@ public class Advice {
 	@Override
 	public String toString() {
 		return id + ' ' + adviceState + ' ' + pointCut + ' ' + interceptor + ' ' + pointCut.getInterceptPoint();
+	}
+	
+	public Map<String, Object> toMap() {
+		Map<String, Object> am = new HashMap<>();
+		am.put("state", adviceState.toString());
+		am.put("id", id);
+		am.put("pointcut", pointCut.toMap());
+		am.put("interceptor", interceptor.toMap());
+		return am;
 	}
 
 	@Override

@@ -1,5 +1,8 @@
 package org.wmaop.aop.matcher;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class AlwaysTrueMatcher<T> implements Matcher<T> {
 
 	private final MatchResult result;
@@ -17,6 +20,13 @@ public class AlwaysTrueMatcher<T> implements Matcher<T> {
 
 	public MatchResult match(Object value) {
 		return result;
+	}
+
+	@Override
+	public Map<String, Object> toMap() {
+		Map<String, Object> am = new HashMap<>();
+		am.put("type", "AlwaysTrueMatcher");
+		return am;
 	}
 
 }

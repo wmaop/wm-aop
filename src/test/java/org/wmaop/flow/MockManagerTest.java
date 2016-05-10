@@ -18,6 +18,8 @@ import com.wm.util.coder.IDataXMLCoder;
 
 public class MockManagerTest {
 
+	private static final String[][] PARAMS = new String[][] { { ADVICE_ID, "advid" }, { INTERCEPT_POINT, "before" }, { SERVICE_NAME, "foo:bar" } };
+
 	@Test
 	public void shouldVerifyMissingParameters() throws Exception {
 		final MockManager mm = new MockManager();
@@ -62,18 +64,13 @@ public class MockManagerTest {
 			public void action(IData idata) throws ServiceException {
 				mm.registerFixedResponseMock(idata);
 			}
-		}, new String[][] { { ADVICE_ID, "advid" }, { INTERCEPT_POINT, "before" }, { SERVICE_NAME, "foo:bar" } });
+		}, PARAMS);
 	}
 
 	private void testForMissingManadatory(Callback callback, String[][] params) throws Exception {
 		for (int i = 0; i < params.length; i++) {
 			IData idata = IDataFactory.create();
-			IDataCursor idc = idata.getCursor();
-			for (int j = 0; j < params.length; j++) {
-				if (i == j)
-					continue; // Miss out one at a time;
-				IDataUtil.put(idc, params[j][0], params[j][1]);
-			}
+			addParams(idata, params, i);  // Miss out one at a time;
 			try {
 				callback.action(idata);
 				fail("Missed mandatory " + params[i][0]);
@@ -83,7 +80,18 @@ public class MockManagerTest {
 		}
 	}
 
+	private void addParams(IData idata, String[][] params, int skipEntry) {
+		IDataCursor idc = idata.getCursor();
+		for (int j = 0; j < params.length; j++) {
+			if (skipEntry == j)
+				continue;
+			IDataUtil.put(idc, params[j][0], params[j][1]);
+		}
+		idc.destroy();
+	}
+
 	interface Callback {
 		void action(IData idata) throws ServiceException;
 	}
+	
 }

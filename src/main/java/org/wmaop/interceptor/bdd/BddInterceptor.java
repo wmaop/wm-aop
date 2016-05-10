@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.log4j.Logger;
 import org.wmaop.aop.interceptor.CompositeInterceptor;
@@ -43,6 +44,7 @@ public class BddInterceptor extends BaseInterceptor implements CompositeIntercep
 		iDataMatcher = new JexlIDataMatcher(exprs);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public <T extends Interceptor> List<T> getInterceptorsOfType(Class<T> type) {
 		List<T> m = new ArrayList<>();
@@ -58,7 +60,7 @@ public class BddInterceptor extends BaseInterceptor implements CompositeIntercep
 	
 	private void processWhen(Map<String, String> exprs, When when) {
 		InterceptorFactory intFactory = new InterceptorFactory();
-		String sid = when.getId();
+		String id = when.getId();
 		String expr = when.getCondition();
 
 		for (Object o : when.getContent()) {
@@ -66,17 +68,17 @@ public class BddInterceptor extends BaseInterceptor implements CompositeIntercep
 				continue;
 			Interceptor interceptor = intFactory.getInterceptor((Then) o);
 			if (expr != null) {
-				exprs.put(sid, expr);
-				List<Interceptor> am = interceptorMap.get(sid);
+				exprs.put(id, expr);
+				List<Interceptor> am = interceptorMap.get(id);
 				if (am == null) {
 					am = new ArrayList<Interceptor>();
-					interceptorMap.put(sid, am);
+					interceptorMap.put(id, am);
 				}
 				am.add(interceptor);
 			} else {
 				defaultInterceptors.add(interceptor);
 			}
-			logger.info("]>]> Adding response id " + sid + " to action " + interceptor);
+			logger.info("]>]> Adding response id " + id + " to action " + interceptor);
 		}
 	}
 
@@ -106,6 +108,28 @@ public class BddInterceptor extends BaseInterceptor implements CompositeIntercep
 			}
 		}
 		return result;
+	}
+	
+	@Override
+	public void addMap(Map<String, Object> am) {
+		am.put("type", "BddInterceptor");
+		am.put("name", name);
+		am.put("invokeCount", invokeCount);
+		am.put("ignoreNoMatch", Boolean.toString(ignoreNoMatch));
+		Map<String, Object> iterceptors = new HashMap<>();
+		for (Entry<String, List<Interceptor>> e : interceptorMap.entrySet()) {
+			iterceptors.put(e.getKey(), toMapList(e.getValue()));
+		}
+		am.put("interceptors", iterceptors);
+		am.put("defaultInterceptors", toMapList(defaultInterceptors));
+	}
+
+	List<Map<String, Object>> toMapList(List<Interceptor> interceptors) {
+		List<Map<String, Object>> ml = new ArrayList<>();
+		for (Interceptor i : interceptors) {
+			ml.add(i.toMap());
+		}
+		return ml;
 	}
 
 }

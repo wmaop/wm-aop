@@ -1,5 +1,8 @@
 package org.wmaop.aop.pointcut;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.wmaop.aop.interceptor.FlowPosition;
 import org.wmaop.aop.interceptor.InterceptPoint;
 import org.wmaop.aop.matcher.Matcher;
@@ -38,6 +41,15 @@ public class ServicePipelinePointCut implements PointCut {
 	@Override
 	public InterceptPoint getInterceptPoint() {
 		return interceptPoint;
+	}
+
+	@Override
+	public Map<String, Object> toMap() {
+		Map<String, Object> am = new HashMap<>();
+		am.put("interceptPoint", interceptPoint.toString());
+		am.put("flowPositionMatcher", flowPositionMatcher.toMap());
+		am.put("pipelineMatcher", pipelineMatcher.toMap());
+		return am;
 	}
 
 }

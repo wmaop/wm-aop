@@ -42,6 +42,9 @@ public class AOPChainProcessor implements InvokeChainProcessor {
 		return instance;
 	}
 
+	/**
+	 * Instantiated by invokemanager
+	 */
 	public AOPChainProcessor() {
 		logger.info(PFX + "Initialising " + this.getClass().getName());
 		adviceManager.reset();

@@ -1,5 +1,7 @@
 package org.wmaop.aop.interceptor;
 
+import java.util.Map;
+
 import com.wm.data.IData;
 
 public interface Interceptor {
@@ -9,5 +11,7 @@ public interface Interceptor {
 	int getInvokeCount();
 
 	String getName();
+
+	Map<String, Object> toMap();
 
 }

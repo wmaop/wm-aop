@@ -1,5 +1,8 @@
 package org.wmaop.aop.assertion;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.wmaop.aop.interceptor.FlowPosition;
 import org.wmaop.aop.interceptor.InterceptResult;
 import org.wmaop.aop.interceptor.Interceptor;
@@ -47,5 +50,14 @@ public class AssertionInterceptor implements Interceptor, Assertable {
 	@Override
 	public String getName() {
 		return assertionName;
+	}
+
+	@Override
+	public Map<String, Object> toMap() {
+		Map<String, Object> am = new HashMap<>();
+		am.put("assertionName", assertionName);
+		am.put("invokeCount", invokeCount);
+		am.put("asserted", Boolean.toString(asserted));
+		return null;
 	}
 }

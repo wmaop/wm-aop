@@ -1,5 +1,8 @@
 package org.wmaop.aop.matcher.jexl;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.commons.jexl2.Expression;
 import org.apache.commons.jexl2.JexlContext;
 import org.apache.commons.jexl2.MapContext;
@@ -46,4 +49,14 @@ public class JexlFlowPositionMatcher implements FlowPositionMatcher {
 	public String getServiceName() {
 		return null; // Cant state the exact service because its expression based
 	}
+	
+	@Override
+	public Map<String, Object> toMap() {
+		Map<String, Object> am = new HashMap<>();
+		am.put("type", "JexlFlowPositionMatcher");
+		am.put("id", sid);
+		am.put("expression", expression.toString());
+		return am;
+	}
+	
 }

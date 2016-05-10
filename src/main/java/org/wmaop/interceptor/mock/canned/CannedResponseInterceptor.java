@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import org.wmaop.aop.interceptor.FlowPosition;
@@ -75,6 +77,16 @@ public class CannedResponseInterceptor extends BaseInterceptor {
 	@Override
 	public String toString() {
 		return "CannedResponseInterceptor";
+	}
+
+	@Override
+	protected void addMap(Map<String, Object> am) {
+		am.put("type", "CannedResponseInterceptor");
+		am.put("responseSequence", sequence.toString());
+		int i = 0;
+		for (IData idata :cannedIdata) {
+			am.put("response" + i++, idata);
+		}
 	}
 
 }

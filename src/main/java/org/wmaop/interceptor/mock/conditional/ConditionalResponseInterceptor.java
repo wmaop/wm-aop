@@ -65,4 +65,14 @@ public class ConditionalResponseInterceptor extends BaseInterceptor {
 		}
 		throw new RuntimeException("No conditions match pipeline state");
 	}
+
+	@Override
+	protected void addMap(Map<String, Object> am) {
+		am.put("type", "ConditionalResponseInterceptor");
+		am.put("condition", evaluator.toMap());
+		am.put("defaultResponse", defaultResponse);
+		am.put("defaultId", defaultId);
+		am.put("ignoreNoMatch", Boolean.toString(ignoreNoMatch));
+		am.put("rsponses", responses);
+	}
 }

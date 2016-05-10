@@ -2,15 +2,19 @@ package org.wmaop.flow;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.wmaop.aop.advice.Advice;
+import org.wmaop.aop.advice.AdviceManager;
 import org.wmaop.aop.assertion.AssertionInterceptor;
 import org.wmaop.aop.interceptor.Interceptor;
 import org.wmaop.chainprocessor.AOPChainProcessor;
 import org.wmaop.interceptor.mock.canned.CannedResponseInterceptor;
 import org.wmaop.interceptor.mock.exception.ExceptionInterceptor;
+import org.wmaop.util.pipeline.StructureConverter;
 
 import com.wm.app.b2b.server.ServiceException;
 import com.wm.data.IData;
@@ -52,19 +56,23 @@ public class MockManager extends AbstractFlowManager {
 	public void getAdvice(IData pipeline) {
 		IDataCursor pipelineCursor = pipeline.getCursor();
 		String	adviceId = IDataUtil.getString( pipelineCursor, "id" );
-	
-		List<Advice> advs;
+		AdviceManager adviceMgr = AOPChainProcessor.getInstance().getAdviceManager();
+		Map<String, ?> adviceMap;
 		if (adviceId == null || adviceId.length() == 0) {
-			advs = AOPChainProcessor.getInstance().getAdviceManager().listAdvice();
+			adviceMap = adviceToMap(adviceMgr.listAdvice().toArray(new Advice[0]));
 		} else {
-			advs = new ArrayList<>();
-			advs.add(AOPChainProcessor.getInstance().getAdviceManager().getAdvice(adviceId));
+			adviceMap = adviceToMap(adviceMgr.getAdvice(adviceId));
 		}
-		//TODO: Better textual representation of advice for pipeline		
-		
-		// to document and set into pipeline
-		IDataUtil.put(pipelineCursor, "advices", advs.size());
+		IDataUtil.put(pipelineCursor, "advice", new StructureConverter().toIData(adviceMap));
 		pipelineCursor.destroy();
+	}
+	
+	Map<String, Object> adviceToMap(Advice... advices) {
+		Map<String, Object> adviceMap = new HashMap<>();
+		for (Advice adv : advices) {
+			adviceMap.put(adv.getId(), adv.toMap());
+		}
+		return adviceMap;
 	}
 
 	public void removeAdvice(IData pipeline) {
@@ -90,7 +98,7 @@ public class MockManager extends AbstractFlowManager {
 		try {
 			interceptor = new CannedResponseInterceptor(idata);
 		} catch (Exception e) {
-			throw new ServiceException("Unable to parse response IData for " + adviceId);
+			throw new ServiceException("Unable to parse response IData for " + adviceId + " - Is the response valid IData XML?");
 		}
 		registerInterceptor(adviceId, interceptPoint.toUpperCase(), serviceName, pipelineCondition, interceptor);
 		registerStub(serviceName);
