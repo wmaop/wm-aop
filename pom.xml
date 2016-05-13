@@ -28,6 +28,12 @@
 		</license>
 	</licenses>
 
+	<scm>
+		<url>https://github.com/wmaop/wm-aop</url>
+		<connection>scm:git:git://github.com/wmaop/wm-aop.git</connection>
+		<developerConnection>scm:git:sysgen@github.com:wmaop/wm-aop.git</developerConnection>
+    </scm>
+
 	<developers>
 		<developer>
 			<name>Richard Tomlinson</name>
