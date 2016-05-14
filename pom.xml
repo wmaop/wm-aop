@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<artifactId>wm-aop</artifactId>
-	<version>1.0.1-SNAPSHOT</version>
+	<version>1.0.1</version>
 	<packaging>jar</packaging>
 
 	<parent>
@@ -31,7 +31,7 @@
 		<url>https://github.com/wmaop/wm-aop</url>
 		<connection>scm:git:git://github.com/wmaop/wm-aop.git</connection>
 		<developerConnection>scm:git:sysgen@github.com:wmaop/wm-aop.git</developerConnection>
-      <tag>wm-aop-1.0.0</tag>
+      <tag>wm-aop-1.0.1</tag>
   </scm>
 
 	<developers>
