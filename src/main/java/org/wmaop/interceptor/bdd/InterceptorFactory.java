@@ -17,7 +17,7 @@ public class InterceptorFactory {
 	public Interceptor getInterceptor(Then then) {
 		if (then.getAssert() != null) {
 			return getAssertInterceptor(then.getAssert());
-		} else if (then.getReturn() != null && then.getReturn().size() != 0) {
+		} else if (then.getReturn() != null && !then.getReturn().isEmpty()) {
 			return getReturnInterceptor(then.getReturn());
 		} else if (then.getPipelineCapture() != null) {
 			return getPipelineCaptureInterceptor(then.getPipelineCapture());

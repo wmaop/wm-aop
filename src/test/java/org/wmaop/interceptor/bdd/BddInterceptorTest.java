@@ -22,7 +22,7 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.wmaop.aop.advice.AdviceManager;
 import org.wmaop.aop.assertion.Assertable;
-import org.wmaop.aop.assertion.AssertionManager;
+import org.wmaop.aop.stub.StubManager;
 import org.wmaop.chainprocessor.AOPChainProcessor;
 
 import com.wm.app.b2b.server.BaseService;
@@ -42,7 +42,7 @@ public class BddInterceptorTest {
 	@Test
 	public void shouldAssert() throws Exception {
 		ClassLoader classLoader = this.getClass().getClassLoader();
-		AOPChainProcessor cp = new AOPChainProcessor();
+		AOPChainProcessor cp = new AOPChainProcessor(new AdviceManager(), mock(StubManager.class));
 		cp.setEnabled(true);
 		ParsedScenario scenario = new BddParser().parse(classLoader.getResourceAsStream("bdd/assertionBdd.xml"));
 		cp.getAdviceManager().registerAdvice(scenario.getAdvice());
@@ -251,7 +251,7 @@ public class BddInterceptorTest {
 		try (Scanner scanner = new Scanner(fs, "UTF-8")) {
 			ByteArrayInputStream bais = new ByteArrayInputStream(
 					scanner.useDelimiter("\\A").next().replace("{{fl}}", capture).getBytes());
-			AOPChainProcessor cp = new AOPChainProcessor();
+			AOPChainProcessor cp = new AOPChainProcessor(new AdviceManager(), mock(StubManager.class));
 			cp.setEnabled(true);
 			ParsedScenario scenario = new BddParser().parse(bais);
 			cp.getAdviceManager().registerAdvice(scenario.getAdvice());
@@ -275,7 +275,7 @@ public class BddInterceptorTest {
 
 	private AOPChainProcessor getConfiguredProcessor(String testXmlFileName) throws Exception {
 		ClassLoader classLoader = this.getClass().getClassLoader();
-		AOPChainProcessor cp = new AOPChainProcessor();
+		AOPChainProcessor cp = new AOPChainProcessor(new AdviceManager(), mock(StubManager.class));
 		cp.setEnabled(true);
 
 		ParsedScenario scenario = new BddParser().parse(classLoader.getResourceAsStream(testXmlFileName));

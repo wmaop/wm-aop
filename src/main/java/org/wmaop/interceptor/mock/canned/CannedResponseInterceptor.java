@@ -18,10 +18,12 @@ import com.wm.util.coder.IDataXMLCoder;
 
 public class CannedResponseInterceptor extends BaseInterceptor {
 
-	public enum ResponseSequence{ 
+	private static final String CANNED_RESPONSE_PREFIX = "CannedResponse:";
+
+	public enum ResponseSequence {
 		SEQUENTIAL, RANDOM;
 	}
-	
+
 	private final List<IData> cannedIdata;
 	private final ResponseSequence sequence;
 	private int seqCount = 0;
@@ -32,7 +34,7 @@ public class CannedResponseInterceptor extends BaseInterceptor {
 	}
 
 	public CannedResponseInterceptor(ResponseSequence seq, List<String> list) throws IOException {
-		super("CannedResponse:");
+		super(CANNED_RESPONSE_PREFIX);
 		sequence = seq;
 		cannedIdata = new ArrayList<>();
 		for (String idataXml : list) {
@@ -40,22 +42,23 @@ public class CannedResponseInterceptor extends BaseInterceptor {
 		}
 	}
 
-	public CannedResponseInterceptor(InputStream idataXmlStream) throws IOException  {
+	public CannedResponseInterceptor(InputStream idataXmlStream) throws IOException {
 		this(new IDataXMLCoder().decode(idataXmlStream));
 	}
 
 	public CannedResponseInterceptor(IData idata) {
-		super("CannedResponse:");
+		super(CANNED_RESPONSE_PREFIX);
 		cannedIdata = Arrays.asList(idata);
 		sequence = ResponseSequence.SEQUENTIAL;
 	}
 
 	public CannedResponseInterceptor(ResponseSequence seq, IData... idata) {
-		super("CannedResponse:");
+		super(CANNED_RESPONSE_PREFIX);
 		cannedIdata = Arrays.asList(idata);
 		sequence = seq;
 	}
 
+	@Override
 	public InterceptResult intercept(FlowPosition flowPosition, IData pipeline) {
 		invokeCount++;
 		if (cannedIdata != null) {
@@ -65,14 +68,15 @@ public class CannedResponseInterceptor extends BaseInterceptor {
 	}
 
 	protected IData getResponse() {
-		switch(sequence) {
-			case RANDOM:
-				return cannedIdata.get(random.nextInt(cannedIdata.size()));
-			default:
-				return cannedIdata.get(seqCount++%cannedIdata.size());
-			
+		IData response;
+		if (sequence == ResponseSequence.RANDOM) {
+			response = cannedIdata.get(random.nextInt(cannedIdata.size()));
+		} else {
+			response = cannedIdata.get(seqCount++ % cannedIdata.size());
 		}
+		return response;
 	}
+
 	@Override
 	public String toString() {
 		return "CannedResponseInterceptor";
@@ -83,7 +87,7 @@ public class CannedResponseInterceptor extends BaseInterceptor {
 		am.put("type", "CannedResponseInterceptor");
 		am.put("responseSequence", sequence.toString());
 		int i = 0;
-		for (IData idata :cannedIdata) {
+		for (IData idata : cannedIdata) {
 			am.put("response" + i++, idata);
 		}
 	}

@@ -9,13 +9,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Observable;
 
 import org.apache.log4j.Logger;
 import org.wmaop.aop.interceptor.CompositeInterceptor;
 import org.wmaop.aop.interceptor.InterceptPoint;
 import org.wmaop.aop.interceptor.Interceptor;
 
-public class AdviceManager {
+public class AdviceManager extends Observable {
 
 	private static final Logger logger = Logger.getLogger(AdviceManager.class);
 	private static final String PFX = "]>]> ";
@@ -31,8 +32,12 @@ public class AdviceManager {
 		}
 		advices.get(advice.getPointCut().getInterceptPoint()).add(advice);
 		idAdvice.put(advice.getId(), advice);
+		if (advice.getAdviceState() == AdviceState.NEW) {
+			notify(advice);
+		}
 
 		advice.setAdviceState(ENABLED);
+		notify(advice);
 		logger.info(PFX + "Registered advice " + advice);
 	}
 
@@ -51,6 +56,7 @@ public class AdviceManager {
 		}
 		idAdvice.remove(advice.getId());
 		advice.setAdviceState(DISPOSED);
+		notify(advice);
 	}
 
 	public void clearAdvice() {
@@ -124,6 +130,11 @@ public class AdviceManager {
 
 	public boolean verifyInvokedAtMost(int count, String name) {
 		return getInvokeCountForPrefix(name) <= count;
+	}
+
+	void notify(Advice advice) {
+		setChanged();
+		notifyObservers(advice);
 	}
 	
 }

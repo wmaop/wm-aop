@@ -36,13 +36,13 @@ public class MockManager extends AbstractFlowManager {
 	
 	public void enableInterception(IData pipeline) {
 		IDataCursor pipelineCursor = pipeline.getCursor();
-		String	$resourceID = IDataUtil.getString( pipelineCursor, "enabled" );
+		String resourceID = IDataUtil.getString( pipelineCursor, "enabled" );
 		
 		boolean enabled;
-		if ($resourceID == null || $resourceID.length() == 0) {
+		if (resourceID == null || resourceID.length() == 0) {
 			enabled = AOPChainProcessor.getInstance().isEnabled();
 		} else {
-			enabled = Boolean.valueOf($resourceID);
+			enabled = Boolean.valueOf(resourceID);
 			AOPChainProcessor.getInstance().setEnabled(enabled);
 		}
 		
@@ -99,7 +99,6 @@ public class MockManager extends AbstractFlowManager {
 			throw new ServiceException("Unable to parse response IData for " + adviceId + " - Is the response valid IData XML?");
 		}
 		registerInterceptor(adviceId, interceptPoint.toUpperCase(), serviceName, pipelineCondition, interceptor);
-		registerStub(serviceName);
 	}
 	
 	public void registerAssertion(IData pipeline) throws ServiceException {
@@ -143,7 +142,6 @@ public class MockManager extends AbstractFlowManager {
 		try {
 			Exception e = (Exception) Class.forName(exception).getDeclaredConstructor(String.class).newInstance("WMAOP " + serviceName);
 			registerInterceptor(adviceId, interceptPoint, serviceName, pipelineCondition, new ExceptionInterceptor(e));
-			registerStub(serviceName);
 		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
 			throw new ServiceException(e);
 		}

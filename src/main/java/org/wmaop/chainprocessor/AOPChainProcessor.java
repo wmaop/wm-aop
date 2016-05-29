@@ -14,6 +14,7 @@ import org.wmaop.aop.advice.AdviceManager;
 import org.wmaop.aop.interceptor.FlowPosition;
 import org.wmaop.aop.interceptor.InterceptResult;
 import org.wmaop.aop.interceptor.Interceptor;
+import org.wmaop.aop.stub.StubLifecycleObserver;
 import org.wmaop.aop.stub.StubManager;
 
 import com.wm.app.b2b.server.BaseService;
@@ -32,8 +33,8 @@ public class AOPChainProcessor implements InvokeChainProcessor {
 
 	private boolean interceptingEnabled = false;
 
-	private final StubManager stubManager = new StubManager();
-	private final AdviceManager adviceManager = new AdviceManager();
+	private final StubManager stubManager;
+	private final AdviceManager adviceManager;
 	
 	public static AOPChainProcessor getInstance() {
 		return instance;
@@ -43,10 +44,18 @@ public class AOPChainProcessor implements InvokeChainProcessor {
 	 * Instantiated by invokemanager
 	 */
 	public AOPChainProcessor() {
+		this(new AdviceManager(), new StubManager());
+	}
+
+	public AOPChainProcessor(AdviceManager advMgr, StubManager stbMgr) {
+		adviceManager = advMgr;
+		stubManager = stbMgr;
+		
 		logger.info(PFX + "Initialising " + this.getClass().getName());
 		adviceManager.reset();
 		AOPChainProcessor.instance = this;
 	
+		adviceManager.addObserver(new StubLifecycleObserver(stubManager));
 	}
 
 	public void setEnabled(boolean enabled) {

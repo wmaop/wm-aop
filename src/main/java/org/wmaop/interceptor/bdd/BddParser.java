@@ -57,8 +57,7 @@ public class BddParser {
 		FlowPositionMatcherImpl flowPositionMatcher = new FlowPositionMatcherImpl(service.getValue() + '_' + service.getIntercepted(), service.getValue());
 		logger.info("Created flow position matcher: " + flowPositionMatcher);
 
-		ServicePipelinePointCut joinPoint = new ServicePipelinePointCut(flowPositionMatcher, getMatcher(when), getInterceptPoint(scenario));
-		return joinPoint;
+		return new ServicePipelinePointCut(flowPositionMatcher, getMatcher(when), getInterceptPoint(scenario));
 	}
 
 	private Matcher<? super IData> getMatcher(When when) {
@@ -72,7 +71,7 @@ public class BddParser {
 		if (condition != null && condition.length() > 0) {
 			pipelineMatcher = new JexlIDataMatcher(id, condition);
 		} else {
-			pipelineMatcher = new AlwaysTrueMatcher<IData>(id);
+			pipelineMatcher = new AlwaysTrueMatcher<>(id);
 		}
 		logger.info("Created pipeline matcher: " + pipelineMatcher);
 		return pipelineMatcher;

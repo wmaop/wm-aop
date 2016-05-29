@@ -117,10 +117,10 @@ public class StubManagerTest {
 	}
 
 	@Test
-	public void shouldSkipWithExistingPackagePresetn() {
+	public void shouldSkipWithExistingPackagePresent() {
 		Package pkg = mock(Package.class);
 		PowerMockito.when(PackageManager.getPackage(StubManager.SUPPORTING_PKG)).thenReturn(pkg);
-		stubManager.createStubPackage();
+		assertFalse(stubManager.isStubPackageMissing());
 	}
 
 	@Test

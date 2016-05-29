@@ -29,7 +29,7 @@ public class ScenarioManager {
 		} else if (scenarioAsString != null) {
 			scenarioStream = new ByteArrayInputStream(scenarioAsString.getBytes());
 		} else if (scenarioAsNode != null) {
-			StringBuffer sb = new StringBuffer();
+			StringBuffer sb = new StringBuffer(); //Required for sig
 			try {
 				scenarioAsNode.appendGeneratedMarkup(sb);
 			} catch (WMDocumentException e) {
@@ -43,6 +43,7 @@ public class ScenarioManager {
 			ParsedScenario scenario = new BddParser().parse(scenarioStream);
 			AOPChainProcessor aop = AOPChainProcessor.getInstance();
 			aop.getAdviceManager().registerAdvice(scenario.getAdvice());
+			// TODO indicates that mocks within scenarios should be treated as first class mock citizens
 			aop.getStubManager().registerStubService(scenario.getServiceNames());
 			aop.setEnabled(true);
 		} catch (Exception e) {

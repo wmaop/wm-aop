@@ -16,6 +16,7 @@ import java.util.List;
 
 import org.junit.Test;
 import org.wmaop.aop.advice.Advice;
+import org.wmaop.aop.advice.AdviceManager;
 import org.wmaop.aop.assertion.AssertionInterceptor;
 import org.wmaop.aop.interceptor.InterceptPoint;
 import org.wmaop.aop.interceptor.Interceptor;
@@ -25,7 +26,7 @@ import org.wmaop.aop.matcher.Matcher;
 import org.wmaop.aop.matcher.jexl.JexlIDataMatcher;
 import org.wmaop.aop.pointcut.PointCut;
 import org.wmaop.aop.pointcut.ServicePipelinePointCut;
-import org.wmaop.chainprocessor.AOPChainProcessor;
+import org.wmaop.aop.stub.StubManager;
 import org.wmaop.interceptor.mock.canned.CannedResponseInterceptor;
 import org.wmaop.interceptor.mock.exception.ExceptionInterceptor;
 
@@ -44,7 +45,7 @@ public class AOPChainProcessorTest {
 	@Test
 	public void shouldExecuteConditionalMatch() throws Exception {
 		ClassLoader classLoader = this.getClass().getClassLoader();
-		AOPChainProcessor cp = new AOPChainProcessor();
+		AOPChainProcessor cp = new AOPChainProcessor(new AdviceManager(), mock(StubManager.class));
 		cp.setEnabled(true);
 
 		FlowPositionMatcherImpl serviceNameMatcher = new FlowPositionMatcherImpl("my id", "pre:foo");
@@ -82,7 +83,7 @@ public class AOPChainProcessorTest {
 	@Test
 	public void shouldExecuteAlwaysTrueReponse() throws Exception {
 		ClassLoader classLoader = this.getClass().getClassLoader();
-		AOPChainProcessor cp = new AOPChainProcessor();
+		AOPChainProcessor cp = new AOPChainProcessor(new AdviceManager(), mock(StubManager.class));
 		cp.setEnabled(true);
 
 		FlowPositionMatcherImpl serviceNameMatcher = new FlowPositionMatcherImpl("my id", "pre:foo");
@@ -106,11 +107,10 @@ public class AOPChainProcessorTest {
 
 	@Test
 	public void shouldUnregister() {
-		AOPChainProcessor cp = new AOPChainProcessor();
+		AOPChainProcessor cp = new AOPChainProcessor(new AdviceManager(), mock(StubManager.class));
 
 		Interceptor interceptor = mock(Interceptor.class);
-		PointCut pc = mock(PointCut.class);
-		when(pc.getInterceptPoint()).thenReturn(InterceptPoint.INVOKE);
+		PointCut pc = new ServicePipelinePointCut(new FlowPositionMatcherImpl("foo", "bar"), new AlwaysTrueMatcher<>("foo"), InterceptPoint.INVOKE); 
 		Advice mockAdviceA = new Advice("a", pc, interceptor);
 		cp.getAdviceManager().registerAdvice(mockAdviceA);
 		assertEquals(1, cp.getAdviceManager().listAdvice().size());
@@ -144,11 +144,9 @@ public class AOPChainProcessorTest {
 
 	@Test
 	public void shouldClearAdvice() {
-		AOPChainProcessor cp = new AOPChainProcessor();
-		AOPChainProcessor.getInstance();
+		AOPChainProcessor cp = new AOPChainProcessor(new AdviceManager(), mock(StubManager.class));
 
-		PointCut pc = mock(PointCut.class);
-		when(pc.getInterceptPoint()).thenReturn(InterceptPoint.INVOKE);
+		PointCut pc = new ServicePipelinePointCut(new FlowPositionMatcherImpl("foo", "bar"), new AlwaysTrueMatcher<>("foo"), InterceptPoint.INVOKE); 
 		Advice mockAdviceA = new Advice("a", pc, null);
 		cp.getAdviceManager().registerAdvice(mockAdviceA);
 
@@ -175,7 +173,7 @@ public class AOPChainProcessorTest {
 	@Test
 	public void shouldSetException() throws Exception{
 		ClassLoader classLoader = this.getClass().getClassLoader();
-		AOPChainProcessor cp = new AOPChainProcessor();
+		AOPChainProcessor cp = new AOPChainProcessor(new AdviceManager(), mock(StubManager.class));
 		cp.setEnabled(true);
 
 		FlowPositionMatcherImpl serviceNameMatcher = new FlowPositionMatcherImpl("my id", "pre:foo");
@@ -251,7 +249,7 @@ public class AOPChainProcessorTest {
 	
 	@Test
 	public void shouldFireMultiBeforeAfterAndSingleInvoke() throws ServerException, IOException {
-		AOPChainProcessor cp = new AOPChainProcessor();
+		AOPChainProcessor cp = new AOPChainProcessor(new AdviceManager(), mock(StubManager.class));
 		cp.getAdviceManager().registerAdvice(getCannedAdvice("pre1", InterceptPoint.BEFORE, null));
 		cp.getAdviceManager().registerAdvice(getCannedAdvice("pre2", InterceptPoint.BEFORE, null));
 		cp.getAdviceManager().registerAdvice(getCannedAdvice("inv1", InterceptPoint.INVOKE, "a == 1"));
@@ -292,7 +290,7 @@ public class AOPChainProcessorTest {
 		ClassLoader classLoader = this.getClass().getClassLoader();
 		FlowPositionMatcherImpl serviceNameMatcher = new FlowPositionMatcherImpl(adviceId, "pre:foo");
 		CannedResponseInterceptor interceptor = new CannedResponseInterceptor(classLoader.getResourceAsStream("cannedResponse.xml"));
-		Matcher matcher;
+		Matcher<? super IData> matcher;
 		if (expression != null) {
 			matcher = new JexlIDataMatcher(adviceId, expression);
 		} else {

@@ -31,6 +31,7 @@ public class PipelineCaptureInterceptor extends BaseInterceptor {
 		}
 	}
 
+	@Override
 	public InterceptResult intercept(FlowPosition flowPosition, IData idata) {
 		invokeCount++;
 		try (OutputStream fos = getFileOutputStream(getFileName())) {

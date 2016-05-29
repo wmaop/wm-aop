@@ -22,14 +22,14 @@ public class ConditionalResponseInterceptor extends BaseInterceptor {
 	private static final Logger logger = Logger.getLogger(ConditionalResponseInterceptor.class);
 
 	private final JexlIDataMatcher evaluator;
-	private final Map<String, IData> responses = new HashMap<String, IData>();
+	private final Map<String, IData> responses = new HashMap<>();
 	private final IData defaultResponse;
 	private final String defaultId;
 	private final boolean ignoreNoMatch;
 
 	public ConditionalResponseInterceptor(List<ConditionResponse> conditionResponses, ConditionResponse defaultResponse, boolean ignoreNoMatch) throws IOException {
 		super("ConditionalResponse:");
-		Map<String, String> exprs = new LinkedHashMap<String, String>();
+		Map<String, String> exprs = new LinkedHashMap<>();
 		this.ignoreNoMatch = ignoreNoMatch;
 		for (ConditionResponse cr : conditionResponses) {
 			String sid = cr.getId();
@@ -47,6 +47,7 @@ public class ConditionalResponseInterceptor extends BaseInterceptor {
 		evaluator = new JexlIDataMatcher(exprs);
 	}
 
+	@Override
 	public InterceptResult intercept(FlowPosition flowPosition, IData idata) {
 		invokeCount++;
 		MatchResult result = evaluator.match(idata);

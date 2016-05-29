@@ -11,9 +11,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.wmaop.aop.advice.Advice;
-import org.wmaop.aop.interceptor.FlowPosition;
-import org.wmaop.aop.matcher.FlowPositionMatcher;
-import org.wmaop.aop.matcher.Matcher;
 
 import com.wm.app.b2b.server.BaseService;
 import com.wm.app.b2b.server.Package;
@@ -28,12 +25,14 @@ import com.wm.lang.ns.NSServiceType;
 
 public class StubManager {
 
-	private final Set<String> stubbedServices = new HashSet<String>(); 
+	private final Set<String> stubbedServices = new HashSet<>(); 
 	
 	protected static final String SUPPORTING_PKG = "OrgWmaopStubs";
 
 	public void registerStubService(String... svcNames) {
-		createStubPackage(); // Ensure package exists
+		if (isStubPackageMissing()) {
+			createStubPackage();
+		}
 		for (String svcName : svcNames) {
 			if (isRegisteredService(svcName)) {
 				continue; // existing service so no stub required
@@ -100,10 +99,11 @@ public class StubManager {
 		}
 	}
 
+	protected boolean isStubPackageMissing() {
+		return PackageManager.getPackage(SUPPORTING_PKG) == null;
+	}
+	
 	protected void createStubPackage() {
-		if (PackageManager.getPackage(SUPPORTING_PKG) != null) {
-			return;
-		}
 		File pkgdir = new File(PackageManager.getPackageDir(), SUPPORTING_PKG);
 		if (pkgdir.exists()) {
 			try {
@@ -123,12 +123,7 @@ public class StubManager {
 	}
 
 	protected String getServiceName(Advice advice) {
-		String svcName = null;
-		Matcher<FlowPosition> matcher = advice.getPointCut().getFlowPositionMatcher();
-		if (matcher instanceof FlowPositionMatcher) {
-			svcName = ((FlowPositionMatcher)matcher).getServiceName();
-		}
-		return svcName;
+		return advice.getPointCut().getFlowPositionMatcher().getServiceName();
 	}
 
 	protected boolean deleteFolder(String location) throws IOException {

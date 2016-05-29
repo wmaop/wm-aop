@@ -27,12 +27,14 @@ public class RestDelegatingInterceptor extends BaseInterceptor {
 		this.destinationUrl = destinationUrl;
 	}
 
+	@Override
 	public InterceptResult intercept(FlowPosition flowPosition, IData idata) {
 		invokeCount++;
 		sendPost(idata);
 		return InterceptResult.TRUE;
 	}
 
+	@Override
 	public String getName() {
 		return serviceName;
 	}

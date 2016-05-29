@@ -21,6 +21,9 @@ public class StubLifecycleObserver implements Observer {
 
 	private void handleState(Advice advice) {
 		switch (advice.getAdviceState()) {
+		case NEW:
+			stubManager.registerStubService(advice.getPointCut().getFlowPositionMatcher().getServiceName());
+			break;
 		case DISPOSED:
 			if (stubManager.hasStub(advice)) {
 				stubManager.unregisterStubService(advice);

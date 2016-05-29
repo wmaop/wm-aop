@@ -9,6 +9,7 @@ import static org.mockito.Mockito.when;
 import org.junit.Test;
 import org.wmaop.aop.interceptor.FlowPosition;
 import org.wmaop.aop.interceptor.InterceptPoint;
+import org.wmaop.aop.matcher.FlowPositionMatcher;
 import org.wmaop.aop.matcher.MatchResult;
 import org.wmaop.aop.matcher.Matcher;
 
@@ -20,7 +21,7 @@ public class ServicePipelinePointCutTest {
 	@Test
 	public void shouldBeApplicable() {
 		FlowPosition pipelinePosition = mock(FlowPosition.class);
-		Matcher<FlowPosition> serviceNameMatcher = mock(Matcher.class);
+		FlowPositionMatcher serviceNameMatcher = mock(FlowPositionMatcher.class);
 		Matcher<? super IData> pipelineMatcher = mock(Matcher.class);
 		IData idataMock = mock(IData.class);
 
@@ -35,7 +36,7 @@ public class ServicePipelinePointCutTest {
 	public void shouldNotBeApplicable() {
 		FlowPosition pipelinePosition = mock(FlowPosition.class);
 		FlowPosition falsePipelinePosition = mock(FlowPosition.class);
-		Matcher<FlowPosition> serviceNameMatcher = mock(Matcher.class);
+		FlowPositionMatcher serviceNameMatcher = mock(FlowPositionMatcher.class);
 		Matcher<? super IData> pipelineMatcher = mock(Matcher.class);
 		IData idataMock = mock(IData.class);
 		IData falseIdataMock = mock(IData.class);

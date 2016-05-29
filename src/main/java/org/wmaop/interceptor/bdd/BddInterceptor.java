@@ -27,15 +27,15 @@ public class BddInterceptor extends BaseInterceptor implements CompositeIntercep
 
 	private final JexlIDataMatcher iDataMatcher;
 	/* Locally held and not registered.  Interceptors here are actioned within and not by the chain processor */
-	private final Map<String, List<Interceptor>> interceptorMap = new HashMap<String, List<Interceptor>>();
-	private final List<Interceptor> defaultInterceptors = new ArrayList<Interceptor>();
+	private final Map<String, List<Interceptor>> interceptorMap = new HashMap<>();
+	private final List<Interceptor> defaultInterceptors = new ArrayList<>();
 	private final boolean ignoreNoMatch;
 
 	private boolean hasExpressions;
 	
 	public BddInterceptor(Scenario scenario, boolean ignoreNoMatch) {
 		super("Scenario:"+scenario.getId());
-		Map<String, String> exprs = new LinkedHashMap<String, String>();
+		Map<String, String> exprs = new LinkedHashMap<>();
 		this.ignoreNoMatch = ignoreNoMatch;
 		for (When when : scenario.getWhen()) {
 			processWhen(exprs, when);
@@ -83,7 +83,7 @@ public class BddInterceptor extends BaseInterceptor implements CompositeIntercep
 				exprs.put(id, expr);
 				List<Interceptor> am = interceptorMap.get(id);
 				if (am == null) {
-					am = new ArrayList<Interceptor>();
+					am = new ArrayList<>();
 					interceptorMap.put(id, am);
 				}
 				am.add(interceptor);
@@ -94,6 +94,7 @@ public class BddInterceptor extends BaseInterceptor implements CompositeIntercep
 		}
 	}
 
+	@Override
 	public InterceptResult intercept(FlowPosition flowPosition, IData idata) {
 		invokeCount++;
 		MatchResult result = hasExpressions ? iDataMatcher.match(idata) : null;
@@ -102,7 +103,7 @@ public class BddInterceptor extends BaseInterceptor implements CompositeIntercep
 		// Check for match of expression, ignoring if its a non-expression default
 		if (result != null && result.isMatch()) {
 			return executeActions(interceptorMap.get(result.getId()), flowPosition, idata);
-		} else if (defaultInterceptors.size() > 0) {
+		} else if (!defaultInterceptors.isEmpty()) {
 			return executeActions(defaultInterceptors, flowPosition, idata);
 		}
 		if (ignoreNoMatch) {
@@ -116,7 +117,7 @@ public class BddInterceptor extends BaseInterceptor implements CompositeIntercep
 		for (Interceptor action : list) {
 			InterceptResult ir = action.intercept(flowPosition, idata);
 			if (ir.getException() != null) {
-				result = ir; // Set Exception as return;
+				result = ir;
 			}
 		}
 		return result;

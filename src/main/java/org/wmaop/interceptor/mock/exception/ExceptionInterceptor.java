@@ -20,6 +20,8 @@ public class ExceptionInterceptor extends BaseInterceptor {
 		super("Exception:"+e.getClass().getName());
 		interceptResult = new InterceptResult(true, e);
 	}
+	
+	@Override
 	public InterceptResult intercept(FlowPosition flowPosition, IData idata) {
 		invokeCount++;
 		return interceptResult;
