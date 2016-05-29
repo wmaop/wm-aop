@@ -20,6 +20,7 @@ import java.util.Scanner;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+import org.wmaop.aop.advice.AdviceManager;
 import org.wmaop.aop.assertion.Assertable;
 import org.wmaop.aop.assertion.AssertionManager;
 import org.wmaop.chainprocessor.AOPChainProcessor;
@@ -58,33 +59,33 @@ public class BddInterceptorTest {
 		// Execute a service, no change to pipeline
 		cp.process(chainIterator, getBaseService("pub.test:svcA"), pipeline, ss);
 
-		AssertionManager asm = cp.getAssertionManager();
+		AdviceManager asm = cp.getAdviceManager();
 		// Correct service, condition doesnt match
 		cp.process(chainIterator, getBaseService("org.wmaop.foo:bar"), pipeline, ss);
-		assertEquals(0, asm.getAssertion("PreBarAssertion").getInvokeCount());
-		assertTrue(asm.verifyNever("PreBarAssertion"));
-		assertFalse(asm.verifyOnceOnly("PreBarAssertion"));
-		assertFalse(asm.verifyAtLeast(1, "PreBarAssertion"));
-		assertFalse(asm.verifyAtLeastOnce("PreBarAssertion"));
-		assertTrue(asm.verifyAtMost(1, "PreBarAssertion"));
+		assertEquals(0, asm.getInvokeCountForPrefix("PreBarAssertion"));
+		assertTrue(asm.verifyInvokedNever("PreBarAssertion"));
+		assertFalse(asm.verifyInvokedOnceOnly("PreBarAssertion"));
+		assertFalse(asm.verifyInvokedAtLeast(1, "PreBarAssertion"));
+		assertFalse(asm.verifyInvokedAtLeastOnce("PreBarAssertion"));
+		assertTrue(asm.verifyInvokedAtMost(1, "PreBarAssertion"));
 
 		// Correct service, condition match
 		add(pipeline, "foo", 2);
 		cp.process(chainIterator, getBaseService("org.wmaop.foo:bar"), pipeline, ss);
-		assertEquals(1, asm.getAssertion("PreBarAssertion").getInvokeCount());
-		assertFalse(asm.verifyNever("PreBarAssertion"));
-		assertTrue(asm.verifyOnceOnly("PreBarAssertion"));
-		assertTrue(asm.verifyAtLeast(1, "PreBarAssertion"));
-		assertTrue(asm.verifyAtLeastOnce("PreBarAssertion"));
-		assertTrue(asm.verifyAtMost(1, "PreBarAssertion"));
+		assertEquals(1, asm.getInvokeCountForPrefix("PreBarAssertion"));
+		assertFalse(asm.verifyInvokedNever("PreBarAssertion"));
+		assertTrue(asm.verifyInvokedOnceOnly("PreBarAssertion"));
+		assertTrue(asm.verifyInvokedAtLeast(1, "PreBarAssertion"));
+		assertTrue(asm.verifyInvokedAtLeastOnce("PreBarAssertion"));
+		assertTrue(asm.verifyInvokedAtMost(1, "PreBarAssertion"));
 
 		cp.process(chainIterator, getBaseService("org.wmaop.foo:bar"), pipeline, ss);
-		assertEquals(2, asm.getAssertion("PreBarAssertion").getInvokeCount());
-		assertFalse(asm.verifyNever("PreBarAssertion"));
-		assertFalse(asm.verifyOnceOnly("PreBarAssertion"));
-		assertTrue(asm.verifyAtLeast(1, "PreBarAssertion"));
-		assertTrue(asm.verifyAtLeastOnce("PreBarAssertion"));
-		assertFalse(asm.verifyAtMost(1, "PreBarAssertion"));
+		assertEquals(2, asm.getInvokeCountForPrefix("PreBarAssertion"));
+		assertFalse(asm.verifyInvokedNever("PreBarAssertion"));
+		assertFalse(asm.verifyInvokedOnceOnly("PreBarAssertion"));
+		assertTrue(asm.verifyInvokedAtLeast(1, "PreBarAssertion"));
+		assertTrue(asm.verifyInvokedAtLeastOnce("PreBarAssertion"));
+		assertFalse(asm.verifyInvokedAtMost(1, "PreBarAssertion"));
 
 	}
 

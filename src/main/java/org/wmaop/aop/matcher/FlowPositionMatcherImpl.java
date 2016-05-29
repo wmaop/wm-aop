@@ -15,6 +15,7 @@ public class FlowPositionMatcherImpl implements FlowPositionMatcher {
 		matchTrue = new MatchResult(true, id);
 	}
 
+	@Override
 	public MatchResult match(FlowPosition obj) {
 		if (obj == null || !serviceName.equals(obj.toString()))
 			return MatchResult.FALSE;

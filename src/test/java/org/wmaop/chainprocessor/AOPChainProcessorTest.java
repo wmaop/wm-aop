@@ -8,6 +8,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -32,7 +33,10 @@ import com.wm.app.b2b.server.BaseService;
 import com.wm.app.b2b.server.invoke.InvokeChainProcessor;
 import com.wm.app.b2b.server.invoke.ServiceStatus;
 import com.wm.data.IData;
+import com.wm.data.IDataFactory;
+import com.wm.data.IDataUtil;
 import com.wm.lang.ns.NSName;
+import com.wm.util.ServerException;
 import com.wm.util.coder.IDataXMLCoder;
 
 public class AOPChainProcessorTest {
@@ -243,5 +247,58 @@ public class AOPChainProcessorTest {
 		cp.process(chainIterator, baseService, idata, ss);
 
 		verify(icp, times(1)).process(chainIterator, baseService, idata, ss);
+	}
+	
+	@Test
+	public void shouldFireMultiBeforeAfterAndSingleInvoke() throws ServerException, IOException {
+		AOPChainProcessor cp = new AOPChainProcessor();
+		cp.getAdviceManager().registerAdvice(getCannedAdvice("pre1", InterceptPoint.BEFORE, null));
+		cp.getAdviceManager().registerAdvice(getCannedAdvice("pre2", InterceptPoint.BEFORE, null));
+		cp.getAdviceManager().registerAdvice(getCannedAdvice("inv1", InterceptPoint.INVOKE, "a == 1"));
+		cp.getAdviceManager().registerAdvice(getCannedAdvice("inv2", InterceptPoint.INVOKE, "a == 2"));
+		cp.getAdviceManager().registerAdvice(getCannedAdvice("inv3", InterceptPoint.INVOKE, "a == 3"));
+		cp.getAdviceManager().registerAdvice(getCannedAdvice("post1", InterceptPoint.AFTER, null));
+		cp.getAdviceManager().registerAdvice(getCannedAdvice("post2", InterceptPoint.AFTER, null));
+		
+		IData idata = IDataFactory.create();
+		IDataUtil.put(idata.getCursor(), "a", 2);
+		
+		BaseService baseService = mock(BaseService.class);
+		when(baseService.getNSName()).thenReturn(NSName.create("pre:foo"));
+		ServiceStatus ss = mock(ServiceStatus.class);
+
+		Iterator<InvokeChainProcessor> chainIterator = new ArrayList<InvokeChainProcessor>().iterator();
+
+		// Execute
+		cp.setEnabled(true);
+		cp.process(chainIterator, baseService, idata, ss);
+		
+		assertEquals(1, getInvokeCount(cp, "pre1"));
+		assertEquals(1, getInvokeCount(cp, "pre2"));
+		assertEquals(0, getInvokeCount(cp, "inv1"));
+		assertEquals(1, getInvokeCount(cp, "inv2"));
+		assertEquals(0, getInvokeCount(cp, "inv3"));
+		assertEquals(1, getInvokeCount(cp, "post1"));
+		assertEquals(1, getInvokeCount(cp, "post2"));
+		
+		cp.getAdviceManager().clearAdvice();
+	}
+
+	private int getInvokeCount(AOPChainProcessor cp, String adviceId) {
+		return cp.getAdviceManager().getAdvice(adviceId).getInterceptor().getInvokeCount();
+	}
+	
+	private Advice getCannedAdvice(String adviceId, InterceptPoint interceptPoint, String expression) throws IOException {
+		ClassLoader classLoader = this.getClass().getClassLoader();
+		FlowPositionMatcherImpl serviceNameMatcher = new FlowPositionMatcherImpl(adviceId, "pre:foo");
+		CannedResponseInterceptor interceptor = new CannedResponseInterceptor(classLoader.getResourceAsStream("cannedResponse.xml"));
+		Matcher matcher;
+		if (expression != null) {
+			matcher = new JexlIDataMatcher(adviceId, expression);
+		} else {
+			matcher = new AlwaysTrueMatcher<IData>(adviceId);
+		}
+		ServicePipelinePointCut pointCut = new ServicePipelinePointCut(serviceNameMatcher, matcher, interceptPoint);
+		return new Advice(adviceId, pointCut, interceptor);
 	}
 }

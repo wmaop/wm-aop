@@ -44,6 +44,17 @@ public class BddInterceptor extends BaseInterceptor implements CompositeIntercep
 		iDataMatcher = new JexlIDataMatcher(exprs);
 	}
 
+
+	@Override
+	public List<Interceptor> getInterceptors() {
+		List<Interceptor> interceptors = new ArrayList<>();
+		interceptors.addAll(defaultInterceptors);
+		for(Entry<String, List<Interceptor>> e : interceptorMap.entrySet()) {
+			interceptors.addAll(e.getValue());
+		}
+		return interceptors;
+	}
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T extends Interceptor> List<T> getInterceptorsOfType(Class<T> type) {
@@ -57,6 +68,7 @@ public class BddInterceptor extends BaseInterceptor implements CompositeIntercep
 		}
 		return m ;
 	}
+	
 	
 	private void processWhen(Map<String, String> exprs, When when) {
 		InterceptorFactory intFactory = new InterceptorFactory();
@@ -131,5 +143,4 @@ public class BddInterceptor extends BaseInterceptor implements CompositeIntercep
 		}
 		return ml;
 	}
-
 }

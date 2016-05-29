@@ -121,7 +121,7 @@ public class MockManager extends AbstractFlowManager {
 
 		mandatory(pipeline, "{0} must exist when retrieving assertion count", ADVICE_ID);
 		logger.debug("Retrieving assertion " + adviceId);
-		int invokeCount = AOPChainProcessor.getInstance().getAssertionManager().getInvokeCountForPrefix(adviceId);
+		int invokeCount = AOPChainProcessor.getInstance().getAdviceManager().getInvokeCountForPrefix(adviceId);
 		
 		pipelineCursor = pipeline.getCursor();
 		IDataUtil.put(pipelineCursor, "invokeCount", invokeCount);

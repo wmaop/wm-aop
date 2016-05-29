@@ -18,6 +18,7 @@ public class AlwaysTrueMatcher<T> implements Matcher<T> {
 		return "AlwaysTrueMatcher[" + id + ']';
 	}
 
+	@Override
 	public MatchResult match(Object value) {
 		return result;
 	}

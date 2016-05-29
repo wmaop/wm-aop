@@ -9,7 +9,7 @@ import java.util.Map.Entry;
 import org.apache.log4j.Logger;
 
 public class AssertionManager  {
-
+/*
 	private static final Logger logger = Logger.getLogger(AssertionManager.class);
 	private final Map<String, Assertable> assertions = new HashMap<String, Assertable>();
 	
@@ -81,5 +81,5 @@ public class AssertionManager  {
 	public boolean verifyAtMost(int count, String name) {
 		return getAssertion(name).getInvokeCount() <= count;
 	}
-
+*/
 }

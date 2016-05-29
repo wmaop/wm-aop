@@ -11,8 +11,6 @@ import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 import org.apache.log4j.Logger;
 import org.wmaop.aop.advice.Advice;
 import org.wmaop.aop.advice.AdviceManager;
-import org.wmaop.aop.assertion.AspectAssertionObserver;
-import org.wmaop.aop.assertion.AssertionManager;
 import org.wmaop.aop.interceptor.FlowPosition;
 import org.wmaop.aop.interceptor.InterceptResult;
 import org.wmaop.aop.interceptor.Interceptor;
@@ -34,7 +32,6 @@ public class AOPChainProcessor implements InvokeChainProcessor {
 
 	private boolean interceptingEnabled = false;
 
-	private final AssertionManager assertionManager = new AssertionManager();
 	private final StubManager stubManager = new StubManager();
 	private final AdviceManager adviceManager = new AdviceManager();
 	
@@ -50,13 +47,8 @@ public class AOPChainProcessor implements InvokeChainProcessor {
 		adviceManager.reset();
 		AOPChainProcessor.instance = this;
 	
-		adviceManager.addObserver(new AspectAssertionObserver(assertionManager));
 	}
 
-	public AssertionManager getAssertionManager() {
-		return assertionManager;
-	}
-	
 	public void setEnabled(boolean enabled) {
 		interceptingEnabled = enabled;
 		logger.info(PFX + "Intercepting " + (enabled ? "enabled" : "disabled"));
@@ -109,8 +101,8 @@ public class AOPChainProcessor implements InvokeChainProcessor {
 		try {
 			for (Advice advice : adviceManager.getAdvicesForInterceptPoint(pos.getInterceptPoint())) {
 				if (advice.getAdviceState() == ENABLED && advice.isApplicable(pos, idata)) {
-					hasIntercepted = intercept(exitOnIntercept, pos, idata, serviceStatus, advice);
-					if (hasIntercepted) {
+					hasIntercepted = intercept(pos, idata, serviceStatus, advice);
+					if (hasIntercepted && exitOnIntercept) {
 						break;
 					}
 				}
@@ -121,26 +113,26 @@ public class AOPChainProcessor implements InvokeChainProcessor {
 		return hasIntercepted;
 	}
 
-	private boolean intercept(boolean exitOnIntercept, FlowPosition pos, IData idata, ServiceStatus serviceStatus,
+	private boolean intercept(FlowPosition pos, IData idata, ServiceStatus serviceStatus,
 			Advice advice) {
 		Interceptor interceptor = advice.getInterceptor();
 		InterceptResult interceptResult = interceptor.intercept(pos, idata);
 		logger.info(PFX + "Intercepting " + advice.getId() + " " + pos.getInterceptPoint() + ' ' + pos + " - " + interceptResult.hasIntercepted());
 		
+		boolean hasIntercepted = false;	
 		if (interceptResult.hasIntercepted()) {
 			Exception e = interceptResult.getException();
 			if (e != null) {
 				serviceStatus.setException(e);
 			}
-			return true;
+			hasIntercepted = true;
 		}
-		return false;
+		return hasIntercepted;
 	}
 
 	public void reset() {
 		adviceManager.reset();
 		stubManager.clearStubs();
-		assertionManager.removeAssertions();
 		setEnabled(false);
 	}
 	

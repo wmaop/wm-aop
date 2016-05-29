@@ -7,9 +7,9 @@ import org.wmaop.aop.advice.Advice;
 import org.wmaop.aop.interceptor.CompositeInterceptor;
 import org.wmaop.aop.interceptor.Interceptor;
 
-public class AspectAssertionObserver implements Observer {
-
-	private AssertionManager assertionManager;
+@Deprecated
+public class AspectAssertionObserver { //implements Observer {
+/*	private AssertionManager assertionManager;
 
 	public AspectAssertionObserver(AssertionManager assertionManager) {
 		this.assertionManager = assertionManager;
@@ -40,5 +40,5 @@ public class AspectAssertionObserver implements Observer {
 			break;
 		}
 	}
-
+*/
 }

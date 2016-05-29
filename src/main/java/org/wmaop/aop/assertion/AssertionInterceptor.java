@@ -19,12 +19,12 @@ public class AssertionInterceptor implements Interceptor, Assertable {
 	private int invokeCount = 0;
 	private boolean asserted;
 
-	public boolean performAssert(IData idata) {
-		return true;
-	}
-
 	public AssertionInterceptor(String assertionName) {
 		this.assertionName = assertionName;
+	}
+
+	public boolean performAssert(IData idata) {
+		return true;
 	}
 
 	public void reset() {
@@ -32,6 +32,7 @@ public class AssertionInterceptor implements Interceptor, Assertable {
 		asserted = false;
 	}
 
+	@Override
 	public final InterceptResult intercept(FlowPosition flowPosition, IData idata) {
 		invokeCount++;
 		if (performAssert(idata))
@@ -39,6 +40,7 @@ public class AssertionInterceptor implements Interceptor, Assertable {
 		return InterceptResult.FALSE;
 	}
 
+	@Override
 	public int getInvokeCount() {
 		return invokeCount;
 	}

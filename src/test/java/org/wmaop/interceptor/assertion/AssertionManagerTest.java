@@ -14,8 +14,9 @@ import org.wmaop.aop.interceptor.Interceptor;
 
 import com.wm.data.IDataFactory;
 
+@Deprecated
 public class AssertionManagerTest {
-
+/*
 	@Test
 	public void shouldExerciseBasics() {
 		AssertionManager asm = new AssertionManager();
@@ -30,5 +31,5 @@ public class AssertionManagerTest {
 		((Interceptor)assertion).intercept(mock(FlowPosition.class), IDataFactory.create());
 		assertEquals(1, asm.getInvokeCount("foo"));
 	}
-
+*/
 }

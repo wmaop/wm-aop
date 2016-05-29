@@ -16,9 +16,10 @@ import org.wmaop.aop.assertion.AspectAssertionObserver;
 import org.wmaop.aop.assertion.AssertionInterceptor;
 import org.wmaop.aop.assertion.AssertionManager;
 
-@RunWith(PowerMockRunner.class)
+//@RunWith(PowerMockRunner.class)
+@Deprecated
 public class AspectAssertionObserverTest {
-
+/*
 	@Test
 	public void test() {
 		AssertionManager asm = mock(AssertionManager.class);
@@ -48,5 +49,5 @@ public class AspectAssertionObserverTest {
 	
 
 	}
-
+*/
 }
