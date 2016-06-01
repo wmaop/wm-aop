@@ -140,6 +140,9 @@ public class AOPChainProcessorTest {
 		advices = cp.getAdviceManager().listAdvice();
 		assertEquals(1, advices.size());
 		assertEquals("b", advices.get(0).getId());
+
+		cp.getAdviceManager().unregisterAdvice("notregistered"); // Check for non-existant
+		cp.getAdviceManager().unregisterAdvice((Advice)null); // Check for non-existant
 	}
 
 	@Test

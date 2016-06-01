@@ -42,10 +42,16 @@ public class AdviceManager extends Observable {
 	}
 
 	public void unregisterAdvice(String adviceId) {
-		unregisterAdvice(getAdvice(adviceId));
+		Advice advice = getAdvice(adviceId);
+		if (advice != null) {
+			unregisterAdvice(advice);
+		}
 	}
 
 	public void unregisterAdvice(Advice advice) {
+		if (advice == null) {
+			return; // fail safe
+		}
 		// Possibly wrapped so base the removal on the id
 		List<Advice> advcs = advices.get(advice.getPointCut().getInterceptPoint());
 		for (Advice advc : advcs) {
