@@ -86,7 +86,7 @@ public class MockManager extends AbstractFlowManager {
 		String adviceId = IDataUtil.getString(pipelineCursor, ADVICE_ID);
 		String interceptPoint = IDataUtil.getString(pipelineCursor, INTERCEPT_POINT);
 		String serviceName = IDataUtil.getString(pipelineCursor, SERVICE_NAME);
-		String idata = IDataUtil.getString(pipelineCursor, RESPONSE);
+		Object idata = IDataUtil.get(pipelineCursor, RESPONSE);
 		String pipelineCondition = IDataUtil.getString(pipelineCursor, CONDITION);
 		pipelineCursor.destroy();
 
@@ -94,9 +94,13 @@ public class MockManager extends AbstractFlowManager {
 		
 		Interceptor interceptor;
 		try {
-			interceptor = new CannedResponseInterceptor(idata);
+			if (idata instanceof IData) {
+				interceptor = new CannedResponseInterceptor((IData)idata);
+			} else {
+				interceptor = new CannedResponseInterceptor(idata.toString());
+			}
 		} catch (Exception e) {
-			throw new ServiceException("Unable to parse response IData for " + adviceId + " - Is the response valid IData XML?");
+			throw new ServiceException("Unable to parse response IData for " + adviceId + " - Is the response valid IData XML? - " + e.getMessage());
 		}
 		registerInterceptor(adviceId, interceptPoint.toUpperCase(), serviceName, pipelineCondition, interceptor);
 	}
