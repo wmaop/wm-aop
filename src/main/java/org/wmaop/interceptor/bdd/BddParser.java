@@ -9,6 +9,7 @@ import javax.xml.bind.Unmarshaller;
 
 import org.apache.log4j.Logger;
 import org.wmaop.aop.advice.Advice;
+import org.wmaop.aop.advice.scope.GlobalScope;
 import org.wmaop.aop.interceptor.InterceptPoint;
 import org.wmaop.aop.interceptor.Interceptor;
 import org.wmaop.aop.matcher.AlwaysTrueMatcher;
@@ -41,7 +42,7 @@ public class BddParser {
 
 	private Advice processAdvice(Scenario scenario) {
 		Interceptor interceptor = new BddInterceptor(scenario, true);
-		return new Advice(scenario.getId(), getJoinPoint(scenario), interceptor);
+		return new Advice(scenario.getId(), new GlobalScope(), getJoinPoint(scenario), interceptor);
 	}
 
 	private InterceptPoint getInterceptPoint(Scenario scenario) {

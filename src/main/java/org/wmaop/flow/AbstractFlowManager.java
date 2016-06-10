@@ -4,6 +4,7 @@ import java.text.MessageFormat;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.wmaop.aop.advice.Advice;
+import org.wmaop.aop.advice.scope.Scope;
 import org.wmaop.aop.interceptor.InterceptPoint;
 import org.wmaop.aop.interceptor.Interceptor;
 import org.wmaop.aop.matcher.AlwaysTrueMatcher;
@@ -49,11 +50,12 @@ public abstract class AbstractFlowManager {
 		throw new ServiceException(mf.format(ArrayUtils.addAll(new Object[]{input}, values)));
 	}
 
-	protected void registerInterceptor(String adviceId, String interceptPoint, String serviceName, String pipelineCondition, Interceptor interceptor) throws ServiceException {
+	protected void registerInterceptor(String adviceId, Scope scope, String interceptPoint, String serviceName, String pipelineCondition, Interceptor interceptor) throws ServiceException {
 		String interceptPointUpper = interceptPoint.toUpperCase();
 		oneof("interceptPoint {0} must be either {1}, {2} or {3}", interceptPointUpper, "BEFORE", "INVOKE", "AFTER");
 		InterceptPoint ip = InterceptPoint.valueOf(interceptPointUpper);
 	
+		// TODO allow the use of alternative such as calling service
 		FlowPositionMatcher servicePositionMatcher = new FlowPositionMatcherImpl(serviceName, serviceName);
 		Matcher<IData> pipelineMatcher;
 		if (pipelineCondition != null && pipelineCondition.length() > 0) {
@@ -62,7 +64,7 @@ public abstract class AbstractFlowManager {
 			pipelineMatcher = new AlwaysTrueMatcher<>(serviceName);
 		}
 		PointCut joinPoint = new ServicePipelinePointCut(servicePositionMatcher, pipelineMatcher, ip);
-		Advice advice = new Advice(adviceId, joinPoint, interceptor);
+		Advice advice = new Advice(adviceId, scope, joinPoint, interceptor);
 		AOPChainProcessor aop = AOPChainProcessor.getInstance();
 		aop.getAdviceManager().registerAdvice(advice);
 		aop.setEnabled(true);

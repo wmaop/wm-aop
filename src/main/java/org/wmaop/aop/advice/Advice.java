@@ -3,6 +3,7 @@ package org.wmaop.aop.advice;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.wmaop.aop.advice.scope.Scope;
 import org.wmaop.aop.interceptor.FlowPosition;
 import org.wmaop.aop.interceptor.Interceptor;
 import org.wmaop.aop.pointcut.PointCut;
@@ -15,11 +16,17 @@ public class Advice {
 	private final Interceptor interceptor;
 	private final String id;
 	private AdviceState adviceState = AdviceState.NEW;
+	private final Scope scope;
 
-	public Advice(String id, PointCut pointCut, Interceptor interceptor) {
+	public Advice(String id, Scope scope, PointCut pointCut, Interceptor interceptor) {
 		this.pointCut = pointCut;
 		this.interceptor = interceptor;
 		this.id = id;
+		this.scope = scope;
+	}
+
+	public Scope getScope() {
+		return scope;
 	}
 
 	public PointCut getPointCut() {
@@ -27,7 +34,7 @@ public class Advice {
 	}
 
 	public boolean isApplicable(FlowPosition pipelinePosition, IData idata){
-		return pointCut.isApplicable(pipelinePosition, idata);
+		return pointCut.isApplicable(pipelinePosition, idata) && scope.isInScope();
 	}
 	
 	public Interceptor getInterceptor() {

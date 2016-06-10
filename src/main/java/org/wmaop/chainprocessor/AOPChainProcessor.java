@@ -41,7 +41,7 @@ public class AOPChainProcessor implements InvokeChainProcessor {
 	}
 
 	/**
-	 * Instantiated by invokemanager
+	 * Instantiated by invokemanager - Limited control so no Spring here...
 	 */
 	public AOPChainProcessor() {
 		this(new AdviceManager(), new StubManager());
@@ -94,7 +94,7 @@ public class AOPChainProcessor implements InvokeChainProcessor {
 		boolean hasIntercepted = processAdvice(true, pipelinePosition, idata, serviceStatus);
 
 		if (hasIntercepted && logger.isDebugEnabled()) {
-			logger.debug("Intercepted: " + ReflectionToStringBuilder.toString(serviceStatus));
+			if (logger.isDebugEnabled()) logger.debug("Intercepted: " + ReflectionToStringBuilder.toString(serviceStatus));
 		}
 
 		if (!hasIntercepted && processorChain.hasNext()) {

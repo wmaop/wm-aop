@@ -7,6 +7,10 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.wmaop.aop.advice.Advice;
 import org.wmaop.aop.advice.AdviceManager;
+import org.wmaop.aop.advice.scope.GlobalScope;
+import org.wmaop.aop.advice.scope.Scope;
+import org.wmaop.aop.advice.scope.SessionScope;
+import org.wmaop.aop.advice.scope.UserScope;
 import org.wmaop.aop.assertion.AssertionInterceptor;
 import org.wmaop.aop.interceptor.Interceptor;
 import org.wmaop.chainprocessor.AOPChainProcessor;
@@ -27,6 +31,8 @@ public class MockManager extends AbstractFlowManager {
 	public static final String SERVICE_NAME = "serviceName";
 	public static final String CONDITION = "condition";
 	public static final String EXCEPTION = "exception";
+	public static final String SCOPE = "scope";
+	public static final String USER = "user";
 	
 	private static final Logger logger = Logger.getLogger(MockManager.class);
 	
@@ -102,9 +108,28 @@ public class MockManager extends AbstractFlowManager {
 		} catch (Exception e) {
 			throw new ServiceException("Unable to parse response IData for " + adviceId + " - Is the response valid IData XML? - " + e.getMessage());
 		}
-		registerInterceptor(adviceId, interceptPoint.toUpperCase(), serviceName, pipelineCondition, interceptor);
+		registerInterceptor(adviceId, getScope(pipeline), interceptPoint.toUpperCase(), serviceName, pipelineCondition, interceptor);
 	}
 	
+	private Scope getScope(IData pipeline) throws ServiceException {
+		IDataCursor pipelineCursor = pipeline.getCursor();
+		String theScope = IDataUtil.getString(pipelineCursor, SCOPE);
+		String username = IDataUtil.getString(pipelineCursor, SCOPE);
+		if (theScope == null || "GLOBAL".equals(theScope.toUpperCase())) {
+			return new GlobalScope();
+		}
+		if ("SESSION".equals(theScope.toUpperCase())) {
+			return new SessionScope();
+		}
+		if ("USER".equals(theScope.toUpperCase())) {
+			if (username == null || username.length() == 0) {
+				throw new ServiceException("'user' must exist in the pipeline when specifying user scope");
+			}
+			return new UserScope(username);
+		}
+		throw new ServiceException("Unknown scope: " + theScope);
+	}
+
 	public void registerAssertion(IData pipeline) throws ServiceException {
 		IDataCursor pipelineCursor = pipeline.getCursor();
 		String adviceId = IDataUtil.getString(pipelineCursor, ADVICE_ID);
@@ -114,7 +139,7 @@ public class MockManager extends AbstractFlowManager {
 		pipelineCursor.destroy();
 
 		mandatory(pipeline, "{0} must exist when creating an assertion", ADVICE_ID, INTERCEPT_POINT, SERVICE_NAME);
-		registerInterceptor(adviceId, interceptPoint, serviceName, pipelineCondition, new AssertionInterceptor(adviceId));
+		registerInterceptor(adviceId, getScope(pipeline), interceptPoint, serviceName, pipelineCondition, new AssertionInterceptor(adviceId));
 	}
 	
 	public void getInvokeCount(IData pipeline) throws ServiceException {
@@ -145,7 +170,7 @@ public class MockManager extends AbstractFlowManager {
 		
 		try {
 			Exception e = (Exception) Class.forName(exception).getDeclaredConstructor(String.class).newInstance("WMAOP " + serviceName);
-			registerInterceptor(adviceId, interceptPoint, serviceName, pipelineCondition, new ExceptionInterceptor(e));
+			registerInterceptor(adviceId, getScope(pipeline), interceptPoint, serviceName, pipelineCondition, new ExceptionInterceptor(e));
 		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
 			throw new ServiceException(e);
 		}

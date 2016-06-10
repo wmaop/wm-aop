@@ -23,6 +23,7 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.wmaop.aop.advice.Advice;
+import org.wmaop.aop.advice.scope.GlobalScope;
 import org.wmaop.aop.interceptor.Interceptor;
 import org.wmaop.aop.matcher.FlowPositionMatcher;
 import org.wmaop.aop.pointcut.PointCut;
@@ -154,7 +155,7 @@ public class StubManagerTest {
 		FlowPositionMatcher matcher = mock(FlowPositionMatcher.class);
 		when(matcher.getServiceName()).thenReturn(SERVICE_NAME);
 		when(pointcut.getFlowPositionMatcher()).thenReturn(matcher);
-		Advice advice = new Advice("id", pointcut , mock(Interceptor.class));
+		Advice advice = new Advice("id", new GlobalScope(), pointcut , mock(Interceptor.class));
 		return advice;
 	}
 
