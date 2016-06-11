@@ -42,14 +42,14 @@
 	</developers>
 	
 	<properties>
-		<wm-aop-util.version>1.0.1</wm-aop-util.version>
+		<wm-aop-util.version>1.1.0-SNAPSHOT</wm-aop-util.version>
 
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<jaxb.version>2.2.7</jaxb.version> <!-- Must match jaxb2-maven-plugin dep version -->
 		<commons-logging.version>1.1.1</commons-logging.version> <!-- JEXL version for exclusion -->
 		<apache.axis2.version>1.6.2</apache.axis2.version>
 		<javax.mail.version>1.4.4</javax.mail.version>
-		<jexl.version>2.1.1</jexl.version>
+		<jexl.version>3.0</jexl.version>
 		
 		<maven.javadoc.skip>true</maven.javadoc.skip>
 	</properties>
@@ -62,7 +62,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-jexl</artifactId>
+			<artifactId>commons-jexl3</artifactId>
 			<version>${jexl.version}</version>
 		</dependency>
 

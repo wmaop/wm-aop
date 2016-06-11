@@ -3,9 +3,9 @@ package org.wmaop.aop.matcher.jexl;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.jexl2.Expression;
-import org.apache.commons.jexl2.JexlContext;
-import org.apache.commons.jexl2.MapContext;
+import org.apache.commons.jexl3.JexlExpression;
+import org.apache.commons.jexl3.JexlContext;
+import org.apache.commons.jexl3.MapContext;
 import org.wmaop.aop.interceptor.FlowPosition;
 import org.wmaop.aop.matcher.MatchResult;
 import org.wmaop.aop.matcher.Matcher;
@@ -13,7 +13,7 @@ import org.wmaop.util.jexl.JexlExpressionFactory;
 
 public class JexlServiceNameMatcher implements Matcher<FlowPosition> {
 
-	private final Expression expression;
+	private final JexlExpression expression;
 	private final String sid;
 
 	public JexlServiceNameMatcher(String sid, String expr) {
@@ -32,8 +32,8 @@ public class JexlServiceNameMatcher implements Matcher<FlowPosition> {
 		return MatchResult.FALSE;
 	}
 
-	private Expression createExpression(String name, String exprText) {
-		Expression compiledExpr = JexlExpressionFactory.createExpression(exprText);
+	private JexlExpression createExpression(String name, String exprText) {
+		JexlExpression compiledExpr = JexlExpressionFactory.createExpression(exprText);
 		Object result = compiledExpr.evaluate(new MapContext());
 		verifyExpressionResult(name, result);
 		return compiledExpr;

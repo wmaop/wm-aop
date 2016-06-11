@@ -6,9 +6,9 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.apache.commons.jexl2.Expression;
-import org.apache.commons.jexl2.JexlContext;
-import org.apache.commons.jexl2.MapContext;
+import org.apache.commons.jexl3.JexlExpression;
+import org.apache.commons.jexl3.JexlContext;
+import org.apache.commons.jexl3.MapContext;
 import org.wmaop.aop.matcher.MatchResult;
 import org.wmaop.aop.matcher.Matcher;
 import org.wmaop.util.jexl.IDataJexlContext;
@@ -18,7 +18,7 @@ import com.wm.data.IData;
 
 public class JexlIDataMatcher implements Matcher<IData> {
 
-	private final Map<String, Expression> expressions = new LinkedHashMap<>();
+	private final Map<String, JexlExpression> expressions = new LinkedHashMap<>();
 	private final String EXPRESSION;
 	
 	public JexlIDataMatcher(String sid, String expression) {
@@ -36,7 +36,7 @@ public class JexlIDataMatcher implements Matcher<IData> {
 	public MatchResult match(IData idata) {
 		JexlContext ctx = new IDataJexlContext(idata);
 
-		for (Entry<String, Expression> expr : expressions.entrySet()) {
+		for (Entry<String, JexlExpression> expr : expressions.entrySet()) {
 			Object result = expr.getValue().evaluate(ctx);
 			verifyExpressionResult(expr.getKey(), result);
 			if ((Boolean) result)
@@ -46,7 +46,7 @@ public class JexlIDataMatcher implements Matcher<IData> {
 	}
 
 	private void createExpression(String name, String exprText) {
-		Expression compiledExpr = JexlExpressionFactory.createExpression(exprText);
+		JexlExpression compiledExpr = JexlExpressionFactory.createExpression(exprText);
 		Object result = compiledExpr.evaluate(new MapContext());
 		verifyExpressionResult(name, result);
 		expressions.put(name, compiledExpr);
@@ -68,7 +68,7 @@ public class JexlIDataMatcher implements Matcher<IData> {
 	public Map<String, Object> toMap() {
 		Map<String, Object> am = new HashMap<>();
 		am.put("type", "JexlIDataMatcher");
-		for (Entry<String, Expression> e : expressions.entrySet()) {
+		for (Entry<String, JexlExpression> e : expressions.entrySet()) {
 			am.put(e.getKey(), e.getValue().toString());
 		}
 		return am;
