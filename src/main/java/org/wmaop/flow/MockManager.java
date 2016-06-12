@@ -4,7 +4,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
 import org.wmaop.aop.advice.Advice;
 import org.wmaop.aop.advice.AdviceManager;
 import org.wmaop.aop.advice.scope.GlobalScope;
@@ -16,6 +15,7 @@ import org.wmaop.aop.interceptor.Interceptor;
 import org.wmaop.chainprocessor.AOPChainProcessor;
 import org.wmaop.interceptor.mock.canned.CannedResponseInterceptor;
 import org.wmaop.interceptor.mock.exception.ExceptionInterceptor;
+import org.wmaop.util.logger.Logger;
 import org.wmaop.util.pipeline.StructureConverter;
 
 import com.wm.app.b2b.server.ServiceException;
@@ -32,7 +32,7 @@ public class MockManager extends AbstractFlowManager {
 	public static final String CONDITION = "condition";
 	public static final String EXCEPTION = "exception";
 	public static final String SCOPE = "scope";
-	public static final String USER = "user";
+	public static final String USERNAME = "username";
 	
 	private static final Logger logger = Logger.getLogger(MockManager.class);
 	
@@ -113,21 +113,27 @@ public class MockManager extends AbstractFlowManager {
 	
 	private Scope getScope(IData pipeline) throws ServiceException {
 		IDataCursor pipelineCursor = pipeline.getCursor();
-		String theScope = IDataUtil.getString(pipelineCursor, SCOPE);
-		String username = IDataUtil.getString(pipelineCursor, SCOPE);
-		if (theScope == null || "GLOBAL".equals(theScope.toUpperCase())) {
+		String requiredScope = IDataUtil.getString(pipelineCursor, SCOPE);
+		if (requiredScope == null) {
 			return new GlobalScope();
 		}
-		if ("SESSION".equals(theScope.toUpperCase())) {
-			return new SessionScope();
-		}
-		if ("USER".equals(theScope.toUpperCase())) {
+		
+		requiredScope = requiredScope.toUpperCase();
+		Scope scope;
+		if ("GLOBAL".equals(requiredScope)) {
+			scope = new GlobalScope();
+		} else if ("SESSION".equals(requiredScope)) {
+			scope = new SessionScope();
+		} else  if ("USER".equals(requiredScope)) {
+			String username = IDataUtil.getString(pipelineCursor, USERNAME);
 			if (username == null || username.length() == 0) {
-				throw new ServiceException("'user' must exist in the pipeline when specifying user scope");
+				throw new ServiceException(USERNAME + " must exist in the pipeline when specifying user scope");
 			}
-			return new UserScope(username);
+			scope = new UserScope(username);
+		} else {
+			throw new ServiceException("Unknown scope: " + requiredScope);
 		}
-		throw new ServiceException("Unknown scope: " + theScope);
+		return scope;
 	}
 
 	public void registerAssertion(IData pipeline) throws ServiceException {

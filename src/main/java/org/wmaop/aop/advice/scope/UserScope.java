@@ -1,7 +1,5 @@
 package org.wmaop.aop.advice.scope;
 
-import org.wmaop.aop.interceptor.FlowPosition;
-
 import com.wm.app.b2b.server.InvokeState;
 
 public class UserScope implements Scope {
@@ -13,7 +11,7 @@ public class UserScope implements Scope {
 	}
 	
 	@Override
-	public boolean isInScope() {
+	public boolean isApplicable() {
 		return username.equals(InvokeState.getCurrentUser().getName());
 	}
 }

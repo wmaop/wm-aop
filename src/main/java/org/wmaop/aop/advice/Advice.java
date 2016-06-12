@@ -34,7 +34,7 @@ public class Advice {
 	}
 
 	public boolean isApplicable(FlowPosition pipelinePosition, IData idata){
-		return pointCut.isApplicable(pipelinePosition, idata) && scope.isInScope();
+		return scope.isApplicable() && pointCut.isApplicable(pipelinePosition, idata);
 	}
 	
 	public Interceptor getInterceptor() {
@@ -64,6 +64,7 @@ public class Advice {
 		am.put("id", id);
 		am.put("pointcut", pointCut.toMap());
 		am.put("interceptor", interceptor.toMap());
+		am.put("scope", scope.toString());
 		return am;
 	}
 

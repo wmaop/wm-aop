@@ -15,7 +15,7 @@ public class SessionScope implements Scope {
 	}
 	
 	@Override
-	public boolean isInScope() {
+	public boolean isApplicable() {
 		return InvokeState.getCurrentSession().getSessionID().equals(associatedSessionId);
 	}
 }

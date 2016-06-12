@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.apache.log4j.Logger;
 import org.wmaop.aop.interceptor.CompositeInterceptor;
 import org.wmaop.aop.interceptor.FlowPosition;
 import org.wmaop.aop.interceptor.InterceptResult;
@@ -18,6 +17,7 @@ import org.wmaop.interceptor.BaseInterceptor;
 import org.wmaop.interceptor.bdd.xsd.Scenario;
 import org.wmaop.interceptor.bdd.xsd.Then;
 import org.wmaop.interceptor.bdd.xsd.When;
+import org.wmaop.util.logger.Logger;
 
 import com.wm.data.IData;
 

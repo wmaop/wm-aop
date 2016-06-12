@@ -8,7 +8,6 @@ import static org.wmaop.aop.interceptor.InterceptPoint.INVOKE;
 import java.util.Iterator;
 
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
-import org.apache.log4j.Logger;
 import org.wmaop.aop.advice.Advice;
 import org.wmaop.aop.advice.AdviceManager;
 import org.wmaop.aop.interceptor.FlowPosition;
@@ -16,6 +15,7 @@ import org.wmaop.aop.interceptor.InterceptResult;
 import org.wmaop.aop.interceptor.Interceptor;
 import org.wmaop.aop.stub.StubLifecycleObserver;
 import org.wmaop.aop.stub.StubManager;
+import org.wmaop.util.logger.Logger;
 
 import com.wm.app.b2b.server.BaseService;
 import com.wm.app.b2b.server.invoke.InvokeChainProcessor;
@@ -26,8 +26,6 @@ import com.wm.util.ServerException;
 public class AOPChainProcessor implements InvokeChainProcessor {
 
 	private static final Logger logger = Logger.getLogger(AOPChainProcessor.class);
-
-	private static final String PFX = "]>]> ";
 
 	private static AOPChainProcessor instance;
 
@@ -51,7 +49,7 @@ public class AOPChainProcessor implements InvokeChainProcessor {
 		adviceManager = advMgr;
 		stubManager = stbMgr;
 		
-		logger.info(PFX + "Initialising " + this.getClass().getName());
+		logger.info("Initialising " + this.getClass().getName());
 		adviceManager.reset();
 		AOPChainProcessor.instance = this;
 	
@@ -60,7 +58,7 @@ public class AOPChainProcessor implements InvokeChainProcessor {
 
 	public void setEnabled(boolean enabled) {
 		interceptingEnabled = enabled;
-		logger.info(PFX + "Intercepting " + (enabled ? "enabled" : "disabled"));
+		logger.info("Intercepting " + (enabled ? "enabled" : "disabled"));
 	}
 
 	public boolean isEnabled() {
@@ -94,7 +92,7 @@ public class AOPChainProcessor implements InvokeChainProcessor {
 		boolean hasIntercepted = processAdvice(true, pipelinePosition, idata, serviceStatus);
 
 		if (hasIntercepted && logger.isDebugEnabled()) {
-			if (logger.isDebugEnabled()) logger.debug("Intercepted: " + ReflectionToStringBuilder.toString(serviceStatus));
+			logger.info("Intercepted: " + ReflectionToStringBuilder.toString(serviceStatus));
 		}
 
 		if (!hasIntercepted && processorChain.hasNext()) {
@@ -109,15 +107,15 @@ public class AOPChainProcessor implements InvokeChainProcessor {
 		boolean hasIntercepted = false;
 		try {
 			for (Advice advice : adviceManager.getAdvicesForInterceptPoint(pos.getInterceptPoint())) {
-				if (advice.getAdviceState() == ENABLED && advice.isApplicable(pos, idata)) {
-					hasIntercepted = intercept(pos, idata, serviceStatus, advice);
-					if (hasIntercepted && exitOnIntercept) {
-						break;
+				if (advice.getAdviceState() == ENABLED && advice.isApplicable(pos, idata) && intercept(pos, idata, serviceStatus, advice)) {
+					hasIntercepted = true; // Ensure its only set, never reset to false
+					if (exitOnIntercept) {
+						break; // Used to break on first intercept if required
 					}
 				}
 			}
 		} catch (Exception e) {
-			logger.error(PFX + "Error intercepting. Behaviour at " + pos + " may be unknown", e);
+			logger.error("Error intercepting. Behaviour at " + pos + " may be unknown", e);
 		}
 		return hasIntercepted;
 	}
@@ -126,7 +124,7 @@ public class AOPChainProcessor implements InvokeChainProcessor {
 			Advice advice) {
 		Interceptor interceptor = advice.getInterceptor();
 		InterceptResult interceptResult = interceptor.intercept(pos, idata);
-		logger.info(PFX + "Intercepting " + advice.getId() + " " + pos.getInterceptPoint() + ' ' + pos + " - " + interceptResult.hasIntercepted());
+		logger.info("Intercepting " + advice.getId() + " " + pos.getInterceptPoint() + ' ' + pos + " - " + interceptResult.hasIntercepted());
 		
 		boolean hasIntercepted = false;	
 		if (interceptResult.hasIntercepted()) {

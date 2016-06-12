@@ -11,15 +11,14 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Observable;
 
-import org.apache.log4j.Logger;
 import org.wmaop.aop.interceptor.CompositeInterceptor;
 import org.wmaop.aop.interceptor.InterceptPoint;
 import org.wmaop.aop.interceptor.Interceptor;
+import org.wmaop.util.logger.Logger;
 
 public class AdviceManager extends Observable {
 
 	private static final Logger logger = Logger.getLogger(AdviceManager.class);
-	private static final String PFX = "]>]> ";
 
 	protected final Map<InterceptPoint, List<Advice>> advices = new EnumMap<>(InterceptPoint.class);
 	protected final Map<String, Advice> idAdvice = new HashMap<>();
@@ -38,7 +37,7 @@ public class AdviceManager extends Observable {
 
 		advice.setAdviceState(ENABLED);
 		notify(advice);
-		logger.info(PFX + "Registered advice " + advice);
+		logger.info("Registered advice " + advice);
 	}
 
 	public void unregisterAdvice(String adviceId) {
@@ -72,7 +71,7 @@ public class AdviceManager extends Observable {
 				unregisterAdvice(adv);
 			}
 		}
-		logger.info(PFX + "Cleared all Advice");
+		logger.info("Cleared all Advice");
 	}
 
 	public Advice getAdvice(String id) {

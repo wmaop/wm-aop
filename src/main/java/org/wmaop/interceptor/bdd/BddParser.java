@@ -7,7 +7,6 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
-import org.apache.log4j.Logger;
 import org.wmaop.aop.advice.Advice;
 import org.wmaop.aop.advice.scope.GlobalScope;
 import org.wmaop.aop.interceptor.InterceptPoint;
@@ -20,6 +19,7 @@ import org.wmaop.aop.pointcut.ServicePipelinePointCut;
 import org.wmaop.interceptor.bdd.xsd.Scenario;
 import org.wmaop.interceptor.bdd.xsd.Service;
 import org.wmaop.interceptor.bdd.xsd.When;
+import org.wmaop.util.logger.Logger;
 
 import com.wm.data.IData;
 

@@ -6,12 +6,12 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
 import org.wmaop.aop.interceptor.FlowPosition;
 import org.wmaop.aop.interceptor.InterceptResult;
 import org.wmaop.aop.matcher.MatchResult;
 import org.wmaop.aop.matcher.jexl.JexlIDataMatcher;
 import org.wmaop.interceptor.BaseInterceptor;
+import org.wmaop.util.logger.Logger;
 
 import com.wm.data.IData;
 import com.wm.data.IDataUtil;

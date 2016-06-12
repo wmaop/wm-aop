@@ -254,12 +254,14 @@ public class AOPChainProcessorTest {
 	@Test
 	public void shouldFireMultiBeforeAfterAndSingleInvoke() throws ServerException, IOException {
 		AOPChainProcessor cp = new AOPChainProcessor(new AdviceManager(), mock(StubManager.class));
+		cp.getAdviceManager().registerAdvice(getCannedAdvice("err1", InterceptPoint.INVOKE, "a == 99"));
 		cp.getAdviceManager().registerAdvice(getCannedAdvice("pre1", InterceptPoint.BEFORE, null));
 		cp.getAdviceManager().registerAdvice(getCannedAdvice("pre2", InterceptPoint.BEFORE, null));
 		cp.getAdviceManager().registerAdvice(getCannedAdvice("inv1", InterceptPoint.INVOKE, "a == 1"));
 		cp.getAdviceManager().registerAdvice(getCannedAdvice("inv2", InterceptPoint.INVOKE, "a == 2"));
 		cp.getAdviceManager().registerAdvice(getCannedAdvice("inv3", InterceptPoint.INVOKE, "a == 3"));
 		cp.getAdviceManager().registerAdvice(getCannedAdvice("post1", InterceptPoint.AFTER, null));
+		cp.getAdviceManager().registerAdvice(getCannedAdvice("err2", InterceptPoint.INVOKE, "a == 99"));
 		cp.getAdviceManager().registerAdvice(getCannedAdvice("post2", InterceptPoint.AFTER, null));
 		
 		IData idata = IDataFactory.create();
