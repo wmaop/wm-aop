@@ -35,7 +35,7 @@ public class ConditionalResponseInterceptor extends BaseInterceptor {
 			String sid = cr.getId();
 			exprs.put(sid, cr.getExpression());
 			responses.put(sid, new IDataXMLCoder().decodeFromBytes(cr.getResponse().getBytes()));
-			logger.info("]>]> Adding response id " + sid + " length " + cr.getResponse().length() + " for expression " + cr.getExpression());
+			logger.info("Adding response id " + sid + " length " + cr.getResponse().length() + " for expression " + cr.getExpression());
 		}
 		if (defaultResponse != null && defaultResponse.getResponse() != null) {
 			this.defaultResponse = new IDataXMLCoder().decodeFromBytes(defaultResponse.getResponse().getBytes());
@@ -51,13 +51,13 @@ public class ConditionalResponseInterceptor extends BaseInterceptor {
 	public InterceptResult intercept(FlowPosition flowPosition, IData idata) {
 		invokeCount++;
 		MatchResult result = evaluator.match(idata);
-		logger.info("]>]> Evaluated " + result);
+		logger.info("Evaluated " + result);
 		if (result != null) {
-			logger.info("]>]> Merging response " + result.getId());
+			logger.info("Merging response " + result.getId());
 			IDataUtil.merge(responses.get(result.getId()), idata);
 			return InterceptResult.TRUE;
 		} else if (defaultResponse != null) {
-			logger.info("]>]> Merging default response " + defaultId);
+			logger.info("Merging default response " + defaultId);
 			IDataUtil.merge(defaultResponse, idata);
 			return InterceptResult.TRUE;
 		}

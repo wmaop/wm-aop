@@ -6,4 +6,9 @@ public final class GlobalScope implements Scope {
 	public final boolean isApplicable() {
 		return true;
 	}
+
+	@Override
+	public String toString() {
+		return "GlobalScope";
+	}
 }

@@ -1,5 +1,8 @@
 <scenario xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:noNamespaceSchemaLocation="../../../main/xsd/bddSchema.xsd" id="advice id">
+	<scope>
+		<session/>
+	</scope>
 	<given>
 		<service intercepted="invoke">pub.test:svcB</service>
 	</given>

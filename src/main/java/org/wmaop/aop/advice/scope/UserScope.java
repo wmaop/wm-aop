@@ -14,4 +14,9 @@ public class UserScope implements Scope {
 	public boolean isApplicable() {
 		return username.equals(InvokeState.getCurrentUser().getName());
 	}
+	
+	@Override
+	public String toString() {
+		return "UserScope[" + InvokeState.getCurrentUser().getName() + ']';
+	}
 }

@@ -3,10 +3,29 @@
   <xs:element name="scenario">
     <xs:complexType>
       <xs:sequence>
+        <xs:element ref="scope" minOccurs="0"/>
         <xs:element ref="given"/>
         <xs:element ref="when" maxOccurs="unbounded"/>
       </xs:sequence>
       <xs:attribute name="id" use="required"/>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="scope">
+    <xs:complexType>
+      <xs:choice>
+        <xs:element name="global"/>
+        <xs:element name="session"/>
+        <xs:element name="user">
+          <xs:complexType>
+            <xs:complexContent>
+              <xs:restriction base="xs:anyType">
+                <xs:attribute name="username" type="xs:string"/>
+              </xs:restriction>
+            </xs:complexContent>
+          </xs:complexType>
+        </xs:element>
+      </xs:choice>
     </xs:complexType>
   </xs:element>
 

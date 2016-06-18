@@ -9,6 +9,9 @@ import javax.xml.bind.Unmarshaller;
 
 import org.wmaop.aop.advice.Advice;
 import org.wmaop.aop.advice.scope.GlobalScope;
+import org.wmaop.aop.advice.scope.Scope;
+import org.wmaop.aop.advice.scope.SessionScope;
+import org.wmaop.aop.advice.scope.UserScope;
 import org.wmaop.aop.interceptor.InterceptPoint;
 import org.wmaop.aop.interceptor.Interceptor;
 import org.wmaop.aop.matcher.AlwaysTrueMatcher;
@@ -17,6 +20,7 @@ import org.wmaop.aop.matcher.Matcher;
 import org.wmaop.aop.matcher.jexl.JexlIDataMatcher;
 import org.wmaop.aop.pointcut.ServicePipelinePointCut;
 import org.wmaop.interceptor.bdd.xsd.Scenario;
+import org.wmaop.interceptor.bdd.xsd.Scope.User;
 import org.wmaop.interceptor.bdd.xsd.Service;
 import org.wmaop.interceptor.bdd.xsd.When;
 import org.wmaop.util.logger.Logger;
@@ -42,9 +46,22 @@ public class BddParser {
 
 	private Advice processAdvice(Scenario scenario) {
 		Interceptor interceptor = new BddInterceptor(scenario, true);
-		return new Advice(scenario.getId(), new GlobalScope(), getJoinPoint(scenario), interceptor);
+		return new Advice(scenario.getId(), getScope(scenario), getJoinPoint(scenario), interceptor);
 	}
 
+	private Scope getScope(Scenario scenario) {
+		if (scenario.getScope() == null) {
+			return new GlobalScope();
+		}
+		if (scenario.getScope().getSession() != null) { 
+			return new SessionScope();
+		}
+		User user = scenario.getScope().getUser(); 
+		if (user != null) {
+			return new UserScope(user.getUsername());
+		}
+		return new GlobalScope();
+	}
 	private InterceptPoint getInterceptPoint(Scenario scenario) {
 		InterceptPoint interceptPoint = InterceptPoint.valueOf(scenario.getGiven().getService().getIntercepted().toUpperCase());
 		logger.info("Creating intercept point: " + interceptPoint);

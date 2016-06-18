@@ -90,7 +90,7 @@ public class BddInterceptor extends BaseInterceptor implements CompositeIntercep
 			} else {
 				defaultInterceptors.add(interceptor);
 			}
-			logger.info("]>]> Adding response id " + id + " to action " + interceptor);
+			logger.info("Adding response id " + id + " to action " + interceptor);
 		}
 	}
 
@@ -98,7 +98,7 @@ public class BddInterceptor extends BaseInterceptor implements CompositeIntercep
 	public InterceptResult intercept(FlowPosition flowPosition, IData idata) {
 		invokeCount++;
 		MatchResult result = hasExpressions ? iDataMatcher.match(idata) : null;
-		logger.info("]>]> Evaluated " + result);
+		logger.info("Evaluated " + result);
 
 		// Check for match of expression, ignoring if its a non-expression default
 		if (result != null && result.isMatch()) {
