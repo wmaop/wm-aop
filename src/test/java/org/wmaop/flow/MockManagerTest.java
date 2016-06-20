@@ -1,13 +1,13 @@
 package org.wmaop.flow;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 import static org.wmaop.flow.MockManager.ADVICE_ID;
 import static org.wmaop.flow.MockManager.INTERCEPT_POINT;
 import static org.wmaop.flow.MockManager.RESPONSE;
 import static org.wmaop.flow.MockManager.SERVICE_NAME;
 
 import org.junit.Test;
+import org.wmaop.aop.advice.remit.*;
 
 import com.wm.app.b2b.server.ServiceException;
 import com.wm.data.IData;
@@ -67,6 +67,35 @@ public class MockManagerTest {
 		}, PARAMS);
 	}
 
+	@Test
+	public void shouldParseRemit() throws Exception {
+		final MockManager mm = new MockManager();
+		IData idata = IDataFactory.create();
+		IDataCursor cursor = idata.getCursor();
+		assertTrue(mm.getRemit(idata) instanceof UserRemit);
+		IDataUtil.put(cursor, "scope", "global");
+		assertTrue(mm.getRemit(idata) instanceof GlobalRemit);
+		IDataUtil.put(cursor, "scope", "session");
+		assertTrue(mm.getRemit(idata) instanceof SessionRemit);
+		IDataUtil.put(cursor, "scope", "user");
+		try {
+			mm.getRemit(idata);
+			fail(); // Must define username
+		} catch (ServiceException se) {
+			// NOOP
+		}
+		IDataUtil.put(cursor, "username", "foo");
+		IDataUtil.put(cursor, "scope", "USER");
+		assertTrue(mm.getRemit(idata) instanceof UserRemit);
+		IDataUtil.put(cursor, "scope", "all");
+		try {
+			mm.getRemit(idata); // Not valid
+			fail();
+		} catch (ServiceException se) {
+			// NOOP
+		}
+	}
+	
 	private void testForMissingManadatory(Callback callback, String[][] params) throws Exception {
 		for (int i = 0; i < params.length; i++) {
 			IData idata = IDataFactory.create();

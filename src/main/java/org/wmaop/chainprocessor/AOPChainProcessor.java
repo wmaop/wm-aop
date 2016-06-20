@@ -10,6 +10,7 @@ import java.util.Iterator;
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 import org.wmaop.aop.advice.Advice;
 import org.wmaop.aop.advice.AdviceManager;
+import org.wmaop.aop.advice.Scope;
 import org.wmaop.aop.interceptor.FlowPosition;
 import org.wmaop.aop.interceptor.InterceptResult;
 import org.wmaop.aop.interceptor.Interceptor;
@@ -50,7 +51,7 @@ public class AOPChainProcessor implements InvokeChainProcessor {
 		stubManager = stbMgr;
 		
 		logger.info("Initialising " + this.getClass().getName());
-		adviceManager.reset();
+		adviceManager.reset(Scope.ALL);
 		AOPChainProcessor.instance = this;
 	
 		adviceManager.addObserver(new StubLifecycleObserver(stubManager));
@@ -137,10 +138,12 @@ public class AOPChainProcessor implements InvokeChainProcessor {
 		return hasIntercepted;
 	}
 
-	public void reset() {
-		adviceManager.reset();
-		stubManager.clearStubs();
-		setEnabled(false);
+	public void reset(Scope scope) {
+		adviceManager.reset(scope);
+		if (scope == Scope.ALL) {
+			stubManager.clearStubs();
+			setEnabled(false);
+		}
 	}
 	
 	/*

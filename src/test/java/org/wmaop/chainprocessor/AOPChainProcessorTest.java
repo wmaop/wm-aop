@@ -17,7 +17,7 @@ import java.util.List;
 import org.junit.Test;
 import org.wmaop.aop.advice.Advice;
 import org.wmaop.aop.advice.AdviceManager;
-import org.wmaop.aop.advice.scope.GlobalScope;
+import org.wmaop.aop.advice.remit.GlobalRemit;
 import org.wmaop.aop.assertion.AssertionInterceptor;
 import org.wmaop.aop.interceptor.InterceptPoint;
 import org.wmaop.aop.interceptor.Interceptor;
@@ -52,12 +52,12 @@ public class AOPChainProcessorTest {
 		FlowPositionMatcherImpl serviceNameMatcher = new FlowPositionMatcherImpl("my id", "pre:foo");
 		Matcher<IData> pipelineMatcher = new JexlIDataMatcher("doc", "documentName == 'iso'");
 		AssertionInterceptor assertion = new AssertionInterceptor("myAssertion");
-		Advice assertionAdvice = new Advice("adv1", new GlobalScope(), new ServicePipelinePointCut(serviceNameMatcher, pipelineMatcher, InterceptPoint.BEFORE), assertion);
+		Advice assertionAdvice = new Advice("adv1", new GlobalRemit(), new ServicePipelinePointCut(serviceNameMatcher, pipelineMatcher, InterceptPoint.BEFORE), assertion);
 		cp.getAdviceManager().registerAdvice(assertionAdvice);
 		assertEquals(1, cp.getAdviceManager().listAdvice().size());
 
 		CannedResponseInterceptor interceptor = new CannedResponseInterceptor(classLoader.getResourceAsStream("cannedResponse.xml"));
-		Advice interceptAdvice = new Advice("adv2", new GlobalScope(), new ServicePipelinePointCut(serviceNameMatcher, pipelineMatcher, InterceptPoint.INVOKE), interceptor);
+		Advice interceptAdvice = new Advice("adv2", new GlobalRemit(), new ServicePipelinePointCut(serviceNameMatcher, pipelineMatcher, InterceptPoint.INVOKE), interceptor);
 		cp.getAdviceManager().registerAdvice(interceptAdvice);
 		
 		assertEquals(2, cp.getAdviceManager().listAdvice().size());
@@ -90,7 +90,7 @@ public class AOPChainProcessorTest {
 		FlowPositionMatcherImpl serviceNameMatcher = new FlowPositionMatcherImpl("my id", "pre:foo");
 		CannedResponseInterceptor interceptor = new CannedResponseInterceptor(classLoader.getResourceAsStream("cannedResponse.xml"));
 		ServicePipelinePointCut pointCut = new ServicePipelinePointCut(serviceNameMatcher, new AlwaysTrueMatcher<IData>("my id"), InterceptPoint.INVOKE);
-		Advice advice = new Advice("intercept", new GlobalScope(), pointCut, interceptor);
+		Advice advice = new Advice("intercept", new GlobalRemit(), pointCut, interceptor);
 		cp.getAdviceManager().registerAdvice(advice);
 
 		// Pipeline mocking
@@ -112,16 +112,16 @@ public class AOPChainProcessorTest {
 
 		Interceptor interceptor = mock(Interceptor.class);
 		PointCut pc = new ServicePipelinePointCut(new FlowPositionMatcherImpl("foo", "bar"), new AlwaysTrueMatcher<>("foo"), InterceptPoint.INVOKE); 
-		Advice mockAdviceA = new Advice("a", new GlobalScope(), pc, interceptor);
+		Advice mockAdviceA = new Advice("a", new GlobalRemit(), pc, interceptor);
 		cp.getAdviceManager().registerAdvice(mockAdviceA);
 		assertEquals(1, cp.getAdviceManager().listAdvice().size());
 
-		Advice mockAdviceAnotherA = new Advice("a", new GlobalScope(), pc, interceptor);
+		Advice mockAdviceAnotherA = new Advice("a", new GlobalRemit(), pc, interceptor);
 		cp.getAdviceManager().registerAdvice(mockAdviceAnotherA);
 		assertEquals(1, cp.getAdviceManager().listAdvice().size());
 		
 		
-		Advice mockAdviceB = new Advice("b", new GlobalScope(), pc, interceptor);
+		Advice mockAdviceB = new Advice("b", new GlobalRemit(), pc, interceptor);
 		cp.getAdviceManager().registerAdvice(mockAdviceB);
 		assertEquals(2, cp.getAdviceManager().listAdvice().size());
 
@@ -151,10 +151,10 @@ public class AOPChainProcessorTest {
 		AOPChainProcessor cp = new AOPChainProcessor(new AdviceManager(), mock(StubManager.class));
 
 		PointCut pc = new ServicePipelinePointCut(new FlowPositionMatcherImpl("foo", "bar"), new AlwaysTrueMatcher<>("foo"), InterceptPoint.INVOKE); 
-		Advice mockAdviceA = new Advice("a", new GlobalScope(), pc, null);
+		Advice mockAdviceA = new Advice("a", new GlobalRemit(), pc, null);
 		cp.getAdviceManager().registerAdvice(mockAdviceA);
 
-		Advice mockAdviceB = new Advice("b",new GlobalScope(),  pc, null);
+		Advice mockAdviceB = new Advice("b",new GlobalRemit(),  pc, null);
 		cp.getAdviceManager().registerAdvice(mockAdviceB);
 
 		List<Advice> advices = cp.getAdviceManager().listAdvice();
@@ -184,7 +184,7 @@ public class AOPChainProcessorTest {
 		Exception exception = new Exception();
 		Interceptor interceptor = new ExceptionInterceptor(exception );
 		ServicePipelinePointCut pointCut = new ServicePipelinePointCut(serviceNameMatcher, new AlwaysTrueMatcher<IData>("my id"), InterceptPoint.INVOKE);
-		Advice advice = new Advice("intercept", new GlobalScope(), pointCut, interceptor);
+		Advice advice = new Advice("intercept", new GlobalRemit(), pointCut, interceptor);
 		cp.getAdviceManager().registerAdvice(advice);
 
 		// Pipeline mocking
@@ -201,7 +201,7 @@ public class AOPChainProcessorTest {
 
 		cp.getAdviceManager().unregisterAdvice(advice);
 		pointCut = new ServicePipelinePointCut(serviceNameMatcher, new AlwaysTrueMatcher<IData>("my id"), InterceptPoint.BEFORE);
-		advice = new Advice("intercept", new GlobalScope(), pointCut, interceptor);
+		advice = new Advice("intercept", new GlobalRemit(), pointCut, interceptor);
 		cp.getAdviceManager().registerAdvice(advice);
 		
 		// Execute
@@ -303,6 +303,6 @@ public class AOPChainProcessorTest {
 			matcher = new AlwaysTrueMatcher<IData>(adviceId);
 		}
 		ServicePipelinePointCut pointCut = new ServicePipelinePointCut(serviceNameMatcher, matcher, interceptPoint);
-		return new Advice(adviceId, new GlobalScope(), pointCut, interceptor);
+		return new Advice(adviceId, new GlobalRemit(), pointCut, interceptor);
 	}
 }

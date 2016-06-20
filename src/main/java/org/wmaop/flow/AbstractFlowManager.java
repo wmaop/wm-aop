@@ -4,7 +4,7 @@ import java.text.MessageFormat;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.wmaop.aop.advice.Advice;
-import org.wmaop.aop.advice.scope.Scope;
+import org.wmaop.aop.advice.remit.Remit;
 import org.wmaop.aop.interceptor.InterceptPoint;
 import org.wmaop.aop.interceptor.Interceptor;
 import org.wmaop.aop.matcher.AlwaysTrueMatcher;
@@ -50,7 +50,7 @@ public abstract class AbstractFlowManager {
 		throw new ServiceException(mf.format(ArrayUtils.addAll(new Object[]{input}, values)));
 	}
 
-	protected void registerInterceptor(String adviceId, Scope scope, String interceptPoint, String serviceName, String pipelineCondition, Interceptor interceptor) throws ServiceException {
+	protected void registerInterceptor(String adviceId, Remit scope, String interceptPoint, String serviceName, String pipelineCondition, Interceptor interceptor) throws ServiceException {
 		String interceptPointUpper = interceptPoint.toUpperCase();
 		oneof("interceptPoint {0} must be either {1}, {2} or {3}", interceptPointUpper, "BEFORE", "INVOKE", "AFTER");
 		InterceptPoint ip = InterceptPoint.valueOf(interceptPointUpper);

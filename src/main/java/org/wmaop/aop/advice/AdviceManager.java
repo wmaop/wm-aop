@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Observable;
 
+import org.wmaop.aop.advice.remit.Remit;
 import org.wmaop.aop.interceptor.CompositeInterceptor;
 import org.wmaop.aop.interceptor.InterceptPoint;
 import org.wmaop.aop.interceptor.Interceptor;
@@ -86,11 +87,25 @@ public class AdviceManager extends Observable {
 		return list;
 	}
 
-	public void reset() {
-		advices.clear();
-		idAdvice.clear();
-		for (InterceptPoint ip : InterceptPoint.values()) {
-			advices.put(ip, new ArrayList<Advice>());
+	public void reset(Scope scope) {
+		if (scope == Scope.ALL) {
+			advices.clear();
+			idAdvice.clear();
+			for (InterceptPoint ip : InterceptPoint.values()) {
+				advices.put(ip, new ArrayList<Advice>());
+			}
+		} else {
+			for (Entry<String, Advice> advRef : new HashMap<String, Advice>(idAdvice).entrySet()) {
+				Advice adv = advRef.getValue();
+				Remit remit = adv.getRemit();
+				if (scope == null) {
+					if (!remit.isApplicable(Scope.GLOBAL)) { // No scope so remove user and session only - ie not global
+						unregisterAdvice(adv);
+					}
+				} else if (remit.isApplicable(scope)) { // Only unregister for applicable scope
+					unregisterAdvice(adv);
+				}
+			}
 		}
 	}
 

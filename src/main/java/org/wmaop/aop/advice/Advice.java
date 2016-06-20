@@ -3,7 +3,7 @@ package org.wmaop.aop.advice;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.wmaop.aop.advice.scope.Scope;
+import org.wmaop.aop.advice.remit.Remit;
 import org.wmaop.aop.interceptor.FlowPosition;
 import org.wmaop.aop.interceptor.Interceptor;
 import org.wmaop.aop.pointcut.PointCut;
@@ -16,17 +16,17 @@ public class Advice {
 	private final Interceptor interceptor;
 	private final String id;
 	private AdviceState adviceState = AdviceState.NEW;
-	private final Scope scope;
+	private final Remit remit;
 
-	public Advice(String id, Scope scope, PointCut pointCut, Interceptor interceptor) {
+	public Advice(String id, Remit remit, PointCut pointCut, Interceptor interceptor) {
 		this.pointCut = pointCut;
 		this.interceptor = interceptor;
 		this.id = id;
-		this.scope = scope;
+		this.remit = remit;
 	}
 
-	public Scope getScope() {
-		return scope;
+	public Remit getRemit() {
+		return remit;
 	}
 
 	public PointCut getPointCut() {
@@ -34,7 +34,7 @@ public class Advice {
 	}
 
 	public boolean isApplicable(FlowPosition pipelinePosition, IData idata){
-		return  pointCut.isApplicable(pipelinePosition, idata) && scope.isApplicable();
+		return  pointCut.isApplicable(pipelinePosition, idata) && remit.isApplicable();
 	}
 	
 	public Interceptor getInterceptor() {
@@ -55,7 +55,7 @@ public class Advice {
 
 	@Override
 	public String toString() {
-		return id + ' ' + adviceState + ' ' + pointCut + ' ' + interceptor + ' ' + pointCut.getInterceptPoint() + ' ' + scope;
+		return id + ' ' + adviceState + ' ' + pointCut + ' ' + interceptor + ' ' + pointCut.getInterceptPoint() + ' ' + remit;
 	}
 	
 	public Map<String, Object> toMap() {
@@ -64,7 +64,7 @@ public class Advice {
 		am.put("id", id);
 		am.put("pointcut", pointCut.toMap());
 		am.put("interceptor", interceptor.toMap());
-		am.put("scope", scope.toString());
+		am.put("remit", remit.toString());
 		return am;
 	}
 

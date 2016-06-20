@@ -1,17 +1,21 @@
-package org.wmaop.aop.advice.scope;
+package org.wmaop.aop.advice.remit;
+
+import static org.wmaop.aop.advice.Scope.*;
+
+import org.wmaop.aop.advice.Scope;
 
 import com.wm.app.b2b.server.InvokeState;
 import com.wm.app.b2b.server.Session;
 
-public class SessionScope implements Scope {
+public class SessionRemit implements Remit {
 
 	private final String associatedSessionId;
 	
-	public SessionScope() {
+	public SessionRemit() {
 		associatedSessionId = getSessionID();
 	}
 	
-	public SessionScope(String associatedSessionId) {
+	public SessionRemit(String associatedSessionId) {
 		this.associatedSessionId = associatedSessionId;
 	}
 	
@@ -20,6 +24,10 @@ public class SessionScope implements Scope {
 		return getSessionID().equals(associatedSessionId);
 	}
 
+	@Override
+	public boolean isApplicable(Scope scope) {
+		return (scope == ALL || scope == SESSION) && isApplicable();
+	}
 
 	@Override
 	public String toString() {

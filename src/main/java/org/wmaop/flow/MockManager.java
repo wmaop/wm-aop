@@ -1,15 +1,17 @@
 package org.wmaop.flow;
 
 import java.lang.reflect.InvocationTargetException;
+
 import java.util.HashMap;
 import java.util.Map;
 
 import org.wmaop.aop.advice.Advice;
 import org.wmaop.aop.advice.AdviceManager;
-import org.wmaop.aop.advice.scope.GlobalScope;
-import org.wmaop.aop.advice.scope.Scope;
-import org.wmaop.aop.advice.scope.SessionScope;
-import org.wmaop.aop.advice.scope.UserScope;
+import org.wmaop.aop.advice.Scope;
+import org.wmaop.aop.advice.remit.GlobalRemit;
+import org.wmaop.aop.advice.remit.Remit;
+import org.wmaop.aop.advice.remit.SessionRemit;
+import org.wmaop.aop.advice.remit.UserRemit;
 import org.wmaop.aop.assertion.AssertionInterceptor;
 import org.wmaop.aop.interceptor.Interceptor;
 import org.wmaop.chainprocessor.AOPChainProcessor;
@@ -22,9 +24,11 @@ import com.wm.app.b2b.server.ServiceException;
 import com.wm.data.IData;
 import com.wm.data.IDataCursor;
 import com.wm.data.IDataUtil;
+import static org.wmaop.aop.advice.Scope.*;
 
 public class MockManager extends AbstractFlowManager {
 
+	// Possible query params
 	public static final String ADVICE_ID = "adviceId";
 	public static final String RESPONSE = "response";
 	public static final String INTERCEPT_POINT = "interceptPoint";
@@ -36,8 +40,17 @@ public class MockManager extends AbstractFlowManager {
 	
 	private static final Logger logger = Logger.getLogger(MockManager.class);
 	
-	public void reset() {
-		AOPChainProcessor.getInstance().reset();
+	public void reset(IData pipeline) throws ServiceException {
+		IDataCursor pipelineCursor = pipeline.getCursor();
+		String	scope = IDataUtil.getString( pipelineCursor, SCOPE );
+		pipelineCursor.destroy();
+		
+		try {
+			Scope applicableScope = scope == null ? null : Scope.valueOf(scope.toUpperCase());
+			AOPChainProcessor.getInstance().reset(applicableScope);
+		} catch (IllegalArgumentException e) {
+			throw new ServiceException("Unknown scope ["+scope+']');
+		}
 	}
 	
 	public void enableInterception(IData pipeline) {
@@ -108,32 +121,36 @@ public class MockManager extends AbstractFlowManager {
 		} catch (Exception e) {
 			throw new ServiceException("Unable to parse response IData for " + adviceId + " - Is the response valid IData XML? - " + e.getMessage());
 		}
-		registerInterceptor(adviceId, getScope(pipeline), interceptPoint.toUpperCase(), serviceName, pipelineCondition, interceptor);
+		registerInterceptor(adviceId, getRemit(pipeline), interceptPoint.toUpperCase(), serviceName, pipelineCondition, interceptor);
 	}
 	
-	private Scope getScope(IData pipeline) throws ServiceException {
+	Remit getRemit(IData pipeline) throws ServiceException {
 		IDataCursor pipelineCursor = pipeline.getCursor();
 		String requiredScope = IDataUtil.getString(pipelineCursor, SCOPE);
 		if (requiredScope == null) {
-			return new GlobalScope();
+			return new UserRemit();
 		}
 		
-		requiredScope = requiredScope.toUpperCase();
-		Scope scope;
-		if ("GLOBAL".equals(requiredScope)) {
-			scope = new GlobalScope();
-		} else if ("SESSION".equals(requiredScope)) {
-			scope = new SessionScope();
-		} else  if ("USER".equals(requiredScope)) {
+		Remit remit;
+		switch (Scope.valueOf(requiredScope.toUpperCase())) {
+		case GLOBAL:
+			remit = new GlobalRemit();
+			break;
+		case SESSION:
+			remit = new SessionRemit();
+			break;
+		case USER:
 			String username = IDataUtil.getString(pipelineCursor, USERNAME);
 			if (username == null || username.length() == 0) {
 				throw new ServiceException(USERNAME + " must exist in the pipeline when specifying user scope");
 			}
-			scope = new UserScope(username);
-		} else {
-			throw new ServiceException("Unknown scope: " + requiredScope);
+			remit = new UserRemit(username);
+			break;
+		default:
+			throw new ServiceException("Inapplicable scope: " + requiredScope);
 		}
-		return scope;
+
+		return remit;
 	}
 
 	public void registerAssertion(IData pipeline) throws ServiceException {
@@ -145,7 +162,7 @@ public class MockManager extends AbstractFlowManager {
 		pipelineCursor.destroy();
 
 		mandatory(pipeline, "{0} must exist when creating an assertion", ADVICE_ID, INTERCEPT_POINT, SERVICE_NAME);
-		registerInterceptor(adviceId, getScope(pipeline), interceptPoint, serviceName, pipelineCondition, new AssertionInterceptor(adviceId));
+		registerInterceptor(adviceId, getRemit(pipeline), interceptPoint, serviceName, pipelineCondition, new AssertionInterceptor(adviceId));
 	}
 	
 	public void getInvokeCount(IData pipeline) throws ServiceException {
@@ -176,7 +193,7 @@ public class MockManager extends AbstractFlowManager {
 		
 		try {
 			Exception e = (Exception) Class.forName(exception).getDeclaredConstructor(String.class).newInstance("WMAOP " + serviceName);
-			registerInterceptor(adviceId, getScope(pipeline), interceptPoint, serviceName, pipelineCondition, new ExceptionInterceptor(e));
+			registerInterceptor(adviceId, getRemit(pipeline), interceptPoint, serviceName, pipelineCondition, new ExceptionInterceptor(e));
 		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
 			throw new ServiceException(e);
 		}

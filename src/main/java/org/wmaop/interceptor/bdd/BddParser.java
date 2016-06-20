@@ -8,10 +8,10 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
 import org.wmaop.aop.advice.Advice;
-import org.wmaop.aop.advice.scope.GlobalScope;
-import org.wmaop.aop.advice.scope.Scope;
-import org.wmaop.aop.advice.scope.SessionScope;
-import org.wmaop.aop.advice.scope.UserScope;
+import org.wmaop.aop.advice.remit.GlobalRemit;
+import org.wmaop.aop.advice.remit.Remit;
+import org.wmaop.aop.advice.remit.SessionRemit;
+import org.wmaop.aop.advice.remit.UserRemit;
 import org.wmaop.aop.interceptor.InterceptPoint;
 import org.wmaop.aop.interceptor.Interceptor;
 import org.wmaop.aop.matcher.AlwaysTrueMatcher;
@@ -49,18 +49,18 @@ public class BddParser {
 		return new Advice(scenario.getId(), getScope(scenario), getJoinPoint(scenario), interceptor);
 	}
 
-	private Scope getScope(Scenario scenario) {
+	private Remit getScope(Scenario scenario) {
 		if (scenario.getScope() == null) {
-			return new GlobalScope();
+			return new UserRemit();
 		}
 		if (scenario.getScope().getSession() != null) { 
-			return new SessionScope();
+			return new SessionRemit();
 		}
 		User user = scenario.getScope().getUser(); 
 		if (user != null) {
-			return new UserScope(user.getUsername());
+			return new UserRemit(user.getUsername());
 		}
-		return new GlobalScope();
+		return new GlobalRemit();
 	}
 	private InterceptPoint getInterceptPoint(Scenario scenario) {
 		InterceptPoint interceptPoint = InterceptPoint.valueOf(scenario.getGiven().getService().getIntercepted().toUpperCase());
