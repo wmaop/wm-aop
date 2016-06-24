@@ -1,13 +1,23 @@
 package org.wmaop.flow;
 
+import static org.mockito.Mockito.*;
 import static org.junit.Assert.*;
-import static org.wmaop.flow.MockManager.ADVICE_ID;
-import static org.wmaop.flow.MockManager.INTERCEPT_POINT;
-import static org.wmaop.flow.MockManager.RESPONSE;
-import static org.wmaop.flow.MockManager.SERVICE_NAME;
+import static org.wmaop.flow.MockManager.*;
 
+import java.util.HashMap;
+
+import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
+import org.wmaop.aop.advice.Advice;
+import org.wmaop.aop.advice.AdviceManager;
+import org.wmaop.aop.advice.Scope;
 import org.wmaop.aop.advice.remit.*;
+import org.wmaop.aop.interceptor.InterceptPoint;
+import org.wmaop.aop.matcher.jexl.JexlIDataMatcher;
+import org.wmaop.aop.pointcut.ServicePipelinePointCut;
+import org.wmaop.chainprocessor.AOPChainProcessor;
+import org.wmaop.interceptor.mock.exception.ExceptionInterceptor;
 
 import com.wm.app.b2b.server.ServiceException;
 import com.wm.data.IData;
@@ -18,11 +28,141 @@ import com.wm.util.coder.IDataXMLCoder;
 
 public class MockManagerTest {
 
-	private static final String[][] PARAMS = new String[][] { { ADVICE_ID, "advid" }, { INTERCEPT_POINT, "before" }, { SERVICE_NAME, "foo:bar" } };
+	private static final String[][] PARAMS = new String[][] { { ADVICE_ID, "advid" }, { INTERCEPT_POINT, "before" },
+			{ SERVICE_NAME, "foo:bar" } };
+
+	AOPChainProcessor acpMock;
+	MockManager mm;
+
+	@Before
+	public void setup() {
+		acpMock = mock(AOPChainProcessor.class);
+		mm = new MockManager();
+		AOPChainProcessor.setInstance(acpMock);
+	}
 
 	@Test
-	public void shouldVerifyMissingParameters() throws Exception {
-		final MockManager mm = new MockManager();
+	public void shouldExerciseReset() throws ServiceException {
+		// No scope
+		mm.reset(IDataFactory.create());
+		verify(acpMock).reset(null);
+		reset(acpMock);
+
+		// Invalid scope
+		try {
+			mm.reset(createIData(new String[][] { { SCOPE, "foo" } }));
+			fail();
+		} catch (ServiceException e) {
+			assertTrue(e.getMessage().contains("Unknown scope"));
+		}
+
+		// Correct scope handling
+		mm.reset(createIData(new String[][] { { SCOPE, "global" } }));
+		verify(acpMock).reset(Scope.GLOBAL);
+
+	}
+
+	@Test
+	public void shouldExerciseEnablement() {
+		mm.enableInterception(IDataFactory.create());
+		verify(acpMock).isEnabled();
+		reset(acpMock);
+
+		mm.enableInterception(createIData(new String[][] { { ENABLED, "" } }));
+		verify(acpMock).isEnabled();
+		reset(acpMock);
+
+		mm.enableInterception(createIData(new String[][] { { ENABLED, "false" } }));
+		verify(acpMock).setEnabled(false);
+		reset(acpMock);
+	}
+
+	@Test
+	public void shouldGetAdvice() {
+		AdviceManager amMock = mock(AdviceManager.class);
+		when(acpMock.getAdviceManager()).thenReturn(amMock);
+		mm.getAdvice(IDataFactory.create());
+		verify(amMock).listAdvice();
+		reset(amMock);
+
+		mm.getAdvice(createIData(new String[][] { { ADVICE_ID, "" } }));
+		verify(amMock).listAdvice();
+		reset(amMock);
+
+		Advice adviceMock = mock(Advice.class);
+		when(adviceMock.getId()).thenReturn("id1");
+		when(adviceMock.toMap()).thenReturn(new HashMap());
+		when(amMock.getAdvice("foo")).thenReturn(adviceMock);
+		mm.getAdvice(createIData(new String[][] { { ADVICE_ID, "foo" } }));
+		verify(amMock).getAdvice("foo");
+
+	}
+
+	@Test
+	public void shouldUnregister() {
+		AdviceManager amMock = mock(AdviceManager.class);
+		when(acpMock.getAdviceManager()).thenReturn(amMock);
+		mm.removeAdvice(IDataFactory.create());
+	}
+
+	@Test
+	public void shouldVerifyMissingAssertionParameters() throws Exception {
+		testForMissingManadatory(new Callback() {
+			public void action(IData idata) throws ServiceException {
+				mm.registerAssertion(idata);
+			}
+		}, new String[][] { { ADVICE_ID, "advid" }, { INTERCEPT_POINT, "before" }, { SERVICE_NAME, "foo:bar" } });
+	}
+
+	@Test
+	public void shouldVerifyMissingExceptionParameters() throws Exception {
+		testForMissingManadatory(new Callback() {
+			public void action(IData idata) throws ServiceException {
+				mm.registerException(idata);
+			}
+		}, new String[][] { { ADVICE_ID, "advid" }, { INTERCEPT_POINT, "before" },
+			{ SERVICE_NAME, "foo:bar" }, {EXCEPTION, "java.lang.Exception"}});
+	}
+
+	@Test
+	public void shouldRegisterException() throws ServiceException {
+		IData idata = createIData(new String[][] { { ADVICE_ID, "id1" }, { INTERCEPT_POINT, "invoke" },
+				{ SERVICE_NAME, "foo:bar" }, { CONDITION, "x == 1" }, { SCOPE, "global"}, {EXCEPTION, "java.lang.Exception"}});
+		AdviceManager amMock = mock(AdviceManager.class);
+		when(acpMock.getAdviceManager()).thenReturn(amMock);
+
+		final ArgumentCaptor<Advice> captor = ArgumentCaptor.forClass(Advice.class);
+		mm.registerException(idata);
+		verify(amMock).registerAdvice(captor.capture());
+		final Advice argument = captor.getValue();
+		assertEquals("id1", argument.getId());
+		assertEquals(InterceptPoint.INVOKE, argument.getPointCut().getInterceptPoint());
+		assertEquals("foo:bar", argument.getPointCut().getFlowPositionMatcher().getServiceName());
+		assertTrue(argument.getRemit() instanceof GlobalRemit);
+		assertTrue(((ServicePipelinePointCut) argument.getPointCut()).getPipelineMatcher() instanceof JexlIDataMatcher);
+
+	}
+
+	@Test
+	public void shouldRegisterAssertion() throws ServiceException {
+		IData idata = createIData(new String[][] { { ADVICE_ID, "id1" }, { INTERCEPT_POINT, "before" },
+				{ SERVICE_NAME, "foo:bar" }, { CONDITION, "x == 1" }, { SCOPE, "global" } });
+		AdviceManager amMock = mock(AdviceManager.class);
+		when(acpMock.getAdviceManager()).thenReturn(amMock);
+
+		final ArgumentCaptor<Advice> captor = ArgumentCaptor.forClass(Advice.class);
+		mm.registerAssertion(idata);
+		verify(amMock).registerAdvice(captor.capture());
+		final Advice argument = captor.getValue();
+		assertEquals("id1", argument.getId());
+		assertEquals(InterceptPoint.BEFORE, argument.getPointCut().getInterceptPoint());
+		assertEquals("foo:bar", argument.getPointCut().getFlowPositionMatcher().getServiceName());
+		assertTrue(argument.getRemit() instanceof GlobalRemit);
+		assertTrue(((ServicePipelinePointCut) argument.getPointCut()).getPipelineMatcher() instanceof JexlIDataMatcher);
+	}
+
+	@Test
+	public void shouldVerifyMissingFixedResponseParameters() throws Exception {
 		testForMissingManadatory(new Callback() {
 			public void action(IData idata) throws ServiceException {
 				mm.registerFixedResponseMock(idata);
@@ -32,25 +172,39 @@ public class MockManagerTest {
 	}
 
 	@Test
-	public void shouldCheckInvalidParameters() throws Exception {
-		IData idata = IDataFactory.create();
-		IDataCursor cursor = idata.getCursor();
-		IDataUtil.put(cursor, ADVICE_ID, "id");
-		IDataUtil.put(cursor, INTERCEPT_POINT, "before");
-		IDataUtil.put(cursor, SERVICE_NAME, "foo:bar");
+	public void shouldGetInvokeCount() throws Exception {
+		testForMissingManadatory(new Callback() {
+			public void action(IData idata) throws ServiceException {
+				mm.getInvokeCount(idata);
+			}
+		}, new String[][] { { ADVICE_ID, "advid" } });
+		
+		AdviceManager amMock = mock(AdviceManager.class);
+		when(amMock.getInvokeCountForPrefix("id1")).thenReturn(99);
+		when(acpMock.getAdviceManager()).thenReturn(amMock);
+		IData pipeline = createIData(new String[][] { { ADVICE_ID, "id1" } });
+		mm.getInvokeCount(pipeline);
+		assertEquals(99, IDataUtil.get(pipeline.getCursor(), "invokeCount"));
+	}
 
-		IDataUtil.put(cursor, RESPONSE, "invalid data");
+	@Test
+	public void shouldCheckInvalidParameters() throws Exception {
+		IData idata = createIData(new String[][] { { ADVICE_ID, "id" }, { INTERCEPT_POINT, "before" },
+				{ SERVICE_NAME, "foo:bar" }, { RESPONSE, "invalid data" } });
 		try {
-			new MockManager().registerFixedResponseMock(idata);
+			mm.registerFixedResponseMock(idata);
 			fail();
 		} catch (Exception e) {
 			assertTrue(e.toString().contains("Unable to parse"));
 		}
-		IDataUtil.put(cursor, RESPONSE, new String(new IDataXMLCoder().encodeToBytes(IDataFactory.create())));
 
+		IDataCursor cursor = idata.getCursor();
+		IDataUtil.put(cursor, RESPONSE, new String(new IDataXMLCoder().encodeToBytes(IDataFactory.create())));
 		IDataUtil.put(cursor, INTERCEPT_POINT, "Nothing");
+		cursor.destroy();
+
 		try {
-			new MockManager().registerFixedResponseMock(idata);
+			mm.registerFixedResponseMock(idata);
 			fail();
 		} catch (Exception e) {
 			assertTrue(e.toString().contains("interceptPoint NOTHING"));
@@ -58,18 +212,7 @@ public class MockManagerTest {
 	}
 
 	@Test
-	public void shouldVerifyAssertingMissingParameters() throws Exception {
-		final MockManager mm = new MockManager();
-		testForMissingManadatory(new Callback() {
-			public void action(IData idata) throws ServiceException {
-				mm.registerFixedResponseMock(idata);
-			}
-		}, PARAMS);
-	}
-
-	@Test
 	public void shouldParseRemit() throws Exception {
-		final MockManager mm = new MockManager();
 		IData idata = IDataFactory.create();
 		IDataCursor cursor = idata.getCursor();
 		assertTrue(mm.getRemit(idata) instanceof UserRemit);
@@ -95,11 +238,11 @@ public class MockManagerTest {
 			// NOOP
 		}
 	}
-	
+
 	private void testForMissingManadatory(Callback callback, String[][] params) throws Exception {
 		for (int i = 0; i < params.length; i++) {
 			IData idata = IDataFactory.create();
-			addParams(idata, params, i);  // Miss out one at a time;
+			addParams(idata, params, i); // Miss out one at a time;
 			try {
 				callback.action(idata);
 				fail("Missed mandatory " + params[i][0]);
@@ -119,8 +262,14 @@ public class MockManagerTest {
 		idc.destroy();
 	}
 
+	private IData createIData(String[][] params) {
+		IData idata = IDataFactory.create();
+		addParams(idata, params, Integer.MAX_VALUE);
+		return idata;
+	}
+
 	interface Callback {
 		void action(IData idata) throws ServiceException;
 	}
-	
+
 }

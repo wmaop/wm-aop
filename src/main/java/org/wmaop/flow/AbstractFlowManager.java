@@ -8,6 +8,7 @@ import org.wmaop.aop.advice.remit.Remit;
 import org.wmaop.aop.interceptor.InterceptPoint;
 import org.wmaop.aop.interceptor.Interceptor;
 import org.wmaop.aop.matcher.AlwaysTrueMatcher;
+import org.wmaop.aop.matcher.CallingServicePositionMatcher;
 import org.wmaop.aop.matcher.FlowPositionMatcher;
 import org.wmaop.aop.matcher.FlowPositionMatcherImpl;
 import org.wmaop.aop.matcher.Matcher;
@@ -50,13 +51,17 @@ public abstract class AbstractFlowManager {
 		throw new ServiceException(mf.format(ArrayUtils.addAll(new Object[]{input}, values)));
 	}
 
-	protected void registerInterceptor(String adviceId, Remit scope, String interceptPoint, String serviceName, String pipelineCondition, Interceptor interceptor) throws ServiceException {
+	protected void registerInterceptor(String adviceId, Remit scope, String interceptPoint, String serviceName, String pipelineCondition, Interceptor interceptor, String calledBy) throws ServiceException {
 		String interceptPointUpper = interceptPoint.toUpperCase();
 		oneof("interceptPoint {0} must be either {1}, {2} or {3}", interceptPointUpper, "BEFORE", "INVOKE", "AFTER");
 		InterceptPoint ip = InterceptPoint.valueOf(interceptPointUpper);
 	
-		// TODO allow the use of alternative such as calling service
-		FlowPositionMatcher servicePositionMatcher = new FlowPositionMatcherImpl(serviceName, serviceName);
+		FlowPositionMatcher servicePositionMatcher;
+		if (calledBy != null && !calledBy.isEmpty()) {
+			servicePositionMatcher = new CallingServicePositionMatcher(serviceName, serviceName, calledBy);
+		} else {
+			servicePositionMatcher = new FlowPositionMatcherImpl(serviceName, serviceName);
+		}
 		Matcher<IData> pipelineMatcher;
 		if (pipelineCondition != null && pipelineCondition.length() > 0) {
 			pipelineMatcher = new JexlIDataMatcher(serviceName, pipelineCondition);

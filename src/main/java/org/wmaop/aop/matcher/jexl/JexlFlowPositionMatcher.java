@@ -11,6 +11,7 @@ import org.wmaop.aop.matcher.FlowPositionMatcher;
 import org.wmaop.aop.matcher.MatchResult;
 import org.wmaop.util.jexl.JexlExpressionFactory;
 
+@Deprecated
 public class JexlFlowPositionMatcher implements FlowPositionMatcher {
 
 	private final JexlExpression expression;

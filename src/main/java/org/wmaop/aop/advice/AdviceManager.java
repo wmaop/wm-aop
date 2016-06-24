@@ -119,7 +119,7 @@ public class AdviceManager extends Observable {
 			Advice advice = e.getValue();
 			Interceptor i = advice.getInterceptor();
 			if (e.getKey().startsWith(prefix)) {
-				invokeCount += advice.getInterceptor().getInvokeCount();
+				invokeCount += i.getInvokeCount();
 			} else if (i instanceof CompositeInterceptor) {
 				for (Interceptor inc : ((CompositeInterceptor)i).getInterceptors()) {
 					if (inc.getName().startsWith(prefix)) {

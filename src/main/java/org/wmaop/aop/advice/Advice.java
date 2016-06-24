@@ -34,7 +34,7 @@ public class Advice {
 	}
 
 	public boolean isApplicable(FlowPosition pipelinePosition, IData idata){
-		return  pointCut.isApplicable(pipelinePosition, idata) && remit.isApplicable();
+		return pointCut.isApplicable(pipelinePosition, idata) && remit.isApplicable();
 	}
 	
 	public Interceptor getInterceptor() {
@@ -61,7 +61,7 @@ public class Advice {
 	public Map<String, Object> toMap() {
 		Map<String, Object> am = new HashMap<>();
 		am.put("state", adviceState.toString());
-		am.put("id", id);
+		am.put("adviceId", id);
 		am.put("pointcut", pointCut.toMap());
 		am.put("interceptor", interceptor.toMap());
 		am.put("remit", remit.toString());

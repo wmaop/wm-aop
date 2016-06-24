@@ -36,7 +36,7 @@ public class UserRemit implements Remit {
 	
 	private String getCurrentUsername() {
 		User currentUser = InvokeState.getCurrentUser();
-		// Safe default during tests
-		return currentUser == null ? "Administrator" : currentUser.getName();
+		// Defacto name when not auth
+		return currentUser == null ? "Default" : currentUser.getName();
 	}
 }

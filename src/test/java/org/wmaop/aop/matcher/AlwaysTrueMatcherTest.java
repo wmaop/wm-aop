@@ -12,6 +12,7 @@ public class AlwaysTrueMatcherTest {
 		AlwaysTrueMatcher<Object> atm = new AlwaysTrueMatcher<Object>("foo");
 		assertTrue(atm.match("kfhkfjhk").isMatch());
 		assertEquals("foo", atm.match("gggkg").getId());
+		assertEquals("foo", atm.toMap().get("id"));
 	}
 
 }

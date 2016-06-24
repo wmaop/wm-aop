@@ -1,6 +1,6 @@
 package org.wmaop.aop.matcher.jexl;
 
-import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.*;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -12,14 +12,15 @@ public class JexlServiceNameMatcherTest {
 
 	@Test
 	public void shouldMatch() {
-		JexlFlowPositionMatcher jsnm = new JexlFlowPositionMatcher("alpha", "serviceName == 'foo'");
+		JexlServiceNameMatcher jsnm = new JexlServiceNameMatcher("alpha", "serviceName == 'foo'");
 		FlowPosition flowPosition = new FlowPosition(InterceptPoint.INVOKE, "foo");
+		assertEquals("serviceName == 'foo'", jsnm.toMap().get("expression"));
 		assertTrue(jsnm.match(flowPosition).isMatch());
 	}
 
 	@Test
 	public void shouldNotMatch() {
-		JexlFlowPositionMatcher jsnm = new JexlFlowPositionMatcher("alpha", "serviceName == 'bar'");
+		JexlServiceNameMatcher jsnm = new JexlServiceNameMatcher("alpha", "serviceName == 'bar'");
 		FlowPosition flowPosition = new FlowPosition(InterceptPoint.INVOKE, "foo");
 		assertFalse(jsnm.match(flowPosition).isMatch());
 	}
@@ -27,7 +28,7 @@ public class JexlServiceNameMatcherTest {
 	@Test
 	public void shouldFail() {
 		try {
-			new JexlFlowPositionMatcher("alpha", "serviceName = 'foo'");
+			new JexlServiceNameMatcher("alpha", "serviceName = 'foo'");
 			fail();
 		} catch (Exception e) {
 			// NOOP

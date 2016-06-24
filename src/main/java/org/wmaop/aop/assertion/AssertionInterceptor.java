@@ -35,8 +35,9 @@ public class AssertionInterceptor implements Interceptor, Assertable {
 	@Override
 	public final InterceptResult intercept(FlowPosition flowPosition, IData idata) {
 		invokeCount++;
-		if (performAssert(idata))
+		if (performAssert(idata)) {
 			asserted = true;
+		}
 		return InterceptResult.FALSE;
 	}
 

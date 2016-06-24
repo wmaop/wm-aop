@@ -27,6 +27,8 @@ public class AssertionInterceptorTest {
 		ai.reset();
 		assertEquals(0, ai.getInvokeCount());
 		assertFalse(ai.hasAsserted());
+		
+		ai.toMap();
 	}
 
 }

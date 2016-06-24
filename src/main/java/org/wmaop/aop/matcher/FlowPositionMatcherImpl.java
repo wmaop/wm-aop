@@ -9,9 +9,11 @@ public class FlowPositionMatcherImpl implements FlowPositionMatcher {
 
 	private final String serviceName;
 	private final MatchResult matchTrue;
+	private final String id;
 
 	public FlowPositionMatcherImpl(String id, String serviceName) {
 		this.serviceName = serviceName;
+		this.id = id;
 		matchTrue = new MatchResult(true, id);
 	}
 
@@ -35,6 +37,7 @@ public class FlowPositionMatcherImpl implements FlowPositionMatcher {
 	@Override
 	public Map<String, Object> toMap() {
 		Map<String, Object> am = new HashMap<>();
+		am.put("id",  id);
 		am.put("type", "FlowPositionMatcher");
 		am.put("serviceName", serviceName);
 		return am;

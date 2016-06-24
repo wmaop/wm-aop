@@ -26,6 +26,7 @@ public class AlwaysTrueMatcher<T> implements Matcher<T> {
 	@Override
 	public Map<String, Object> toMap() {
 		Map<String, Object> am = new HashMap<>();
+		am.put("id",  id);
 		am.put("type", "AlwaysTrueMatcher");
 		return am;
 	}

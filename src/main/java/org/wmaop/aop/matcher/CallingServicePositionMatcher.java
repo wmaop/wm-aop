@@ -14,9 +14,11 @@ public class CallingServicePositionMatcher implements FlowPositionMatcher {
 	private final String serviceName;
 	private final MatchResult matchTrue;
 	private final String serviceNamespacePrefix;
+	private final String id;
 
 	public CallingServicePositionMatcher(String id, String serviceName, String serviceNamespacePrefix) {
 		this.serviceName = serviceName;
+		this.id = id;
 		matchTrue = new MatchResult(true, id);
 		this.serviceNamespacePrefix = serviceNamespacePrefix;
 	}
@@ -27,15 +29,17 @@ public class CallingServicePositionMatcher implements FlowPositionMatcher {
 		
 		@SuppressWarnings("unchecked")
 		Stack<NSService> callStack = InvokeState.getCurrentState().getCallStack();
-		if (isCalledWithin(callStack)) {
+		if (serviceNamespacePrefix == null || isCalledWithin(callStack)) {
 			return matchTrue;
 		}
 		return MatchResult.FALSE;
 	}
 
 	private boolean isCalledWithin(Stack<NSService> callStack) {
-		for (NSService nss : callStack) {
-			if (nss.getNSName().getFullName().startsWith(serviceNamespacePrefix)) {
+		for (int i = callStack.size() - 2; i >-1; i--) {
+			NSService nss = callStack.get(i);
+			if (nss.getPackage().getName().equals(serviceNamespacePrefix) ||
+					nss.getNSName().getFullName().startsWith(serviceNamespacePrefix)) {
 				return true;
 			}
 		}
@@ -55,6 +59,7 @@ public class CallingServicePositionMatcher implements FlowPositionMatcher {
 	@Override
 	public Map<String, Object> toMap() {
 		Map<String, Object> am = new HashMap<>();
+		am.put("id", id);
 		am.put("type", "CallingServicePositionMatcher");
 		am.put("serviceName", serviceName);
 		return am;

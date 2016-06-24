@@ -57,13 +57,13 @@ public class JexlIDataMatcherTest {
 
 		JexlIDataMatcher jidm = new JexlIDataMatcher("id1", "foo == 'bar'");
 		assertEquals("JexlMatcher[foo == 'bar']", jidm.toString());
+		assertEquals("foo == 'bar'", jidm.toMap().get("id1"));
 
 		assertFalse(jidm.match(idata).isMatch());
 
 		IDataCursor idc = idata.getCursor();
 		IDataUtil.put(idc, "foo", "bar");
 		assertTrue(jidm.match(idata).isMatch());
-
 	}
 
 }

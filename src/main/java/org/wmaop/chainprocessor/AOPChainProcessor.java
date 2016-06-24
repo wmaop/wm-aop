@@ -38,6 +38,11 @@ public class AOPChainProcessor implements InvokeChainProcessor {
 	public static AOPChainProcessor getInstance() {
 		return instance;
 	}
+	
+	public static void setInstance(AOPChainProcessor acp) {
+		instance = acp;
+		
+	}
 
 	/**
 	 * Instantiated by invokemanager - Limited control so no Spring here...
@@ -52,7 +57,7 @@ public class AOPChainProcessor implements InvokeChainProcessor {
 		
 		logger.info("Initialising " + this.getClass().getName());
 		adviceManager.reset(Scope.ALL);
-		AOPChainProcessor.instance = this;
+		setInstance(this);
 	
 		adviceManager.addObserver(new StubLifecycleObserver(stubManager));
 	}
