@@ -29,6 +29,8 @@ public class ServicePipelinePointCutTest {
 		when(pipelineMatcher.match(idataMock)).thenReturn(MatchResult.TRUE);
 		ServicePipelinePointCut sppc = new ServicePipelinePointCut(serviceNameMatcher, pipelineMatcher, InterceptPoint.INVOKE);
 		assertTrue(sppc.isApplicable(pipelinePosition, idataMock));
+		
+		assertEquals(InterceptPoint.INVOKE.toString(), sppc.toMap().get("interceptPoint"));
 	}
 
 	@SuppressWarnings("unchecked")

@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Stack;
 
 import org.wmaop.aop.interceptor.FlowPosition;
+import org.wmaop.util.logger.Logger;
 
 import com.wm.app.b2b.server.InvokeState;
 import com.wm.lang.ns.NSService;
@@ -16,6 +17,8 @@ public class CallingServicePositionMatcher implements FlowPositionMatcher {
 	private final String serviceNamespacePrefix;
 	private final String id;
 
+	private static final Logger logger = Logger.getLogger(CallingServicePositionMatcher.class);
+
 	public CallingServicePositionMatcher(String id, String serviceName, String serviceNamespacePrefix) {
 		this.serviceName = serviceName;
 		this.id = id;
@@ -23,6 +26,7 @@ public class CallingServicePositionMatcher implements FlowPositionMatcher {
 		this.serviceNamespacePrefix = serviceNamespacePrefix;
 	}
 
+	@Override
 	public MatchResult match(FlowPosition obj) {
 		if (obj == null || !serviceName.equals(obj.toString()))
 			return MatchResult.FALSE;
@@ -38,6 +42,9 @@ public class CallingServicePositionMatcher implements FlowPositionMatcher {
 	private boolean isCalledWithin(Stack<NSService> callStack) {
 		for (int i = callStack.size() - 2; i >-1; i--) {
 			NSService nss = callStack.get(i);
+			if (logger.isDebugEnabled()) {
+				logger.debug("Call stack service " + nss.getNSName().getFullName() + " startsWith " + serviceNamespacePrefix +" = "+ nss.getNSName().getFullName().startsWith(serviceNamespacePrefix));
+			}
 			if (nss.getPackage().getName().equals(serviceNamespacePrefix) ||
 					nss.getNSName().getFullName().startsWith(serviceNamespacePrefix)) {
 				return true;

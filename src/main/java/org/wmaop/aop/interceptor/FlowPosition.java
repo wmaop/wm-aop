@@ -9,19 +9,20 @@ public class FlowPosition {
 	
 	public FlowPosition(InterceptPoint point, String fqname) {
 		interceptPoint = point;
-		this.fqname = fqname;
 		if (fqname == null) {
 			serviceName = "";
 			packageName = "";
-			return;
-		}
-		int pkgsep = fqname.lastIndexOf(':');
-		if (pkgsep == -1) {
-			serviceName = fqname;
-			packageName = "";
+			this.fqname = "";
 		} else {
-			serviceName = fqname.substring(pkgsep + 1);
-			packageName = fqname.substring(0, pkgsep);
+			this.fqname = fqname;
+			int pkgsep = fqname.lastIndexOf(':');
+			if (pkgsep == -1) {
+				serviceName = fqname;
+				packageName = "";
+			} else {
+				serviceName = fqname.substring(pkgsep + 1);
+				packageName = fqname.substring(0, pkgsep);
+			}
 		}
 	}
 	

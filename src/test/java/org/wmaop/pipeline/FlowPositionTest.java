@@ -15,6 +15,9 @@ public class FlowPositionTest {
 		assertEquals("", fp1.getPackageName());
 		assertEquals("foo", fp1.getFqname());
 		assertEquals(InterceptPoint.BEFORE, fp1.getInterceptPoint());
+		fp1.setInterceptPoint(InterceptPoint.INVOKE);
+		assertEquals(InterceptPoint.INVOKE, fp1.getInterceptPoint());
+		assertEquals("foo", fp1.toString());
 		
 		FlowPosition fp2 = new FlowPosition(InterceptPoint.BEFORE, "foo:bar");
 		assertEquals("bar", fp2.getServiceName());
@@ -25,6 +28,12 @@ public class FlowPositionTest {
 		assertEquals("", fp3.getServiceName());
 		assertEquals("", fp3.getPackageName());
 		assertEquals("", fp3.getFqname());
+
+		FlowPosition fp4 = new FlowPosition(InterceptPoint.BEFORE, null);
+		assertEquals("", fp4.getServiceName());
+		assertEquals("", fp4.getPackageName());
+		assertEquals("", fp4.getFqname());
+	
 	}
 
 }

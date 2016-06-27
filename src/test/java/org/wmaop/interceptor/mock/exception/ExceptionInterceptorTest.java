@@ -18,6 +18,7 @@ public class ExceptionInterceptorTest {
 		ei = new ExceptionInterceptor("java.lang.RuntimeException");
 		ir = ei.intercept(null, null);
 		assertEquals(ir.getException().getClass().getName(), "java.lang.RuntimeException");
+		assertEquals(ei.toMap().get("exception"), "java.lang.RuntimeException");
 
 	}
 

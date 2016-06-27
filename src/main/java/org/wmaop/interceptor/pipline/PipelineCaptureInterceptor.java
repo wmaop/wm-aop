@@ -34,6 +34,7 @@ public class PipelineCaptureInterceptor extends BaseInterceptor {
 	@Override
 	public InterceptResult intercept(FlowPosition flowPosition, IData idata) {
 		invokeCount++;
+		++fileCount;
 		try (OutputStream fos = getFileOutputStream(getFileName())) {
 			new IDataXMLCoder().encode(fos, idata);
 		} catch (IOException e) {
@@ -43,7 +44,7 @@ public class PipelineCaptureInterceptor extends BaseInterceptor {
 	}
 
 	private String getFileName() {
-		return prefix + '-' + ++fileCount + suffix;
+		return prefix + '-' + fileCount + suffix;
 	}
 
 	OutputStream getFileOutputStream(String fileName) throws FileNotFoundException {
@@ -53,6 +54,6 @@ public class PipelineCaptureInterceptor extends BaseInterceptor {
 	@Override
 	protected void addMap(Map<String, Object> am) {
 		am.put("type", "PipelineCaptureInterceptor");
-		am.put("currentFile", getFileName());
+		am.put("currentFile", fileCount == 0 ? "No file captured" : getFileName());
 	}
 }
