@@ -3,7 +3,7 @@ package org.wmaop.chainprocessor;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -17,6 +17,7 @@ import java.util.List;
 import org.junit.Test;
 import org.wmaop.aop.advice.Advice;
 import org.wmaop.aop.advice.AdviceManager;
+import org.wmaop.aop.advice.Scope;
 import org.wmaop.aop.advice.remit.GlobalRemit;
 import org.wmaop.aop.assertion.AssertionInterceptor;
 import org.wmaop.aop.interceptor.InterceptPoint;
@@ -46,7 +47,12 @@ public class AOPChainProcessorTest {
 	@Test
 	public void shouldExecuteConditionalMatch() throws Exception {
 		ClassLoader classLoader = this.getClass().getClassLoader();
-		AOPChainProcessor cp = new AOPChainProcessor(new AdviceManager(), mock(StubManager.class));
+		StubManager stubManager = mock(StubManager.class);
+		AdviceManager adviceManager = new AdviceManager();
+		AOPChainProcessor cp = new AOPChainProcessor(adviceManager , stubManager );
+		assertEquals(stubManager, cp.getStubManager());
+		assertEquals(adviceManager, cp.getAdviceManager());
+		assertEquals(cp, AOPChainProcessor.getInstance());
 		cp.setEnabled(true);
 
 		FlowPositionMatcherImpl serviceNameMatcher = new FlowPositionMatcherImpl("my id", "pre:foo");
@@ -174,6 +180,22 @@ public class AOPChainProcessorTest {
 		assertFalse(cp.isEnabled());
 	}
 
+	@Test
+	public void shouldReset() {
+		StubManager stubManager = mock(StubManager.class);
+		AdviceManager adviceManager = mock(AdviceManager.class);
+		AOPChainProcessor cp = new AOPChainProcessor(adviceManager, stubManager);
+		cp.reset(Scope.SESSION);
+		verify(stubManager, times(0)).clearStubs();
+		verify(adviceManager, times(1)).reset(Scope.SESSION);
+		reset(adviceManager, stubManager);
+		
+		cp.reset(Scope.ALL);
+		verify(stubManager, times(1)).clearStubs();
+		verify(adviceManager, times(1)).reset(Scope.ALL);
+
+	}
+	
 	@Test
 	public void shouldSetException() throws Exception{
 		ClassLoader classLoader = this.getClass().getClassLoader();

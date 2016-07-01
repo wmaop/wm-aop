@@ -26,6 +26,8 @@ import com.wm.util.ServerException;
 
 public class AOPChainProcessor implements InvokeChainProcessor {
 
+	private static final InterceptResult NO_INTERCEPT = new InterceptResult(false);
+
 	private static final Logger logger = Logger.getLogger(AOPChainProcessor.class);
 
 	private static AOPChainProcessor instance;
@@ -89,19 +91,19 @@ public class AOPChainProcessor implements InvokeChainProcessor {
 	private void processIntercept(@SuppressWarnings("rawtypes") Iterator processorChain, BaseService baseService,
 			IData idata, ServiceStatus serviceStatus) throws ServerException {
 		FlowPosition pipelinePosition = new FlowPosition(BEFORE, baseService.getNSName().getFullName());
-		processAdvice(false, pipelinePosition, idata, serviceStatus);
-		if (serviceStatus.getException() != null) {
+		InterceptResult beforeIntResult = processAdvice(false, pipelinePosition, idata, serviceStatus);
+		if (beforeIntResult.getException() != null) {
 			return; // Exception in before to prevent execution of service/mock
 		}
 		
 		pipelinePosition.setInterceptPoint(INVOKE);
-		boolean hasIntercepted = processAdvice(true, pipelinePosition, idata, serviceStatus);
+		InterceptResult intResult = processAdvice(true, pipelinePosition, idata, serviceStatus);
 
-		if (hasIntercepted && logger.isDebugEnabled()) {
+		if (intResult.hasIntercepted() && logger.isDebugEnabled()) {
 			logger.info("Intercepted: " + ReflectionToStringBuilder.toString(serviceStatus));
 		}
 
-		if (!hasIntercepted && processorChain.hasNext()) {
+		if (!intResult.hasIntercepted() && processorChain.hasNext()) {
 			((InvokeChainProcessor) processorChain.next()).process(processorChain, baseService, idata, serviceStatus);
 		}
 
@@ -109,38 +111,34 @@ public class AOPChainProcessor implements InvokeChainProcessor {
 		processAdvice(false, pipelinePosition, idata, serviceStatus);
 	}
 
-	private boolean processAdvice(boolean exitOnIntercept, FlowPosition pos, IData idata, ServiceStatus serviceStatus) {
-		boolean hasIntercepted = false;
+	private InterceptResult processAdvice(boolean exitOnIntercept, FlowPosition pos, IData idata, ServiceStatus serviceStatus) {
+		InterceptResult hasIntercepted = NO_INTERCEPT;
 		try {
 			for (Advice advice : adviceManager.getAdvicesForInterceptPoint(pos.getInterceptPoint())) {
-				if (advice.getAdviceState() == ENABLED && advice.isApplicable(pos, idata) && intercept(pos, idata, serviceStatus, advice)) {
-					hasIntercepted = true; // Ensure its only set, never reset to false
-					if (exitOnIntercept) {
-						break; // Used to break on first intercept if required
+				if (advice.getAdviceState() == ENABLED && advice.isApplicable(pos, idata)) {
+					InterceptResult ir = intercept(pos, idata, serviceStatus, advice);
+					if (ir.hasIntercepted()) {
+						hasIntercepted = ir; // Ensure its only set, never reset to false
+						if (exitOnIntercept) {
+							break; // Used to break on first intercept if required
+						}
 					}
 				}
 			}
 		} catch (Exception e) {
 			logger.error("Error intercepting. Behaviour at " + pos + " may be unknown", e);
 		}
+		if (hasIntercepted.getException() != null) {
+			serviceStatus.setException(hasIntercepted.getException());
+		}
 		return hasIntercepted;
 	}
 
-	private boolean intercept(FlowPosition pos, IData idata, ServiceStatus serviceStatus,
+	private InterceptResult intercept(FlowPosition pos, IData idata, ServiceStatus serviceStatus,
 			Advice advice) {
-		Interceptor interceptor = advice.getInterceptor();
-		InterceptResult interceptResult = interceptor.intercept(pos, idata);
+		InterceptResult interceptResult = advice.getInterceptor().intercept(pos, idata);
 		logger.info("Intercepting " + advice.getId() + " " + pos.getInterceptPoint() + ' ' + pos + " - " + interceptResult.hasIntercepted());
-		
-		boolean hasIntercepted = false;	
-		if (interceptResult.hasIntercepted()) {
-			Exception e = interceptResult.getException();
-			if (e != null) {
-				serviceStatus.setException(e);
-			}
-			hasIntercepted = true;
-		}
-		return hasIntercepted;
+		return interceptResult;
 	}
 
 	public void reset(Scope scope) {

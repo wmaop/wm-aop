@@ -21,6 +21,7 @@ public class ScenarioManager {
 		Object scenarioAsStream = IDataUtil.get(pipelineCursor, "scenarioAsStream");
 		String scenarioAsString = IDataUtil.getString(pipelineCursor, "scenarioAsString");
 		Document scenarioAsNode = (Document) IDataUtil.get(pipelineCursor, "scenarioAsDocument");
+		String adviceId = IDataUtil.getString(pipelineCursor, "adviceId"); 
 		pipelineCursor.destroy();
 
 		InputStream scenarioStream;
@@ -40,7 +41,7 @@ public class ScenarioManager {
 			throw new ServiceException("Must specify the advice xml as an input");
 		}
 		try {
-			ParsedScenario scenario = new BddParser().parse(scenarioStream);
+			ParsedScenario scenario = new BddParser().parse(scenarioStream, adviceId);
 			AOPChainProcessor aop = AOPChainProcessor.getInstance();
 			aop.getAdviceManager().registerAdvice(scenario.getAdvice());
 			// TODO indicates that mocks within scenarios should be treated as first class mock citizens

@@ -19,6 +19,10 @@ public class UserRemit implements Remit {
 		this.username = username;
 	}
 	
+	public String getUsername() {
+		return username;
+	}
+	
 	@Override
 	public boolean isApplicable() {
 		return username.equals(getCurrentUsername());

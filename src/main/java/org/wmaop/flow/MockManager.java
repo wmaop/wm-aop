@@ -143,9 +143,10 @@ public class MockManager extends AbstractFlowManager {
 		case USER:
 			String username = IDataUtil.getString(pipelineCursor, USERNAME);
 			if (username == null || username.length() == 0) {
-				throw new ServiceException(USERNAME + " must exist in the pipeline when specifying user scope");
+				remit = new UserRemit();
+			} else {
+				remit = new UserRemit(username);
 			}
-			remit = new UserRemit(username);
 			break;
 		default:
 			throw new ServiceException("Inapplicable scope: " + requiredScope);

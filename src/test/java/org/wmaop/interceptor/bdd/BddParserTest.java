@@ -24,7 +24,7 @@ public class BddParserTest {
 		PowerMockito.when(AOPChainProcessor.getInstance()).thenReturn(mockProcessor);
 
 		InputStream bddstream = this.getClass().getResourceAsStream("/bdd/multipleReturnBdd.xml");
-		ParsedScenario scenario = new BddParser().parse(bddstream);
+		ParsedScenario scenario = new BddParser().parse(bddstream, null);
 		
 		assertEquals("aspect id",scenario.getAdvice().getId());
 	}

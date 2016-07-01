@@ -1,8 +1,20 @@
 package org.wmaop.flow;
 
-import static org.mockito.Mockito.*;
-import static org.junit.Assert.*;
-import static org.wmaop.flow.MockManager.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.wmaop.flow.MockManager.ADVICE_ID;
+import static org.wmaop.flow.MockManager.CONDITION;
+import static org.wmaop.flow.MockManager.ENABLED;
+import static org.wmaop.flow.MockManager.EXCEPTION;
+import static org.wmaop.flow.MockManager.INTERCEPT_POINT;
+import static org.wmaop.flow.MockManager.RESPONSE;
+import static org.wmaop.flow.MockManager.SCOPE;
+import static org.wmaop.flow.MockManager.SERVICE_NAME;
 
 import java.util.HashMap;
 
@@ -12,12 +24,13 @@ import org.mockito.ArgumentCaptor;
 import org.wmaop.aop.advice.Advice;
 import org.wmaop.aop.advice.AdviceManager;
 import org.wmaop.aop.advice.Scope;
-import org.wmaop.aop.advice.remit.*;
+import org.wmaop.aop.advice.remit.GlobalRemit;
+import org.wmaop.aop.advice.remit.SessionRemit;
+import org.wmaop.aop.advice.remit.UserRemit;
 import org.wmaop.aop.interceptor.InterceptPoint;
 import org.wmaop.aop.matcher.jexl.JexlIDataMatcher;
 import org.wmaop.aop.pointcut.ServicePipelinePointCut;
 import org.wmaop.chainprocessor.AOPChainProcessor;
-import org.wmaop.interceptor.mock.exception.ExceptionInterceptor;
 
 import com.wm.app.b2b.server.ServiceException;
 import com.wm.data.IData;
@@ -27,9 +40,6 @@ import com.wm.data.IDataUtil;
 import com.wm.util.coder.IDataXMLCoder;
 
 public class MockManagerTest {
-
-	private static final String[][] PARAMS = new String[][] { { ADVICE_ID, "advid" }, { INTERCEPT_POINT, "before" },
-			{ SERVICE_NAME, "foo:bar" } };
 
 	AOPChainProcessor acpMock;
 	MockManager mm;
@@ -91,7 +101,7 @@ public class MockManagerTest {
 
 		Advice adviceMock = mock(Advice.class);
 		when(adviceMock.getId()).thenReturn("id1");
-		when(adviceMock.toMap()).thenReturn(new HashMap());
+		when(adviceMock.toMap()).thenReturn(new HashMap<String, Object>());
 		when(amMock.getAdvice("foo")).thenReturn(adviceMock);
 		mm.getAdvice(createIData(new String[][] { { ADVICE_ID, "foo" } }));
 		verify(amMock).getAdvice("foo");
@@ -216,20 +226,20 @@ public class MockManagerTest {
 		IData idata = IDataFactory.create();
 		IDataCursor cursor = idata.getCursor();
 		assertTrue(mm.getRemit(idata) instanceof UserRemit);
+		
 		IDataUtil.put(cursor, "scope", "global");
 		assertTrue(mm.getRemit(idata) instanceof GlobalRemit);
+		
 		IDataUtil.put(cursor, "scope", "session");
 		assertTrue(mm.getRemit(idata) instanceof SessionRemit);
+		
 		IDataUtil.put(cursor, "scope", "user");
-		try {
-			mm.getRemit(idata);
-			fail(); // Must define username
-		} catch (ServiceException se) {
-			// NOOP
-		}
+		assertEquals("Default", ((UserRemit)mm.getRemit(idata)).getUsername());
+		
 		IDataUtil.put(cursor, "username", "foo");
 		IDataUtil.put(cursor, "scope", "USER");
-		assertTrue(mm.getRemit(idata) instanceof UserRemit);
+		assertEquals("foo", ((UserRemit)mm.getRemit(idata)).getUsername());
+		
 		IDataUtil.put(cursor, "scope", "all");
 		try {
 			mm.getRemit(idata); // Not valid

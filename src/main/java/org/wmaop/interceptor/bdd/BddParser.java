@@ -37,16 +37,17 @@ public class BddParser {
 		String assertionid;
 	}
 
-	public ParsedScenario parse(InputStream bddstream) throws JAXBException, IOException {
+	public ParsedScenario parse(InputStream bddstream, String adviceId) throws JAXBException, IOException {
 		JAXBContext jaxbContext = JAXBContext.newInstance(Scenario.class);
 		Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
 		Scenario scenario = (Scenario) jaxbUnmarshaller.unmarshal(bddstream);
-		return new ParsedScenario(processAdvice(scenario), scenario.getGiven().getService().getValue());
+		return new ParsedScenario(processAdvice(scenario, adviceId), scenario.getGiven().getService().getValue());
 	}
 
-	private Advice processAdvice(Scenario scenario) {
+	private Advice processAdvice(Scenario scenario, String adviceId) {
 		Interceptor interceptor = new BddInterceptor(scenario, true);
-		return new Advice(scenario.getId(), getScope(scenario), getJoinPoint(scenario), interceptor);
+		String id = adviceId != null && adviceId.length() > 0 ? adviceId : scenario.getId(); 
+		return new Advice(id, getScope(scenario), getJoinPoint(scenario), interceptor);
 	}
 
 	private Remit getScope(Scenario scenario) {
