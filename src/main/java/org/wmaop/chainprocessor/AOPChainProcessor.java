@@ -13,7 +13,6 @@ import org.wmaop.aop.advice.AdviceManager;
 import org.wmaop.aop.advice.Scope;
 import org.wmaop.aop.interceptor.FlowPosition;
 import org.wmaop.aop.interceptor.InterceptResult;
-import org.wmaop.aop.interceptor.Interceptor;
 import org.wmaop.aop.stub.StubLifecycleObserver;
 import org.wmaop.aop.stub.StubManager;
 import org.wmaop.util.logger.Logger;
