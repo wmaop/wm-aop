@@ -31,8 +31,8 @@
 		<url>https://github.com/wmaop/wm-aop</url>
 		<connection>scm:git:git://github.com/wmaop/wm-aop.git</connection>
 		<developerConnection>scm:git:sysgen@github.com:wmaop/wm-aop.git</developerConnection>
-        <tag>wm-aop-1.0.2</tag>
-  </scm>
+        <tag>wm-aop-1.1.0</tag>
+    </scm>
 
 	<developers>
 		<developer>
@@ -42,7 +42,7 @@
 	</developers>
 	
 	<properties>
-		<wm-aop-util.version>1.1.0-SNAPSHOT</wm-aop-util.version>
+		<wm-aop-util.version>1.1.0</wm-aop-util.version>
 
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<jaxb.version>2.2.7</jaxb.version> <!-- Must match jaxb2-maven-plugin dep version -->
