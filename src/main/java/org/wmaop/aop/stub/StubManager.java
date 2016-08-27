@@ -11,6 +11,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.wmaop.aop.advice.Advice;
+import org.wmaop.util.logger.Logger;
 
 import com.wm.app.b2b.server.BaseService;
 import com.wm.app.b2b.server.Package;
@@ -25,8 +26,10 @@ import com.wm.lang.ns.NSServiceType;
 
 public class StubManager {
 
+	private static final Logger logger = Logger.getLogger(StubManager.class);
+
 	private final Set<String> stubbedServices = new HashSet<>(); 
-	
+
 	protected static final String SUPPORTING_PKG = "OrgWmaopStubs";
 
 	public void registerStubService(String... svcNames) {
@@ -109,7 +112,7 @@ public class StubManager {
 			try {
 				deleteFolder(pkgdir.getAbsolutePath());
 			} catch (IOException e) {
-				e.printStackTrace();
+				logger.error("Failure to delete folder: " + pkgdir.getAbsolutePath(), e);
 			}
 		}
 		Package pkg = new Package(SUPPORTING_PKG);
