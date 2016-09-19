@@ -1,7 +1,9 @@
 package org.wmaop.flow;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.wmaop.aop.advice.Advice;
@@ -15,6 +17,7 @@ import org.wmaop.aop.assertion.AssertionInterceptor;
 import org.wmaop.aop.interceptor.Interceptor;
 import org.wmaop.chainprocessor.AOPChainProcessor;
 import org.wmaop.interceptor.mock.canned.CannedResponseInterceptor;
+import org.wmaop.interceptor.mock.canned.CannedResponseInterceptor.ResponseSequence;
 import org.wmaop.interceptor.mock.exception.ExceptionInterceptor;
 import org.wmaop.util.logger.Logger;
 import org.wmaop.util.pipeline.StructureConverter;
@@ -100,6 +103,7 @@ public class MockManager extends AbstractFlowManager {
 		AOPChainProcessor.getInstance().getAdviceManager().unregisterAdvice(id);
 	}
 	
+	@SuppressWarnings("unchecked")
 	public void registerFixedResponseMock(IData pipeline) throws ServiceException {
 		IDataCursor pipelineCursor = pipeline.getCursor();
 		String adviceId = IDataUtil.getString(pipelineCursor, ADVICE_ID);
@@ -116,10 +120,12 @@ public class MockManager extends AbstractFlowManager {
 		try {
 			if (idata instanceof IData) {
 				interceptor = new CannedResponseInterceptor((IData)idata);
+			} else if (idata instanceof List){
+				interceptor = new CannedResponseInterceptor(ResponseSequence.SEQUENTIAL, (List<String>)idata);
 			} else {
 				interceptor = new CannedResponseInterceptor(idata.toString());
 			}
-		} catch (Exception e) {
+		} catch (Exception e) { // Catch ICoder exceptions
 			throw new ServiceException("Unable to parse response IData for " + adviceId + " - Is the response valid IData XML? - " + e.getMessage());
 		}
 		registerInterceptor(adviceId, getRemit(pipeline), interceptPoint.toUpperCase(), serviceName, pipelineCondition, interceptor, calledBy);
@@ -142,11 +148,7 @@ public class MockManager extends AbstractFlowManager {
 			break;
 		case USER:
 			String username = IDataUtil.getString(pipelineCursor, USERNAME);
-			if (username == null || username.length() == 0) {
-				remit = new UserRemit();
-			} else {
-				remit = new UserRemit(username);
-			}
+			remit = (username == null || username.length() == 0) ? new UserRemit() : new UserRemit(username);
 			break;
 		default:
 			throw new ServiceException("Inapplicable scope: " + requiredScope);
@@ -174,7 +176,6 @@ public class MockManager extends AbstractFlowManager {
 		pipelineCursor.destroy();
 
 		mandatory(pipeline, "{0} must exist when retrieving assertion count", ADVICE_ID);
-		logger.debug("Retrieving assertion " + adviceId);
 		int invokeCount = AOPChainProcessor.getInstance().getAdviceManager().getInvokeCountForPrefix(adviceId);
 		
 		pipelineCursor = pipeline.getCursor();

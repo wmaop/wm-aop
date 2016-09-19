@@ -5,7 +5,9 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.junit.Test;
@@ -88,6 +90,15 @@ public class CannedResponseInterceptorTest {
 		assertEquals("cvalue", IDataUtil.get(cri.getResponse().getCursor(), "ckey"));
 	}
 
+	@Test
+	public void shouldReturnSequentialFromIDataString() throws IOException {
+		List<String> lst = Arrays.asList("<IDataXMLCoder version=\"1.0\"><record javaclass=\"com.wm.data.ISMemDataImpl\"><value name=\"option\">a</value></record></IDataXMLCoder>","<IDataXMLCoder version=\"1.0\"><record javaclass=\"com.wm.data.ISMemDataImpl\"><value name=\"option\">b</value></record></IDataXMLCoder>");
+		CannedResponseInterceptor cri = new CannedResponseInterceptor(ResponseSequence.SEQUENTIAL, lst);
+		assertEquals("a", IDataUtil.get(cri.getResponse().getCursor(), "option"));
+		assertEquals("b", IDataUtil.get(cri.getResponse().getCursor(), "option"));
+		assertEquals("a", IDataUtil.get(cri.getResponse().getCursor(), "option"));
+	}
+	
 	@Test
 	public void shouldReturnRandom() {
 		CannedResponseInterceptor cri = new CannedResponseInterceptor(ResponseSequence.RANDOM, getIData(new String[][]{{"akey", "avalue"}}), getIData(new String[][]{{"bkey", "bvalue"}}), getIData(new String[][]{{"ckey", "cvalue"}}));
