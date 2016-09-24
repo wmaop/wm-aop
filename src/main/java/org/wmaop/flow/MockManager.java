@@ -1,6 +1,5 @@
 package org.wmaop.flow;
 
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.List;
@@ -19,7 +18,6 @@ import org.wmaop.chainprocessor.AOPChainProcessor;
 import org.wmaop.interceptor.mock.canned.CannedResponseInterceptor;
 import org.wmaop.interceptor.mock.canned.CannedResponseInterceptor.ResponseSequence;
 import org.wmaop.interceptor.mock.exception.ExceptionInterceptor;
-import org.wmaop.util.logger.Logger;
 import org.wmaop.util.pipeline.StructureConverter;
 
 import com.wm.app.b2b.server.ServiceException;
@@ -40,8 +38,6 @@ public class MockManager extends AbstractFlowManager {
 	public static final String SCOPE = "scope";
 	public static final String USERNAME = "username";
 	public static final String CALLED_BY = "calledBy";
-	
-	private static final Logger logger = Logger.getLogger(MockManager.class);
 	
 	public void reset(IData pipeline) throws ServiceException {
 		IDataCursor pipelineCursor = pipeline.getCursor();
