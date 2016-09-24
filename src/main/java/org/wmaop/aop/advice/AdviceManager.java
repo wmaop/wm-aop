@@ -95,16 +95,20 @@ public class AdviceManager extends Observable {
 				advices.put(ip, new ArrayList<Advice>());
 			}
 		} else {
-			for (Entry<String, Advice> advRef : new HashMap<String, Advice>(idAdvice).entrySet()) {
-				Advice adv = advRef.getValue();
-				Remit remit = adv.getRemit();
-				if (scope == null) {
-					if (!remit.isApplicable(Scope.GLOBAL)) { // No scope so remove user and session only - ie not global
-						unregisterAdvice(adv);
-					}
-				} else if (remit.isApplicable(scope)) { // Only unregister for applicable scope
+			conditionallyUnregisterAdvice(scope);
+		}
+	}
+
+	private void conditionallyUnregisterAdvice(Scope scope) {
+		for (Entry<String, Advice> advRef : new HashMap<String, Advice>(idAdvice).entrySet()) {
+			Advice adv = advRef.getValue();
+			Remit remit = adv.getRemit();
+			if (scope == null) {
+				if (!remit.isApplicable(Scope.GLOBAL)) { // No scope so remove user and session only - ie not global
 					unregisterAdvice(adv);
 				}
+			} else if (remit.isApplicable(scope)) { // Only unregister for applicable scope
+				unregisterAdvice(adv);
 			}
 		}
 	}
