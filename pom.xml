@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<artifactId>wm-aop</artifactId>
@@ -31,8 +32,8 @@
 		<url>https://github.com/wmaop/wm-aop</url>
 		<connection>scm:git:git://github.com/wmaop/wm-aop.git</connection>
 		<developerConnection>scm:git:git@github.com:wmaop/wm-aop.git</developerConnection>
-        <tag>HEAD</tag>
-    </scm>
+		<tag>HEAD</tag>
+	</scm>
 
 	<developers>
 		<developer>
@@ -40,7 +41,7 @@
 			<url>https://uk.linkedin.com/in/richard-tomlinson-b7b6581</url>
 		</developer>
 	</developers>
-	
+
 	<properties>
 		<wm-aop-util.version>1.1.0</wm-aop-util.version>
 
@@ -50,10 +51,24 @@
 		<apache.axis2.version>1.6.2</apache.axis2.version>
 		<javax.mail.version>1.4.4</javax.mail.version>
 		<jexl.version>3.0</jexl.version>
-		
+
 		<maven.javadoc.skip>true</maven.javadoc.skip>
 	</properties>
-
+	<pluginRepositories>
+		<pluginRepository>
+			<id>jcenter-snapshots</id>
+			<name>jcenter</name>
+			<url>http://oss.jfrog.org/artifactory/oss-snapshot-local/</url>
+		</pluginRepository>
+		<pluginRepository>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+			<id>jcenter-releases</id>
+			<name>jcenter</name>
+			<url>http://jcenter.bintray.com</url>
+		</pluginRepository>
+	</pluginRepositories>
 	<dependencies>
 		<dependency>
 			<groupId>org.wmaop</groupId>
@@ -67,7 +82,8 @@
 		</dependency>
 
 		<dependency>
-			<!-- Proided by jexl in wm-aop-util so mark provided for exclusion in copy-->
+			<!-- Proided by jexl in wm-aop-util so mark provided for exclusion in 
+				copy -->
 			<groupId>commons-logging</groupId>
 			<artifactId>commons-logging</artifactId>
 			<version>${commons-logging.version}</version>
@@ -98,7 +114,7 @@
 			<version>${webMethods.version}</version>
 			<scope>provided</scope>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>com.softwareag.webmethods.wsstack</groupId>
 			<artifactId>client-api</artifactId>
@@ -123,8 +139,8 @@
 			<version>${log4j.version}</version>
 			<scope>provided</scope>
 		</dependency>
-		
-		<!-- Required for XMLCoder  -->
+
+		<!-- Required for XMLCoder -->
 		<dependency>
 			<groupId>javax.mail</groupId>
 			<artifactId>mail</artifactId>
@@ -177,6 +193,18 @@
 
 	<build>
 		<plugins>
+			<plugin>
+				<groupId>io.github.swagger2markup</groupId>
+				<artifactId>swagger2markup-maven-plugin</artifactId>
+				<version>1.0.1</version>
+				<configuration>
+					<swaggerInput>${project.basedir}/src/docs/swagger/swagger_wmaop.yaml</swaggerInput>
+					<outputDir>${project.build.directory}/markdown</outputDir>
+					<config>
+						<swagger2markup.markupLanguage>MARKDOWN</swagger2markup.markupLanguage>
+					</config>
+				</configuration>
+			</plugin>
 			<!-- Plugin required to build java classes from XSD using XJC -->
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>

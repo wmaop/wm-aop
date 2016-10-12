@@ -1,0 +1,288 @@
+---
+swagger: "2.0"
+info:
+  description: "wmaop RESTful API provides the ability to define mocks within webMethods Integration Server."
+  version: "1.1.1"
+  title: "wm-aop"
+  contact: "info@wmaop.org"
+host: "localhost:5555"
+basePath: "/rest/org/wmaop"
+schemes:
+- "http"
+security:
+- basic: []
+paths:
+  /define/advice/{adviceId}:
+    get:
+      tags:
+      - "Default"
+      summary: "Get advice details"
+      description: |
+        Specify the adviceId to see details of that advice or leave the adviceId null for all registered advices.   Returned values is an IData record structure. 
+        #### Example
+        If we register a simple mock, such as that shown in define fixedResponse, then with
+        ````GET http://localhost:5555/rest/org/wmaop/define/advice```` we receive:
+        ````
+        <?xml version="1.0" encoding="UTF-8"?>
+        <Values version="2.0">
+            <value name="id">myMockingId</value>
+            <value name="$resourceID">myMockingId</value>
+            <record name="advice" javaclass="com.wm.util.Values">
+                <record name="myMockingId" javaclass="com.wm.util.Values">
+                    <value name="adviceId">myMockingId</value>
+                    <value name="remit">SessionScope[5cf64a1073db108abcec86e8b9b84830]</value>
+                    <record name="pointcut" javaclass="com.wm.util.Values">
+                        <record name="flowPositionMatcher" javaclass="com.wm.util.Values">
+                            <value name="id">pub.jms:send</value>
+                            <value name="type">FlowPositionMatcher</value>
+                            <value name="serviceName">pub.jms:send</value>
+                        </record>
+                        <value name="interceptPoint">INVOKE</value>
+                        <record name="pipelineMatcher" javaclass="com.wm.util.Values">
+                            <value name="id">pub.jms:send</value>
+                            <value name="type">AlwaysTrueMatcher</value>
+                        </record>
+                    </record>
+                    <record name="interceptor" javaclass="com.wm.util.Values">
+                        <record name="response0" javaclass="com.wm.util.Values">
+                            <value name="fileName">mypipeline.xml</value>
+                            <record name="JMSMessage" javaclass="com.wm.util.Values">
+                                <record name="header" javaclass="com.wm.util.Values">
+                                    <value name="JMSCorrelationID">ABC123</value>
+                                </record>
+                            </record>
+                        </record>
+                        <number name="invokeCount" type="Integer">0</number>
+                        <value name="name">CannedResponse:</value>
+                        <value name="type">CannedResponseInterceptor</value>
+                        <value name="responseSequence">SEQUENTIAL</value>
+                    </record>
+                    <value name="state">ENABLED</value>
+                </record>
+            </record>
+        </Values>
+        ````
+      parameters:
+      - name: "adviceId"
+        in: "path"
+        description: "Id of the advice.  Applies to any form of advice: scenario;\
+          \ exception; fixedResponse; assertion."
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "Status 200"
+    delete:
+      tags:
+      - "Default"
+      summary: "Delete an advice"
+      description: "adviceId is mandatory otherwise no delete occurs."
+      parameters:
+      - name: "adviceId"
+        in: "path"
+        description: "Id of the advice.  Applies to any form of advice: scenario;\
+          \ exception; fixedResponse; assertion."
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "Status 200"
+  /define/assertion/{adviceId}:
+    get:
+      tags:
+      - "Default"
+      summary: "Get details of the assertion"
+      parameters:
+      - name: "adviceId"
+        in: "path"
+        description: "The ID of the assertion"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "Status 200"
+    post:
+      tags:
+      - "Default"
+      summary: "Create an assertion"
+      parameters:
+      - name: "adviceId"
+        in: "path"
+        description: "The ID of the assertion"
+        required: true
+        type: "string"
+      - name: "serviceName"
+        in: "query"
+        required: false
+        type: "string"
+      - name: "condition"
+        in: "query"
+        required: false
+        type: "string"
+      - name: "interceptPoint"
+        in: "query"
+        required: false
+        type: "string"
+      - name: "scope"
+        in: "query"
+        required: false
+        type: "string"
+      responses:
+        200:
+          description: "Status 200"
+    delete:
+      tags:
+      - "Default"
+      summary: "Delete an assertion by its assertionId"
+      parameters:
+      - name: "adviceId"
+        in: "path"
+        description: "The ID of the assertion"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "Status 200"
+  /define/exception/{adviceId}:
+    post:
+      tags:
+      - "Default"
+      summary: "Create an exception"
+      parameters:
+      - name: "adviceId"
+        in: "path"
+        description: "The ID of the exception"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "Status 200"
+    delete:
+      tags:
+      - "Default"
+      summary: "Delete an exception"
+      parameters:
+      - name: "adviceId"
+        in: "path"
+        description: "The ID of the exception"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "Status 200"
+  /define/fixedResponse/{adviceId}:
+    post:
+      tags:
+      - "Default"
+      summary: "Create a fixed response mock"
+      parameters:
+      - name: "adviceId"
+        in: "path"
+        description: "The ID of the fixed response mock"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "Status 200"
+    delete:
+      tags:
+      - "Default"
+      summary: "Delete a fixed response mock"
+      parameters:
+      - name: "adviceId"
+        in: "path"
+        description: "The ID of the fixed response mock"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "Status 200"
+  /define/scenario/{adviceId}:
+    post:
+      tags:
+      - "Default"
+      summary: "Create a scenario"
+      parameters:
+      - name: "adviceId"
+        in: "path"
+        description: "ID of the scenario.  When creating, overrides the value in the\
+          \ supplied scenario"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "Status 200"
+    delete:
+      tags:
+      - "Default"
+      summary: "Delete a scenario"
+      parameters:
+      - name: "adviceId"
+        in: "path"
+        description: "ID of the scenario.  When creating, overrides the value in the\
+          \ supplied scenario"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "Status 200"
+  /reset:
+    get:
+      tags:
+      - "Control"
+      summary: "Reset the mocking framework based on scope"
+      parameters:
+      - name: "scope"
+        in: "query"
+        description: "Scope defines the limit to what is reset.  Specifying a scope\
+          \ of ALL resets all scopes and stubs"
+        required: false
+        type: "string"
+      responses:
+        200:
+          description: "Status 200"
+  /state:
+    get:
+      tags:
+      - "Default"
+      parameters: []
+      responses:
+        200:
+          description: "Status 200"
+    post:
+      tags:
+      - "Default"
+      summary: "Set the global state of the framework"
+      parameters:
+      - name: "enabled"
+        in: "query"
+        description: "true/false"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "Status 200"
+  /verify:
+    get:
+      tags:
+      - "Default"
+      produces:
+      - "application/json"
+      parameters: []
+      responses:
+        200:
+          description: "Status 200"
+          schema:
+            $ref: "#/definitions/status"
+securityDefinitions:
+  basic:
+    type: "basic"
+definitions:
+  status:
+    type: "object"
+    required:
+    - "status"
+    properties:
+      status:
+        type: "string"
+        description: "Should show 'Mocking framework operational' if everything is ok"
