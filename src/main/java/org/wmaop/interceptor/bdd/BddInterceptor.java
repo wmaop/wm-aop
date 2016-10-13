@@ -10,6 +10,7 @@ import java.util.Map.Entry;
 import org.wmaop.aop.interceptor.CompositeInterceptor;
 import org.wmaop.aop.interceptor.FlowPosition;
 import org.wmaop.aop.interceptor.InterceptResult;
+import org.wmaop.aop.interceptor.InterceptionException;
 import org.wmaop.aop.interceptor.Interceptor;
 import org.wmaop.aop.matcher.MatchResult;
 import org.wmaop.aop.matcher.jexl.JexlIDataMatcher;
@@ -109,7 +110,7 @@ public class BddInterceptor extends BaseInterceptor implements CompositeIntercep
 		if (ignoreNoMatch) {
 			return InterceptResult.TRUE;
 		}
-		throw new RuntimeException("No conditions match pipeline state");
+		throw new InterceptionException("No conditions match pipeline state");
 	}
 
 	private InterceptResult executeActions(List<Interceptor> list, FlowPosition flowPosition, IData idata) {

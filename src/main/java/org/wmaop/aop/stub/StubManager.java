@@ -46,7 +46,7 @@ public class StubManager {
 				ServerAPI.registerService(SUPPORTING_PKG, name, true, serviceType , null, null, null);
 				stubbedServices.add(svcName);
 			} catch (ServiceSetupException e) {
-				throw new RuntimeException("Error creating stub service for " + svcName, e);
+				throw new StubLifecycleException("Error creating stub service for " + svcName, e);
 			}
 		}
 	}
@@ -72,7 +72,7 @@ public class StubManager {
 			try {
 				Namespace.current().deleteNode(((NSNode) node).getNSName(), true, pkg);
 			} catch (NSException e) {
-				throw new RuntimeException(e);
+				throw new StubLifecycleException("Internal namespace exception clearing stubs", e);
 			}
 		}
 		stubbedServices.clear();
@@ -91,7 +91,7 @@ public class StubManager {
 		try {
 			unregisterStubService(svcName);
 		} catch (NSException e) {
-			throw new RuntimeException("Error unregistering stub", e);
+			throw new StubLifecycleException("Error unregistering stub", e);
 		}
 	}	
 

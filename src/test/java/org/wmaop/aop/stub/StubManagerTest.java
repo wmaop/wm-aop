@@ -50,7 +50,7 @@ public class StubManagerTest {
 	final String SERVICE_NAME = "foo:bar";
 
 	@Before
-	public void setup() {
+	public void setUp() {
 		stubManager = new StubManager();
 		PowerMockito.mockStatic(PackageManager.class);
 		PowerMockito.mockStatic(ServerClassLoader.class);

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.List;
 
 import org.wmaop.aop.assertion.AssertionInterceptor;
+import org.wmaop.aop.interceptor.InterceptionException;
 import org.wmaop.aop.interceptor.Interceptor;
 import org.wmaop.interceptor.bdd.xsd.Assert;
 import org.wmaop.interceptor.bdd.xsd.Then;
@@ -24,7 +25,7 @@ public class InterceptorFactory {
 		} else if (then.getThrow() != null) {
 			return getExceptionInterceptor(then.getThrow());
 		} else {
-			throw new RuntimeException("No then actions");
+			throw new InterceptionException("No then actions within the scenario");
 		}
 	}
 

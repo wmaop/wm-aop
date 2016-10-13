@@ -2,9 +2,9 @@ package org.wmaop.interceptor.mock.conditional;
 
 public class ConditionResponse {
 
-	String id;
-	String expression;
-	String response;
+	private String id;
+	private String expression;
+	private String response;
 	
 	public ConditionResponse(String id, String expression, String response) {
 		super();

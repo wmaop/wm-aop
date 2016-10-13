@@ -41,7 +41,7 @@ public class JexlServiceNameMatcher implements Matcher<FlowPosition> {
 
 	private void verifyExpressionResult(String name, Object result) {
 		if (!(result instanceof Boolean)) {
-			throw new RuntimeException("Cannot parse expression named '" + name + "' to get boolean, instead got "
+			throw new JexlParseException("Cannot parse expression named '" + name + "' to get boolean, instead got "
 					+ result.getClass().getSimpleName() + ": " + result);
 		}
 	}

@@ -156,7 +156,7 @@ public class AdviceManager extends Observable {
 		return getInvokeCountForPrefix(name) <= count;
 	}
 
-	void notify(Advice advice) {
+	protected void notify(Advice advice) {
 		setChanged();
 		notifyObservers(advice);
 	}

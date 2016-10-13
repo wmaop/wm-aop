@@ -8,6 +8,7 @@ import java.util.Map;
 
 import org.wmaop.aop.interceptor.FlowPosition;
 import org.wmaop.aop.interceptor.InterceptResult;
+import org.wmaop.aop.interceptor.InterceptionException;
 import org.wmaop.interceptor.BaseInterceptor;
 
 import com.wm.data.IData;
@@ -38,7 +39,7 @@ public class PipelineCaptureInterceptor extends BaseInterceptor {
 		try (OutputStream fos = getFileOutputStream(getFileName())) {
 			new IDataXMLCoder().encode(fos, idata);
 		} catch (IOException e) {
-			throw new RuntimeException(e);
+			throw new InterceptionException("Error when writing pipeline to file " + getFileName(),e);
 		}
 		return InterceptResult.TRUE;
 	}
@@ -47,7 +48,7 @@ public class PipelineCaptureInterceptor extends BaseInterceptor {
 		return prefix + '-' + fileCount + suffix;
 	}
 
-	OutputStream getFileOutputStream(String fileName) throws FileNotFoundException {
+	protected OutputStream getFileOutputStream(String fileName) throws FileNotFoundException {
 		return new FileOutputStream(fileName);
 	}
 

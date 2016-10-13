@@ -127,7 +127,7 @@ public class MockManager extends AbstractFlowManager {
 		registerInterceptor(adviceId, getRemit(pipeline), interceptPoint.toUpperCase(), serviceName, pipelineCondition, interceptor, calledBy);
 	}
 	
-	Remit getRemit(IData pipeline) throws ServiceException {
+	public Remit getRemit(IData pipeline) throws ServiceException {
 		IDataCursor pipelineCursor = pipeline.getCursor();
 		String requiredScope = IDataUtil.getString(pipelineCursor, SCOPE);
 		if (requiredScope == null) {

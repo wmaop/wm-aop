@@ -41,11 +41,11 @@ import com.wm.util.coder.IDataXMLCoder;
 
 public class MockManagerTest {
 
-	AOPChainProcessor acpMock;
-	MockManager mm;
+	private AOPChainProcessor acpMock;
+	private MockManager mm;
 
 	@Before
-	public void setup() {
+	public void setUp() {
 		acpMock = mock(AOPChainProcessor.class);
 		mm = new MockManager();
 		AOPChainProcessor.setInstance(acpMock);

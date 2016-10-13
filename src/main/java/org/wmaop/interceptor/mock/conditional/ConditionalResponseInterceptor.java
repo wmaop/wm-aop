@@ -8,6 +8,7 @@ import java.util.Map;
 
 import org.wmaop.aop.interceptor.FlowPosition;
 import org.wmaop.aop.interceptor.InterceptResult;
+import org.wmaop.aop.interceptor.InterceptionException;
 import org.wmaop.aop.matcher.MatchResult;
 import org.wmaop.aop.matcher.jexl.JexlIDataMatcher;
 import org.wmaop.interceptor.BaseInterceptor;
@@ -64,7 +65,7 @@ public class ConditionalResponseInterceptor extends BaseInterceptor {
 		if (ignoreNoMatch) {
 			return InterceptResult.TRUE;
 		}
-		throw new RuntimeException("No conditions match pipeline state");
+		throw new InterceptionException("No conditions match pipeline state");
 	}
 
 	@Override

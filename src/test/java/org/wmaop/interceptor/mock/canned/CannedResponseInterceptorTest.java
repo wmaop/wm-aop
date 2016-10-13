@@ -69,7 +69,7 @@ public class CannedResponseInterceptorTest {
 		pc.destroy();
 	}
 	
-	IData getIData(String[][] data) {
+	private IData getIData(String[][] data) {
 		IData idata = new ISMemDataImpl();
 		IDataCursor idc = idata.getCursor();
 		for (String[] kv : data) {

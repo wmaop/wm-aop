@@ -12,8 +12,8 @@ import com.wm.data.IData;
 
 public class ServicePipelinePointCut implements PointCut {
 
-	final FlowPositionMatcher flowPositionMatcher;
-	final Matcher<? super IData> pipelineMatcher;
+	private final FlowPositionMatcher flowPositionMatcher;
+	private final Matcher<? super IData> pipelineMatcher;
 	private InterceptPoint interceptPoint;
 
 	public ServicePipelinePointCut(FlowPositionMatcher flowPositionMatcher, Matcher<? super IData> pipelineMatcher, InterceptPoint interceptPoint) {

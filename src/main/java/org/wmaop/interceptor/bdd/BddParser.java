@@ -32,9 +32,9 @@ public class BddParser {
 	private static final Logger logger = Logger.getLogger(BddParser.class);
 
 	class AssertionHolder {
-		String whenCondition;
-		String whenid;
-		String assertionid;
+		protected String whenCondition;
+		protected String whenid;
+		protected String assertionid;
 	}
 
 	public ParsedScenario parse(InputStream bddstream, String adviceId) throws JAXBException, IOException {
