@@ -33,7 +33,7 @@ public class InterceptorFactory {
 		try {
 			return new CannedResponseInterceptor(ResponseSequence.SEQUENTIAL, list);
 		} catch (IOException e) {
-			throw new RuntimeException(e);
+			throw new InterceptionException("Error while decoding IData for CannedResponse - Format issue with IDATA?", e);
 		}
 	}
 

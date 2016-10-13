@@ -8,6 +8,7 @@ import java.util.Map;
 
 import org.wmaop.aop.interceptor.FlowPosition;
 import org.wmaop.aop.interceptor.InterceptResult;
+import org.wmaop.aop.interceptor.InterceptionException;
 import org.wmaop.interceptor.BaseInterceptor;
 
 import com.wm.data.IData;
@@ -57,7 +58,7 @@ public class RestDelegatingInterceptor extends BaseInterceptor {
 
 			conn.disconnect();
 		} catch (IOException e) {
-			throw new RuntimeException(e);
+			throw new InterceptionException("Error while forwarding request", e);
 		}
 	}
 

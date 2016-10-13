@@ -138,7 +138,7 @@ public class BddInterceptor extends BaseInterceptor implements CompositeIntercep
 		am.put("defaultInterceptors", toMapList(defaultInterceptors));
 	}
 
-	List<Map<String, Object>> toMapList(List<Interceptor> interceptors) {
+	private List<Map<String, Object>> toMapList(List<Interceptor> interceptors) {
 		List<Map<String, Object>> ml = new ArrayList<>();
 		for (Interceptor i : interceptors) {
 			ml.add(i.toMap());

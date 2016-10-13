@@ -47,7 +47,7 @@ public class StubManagerTest {
 	public TemporaryFolder tempFolder= new TemporaryFolder();
 
 	private StubManager stubManager;
-	final String SERVICE_NAME = "foo:bar";
+	private static final String SERVICE_NAME = "foo:bar";
 
 	@Before
 	public void setUp() {
@@ -59,9 +59,9 @@ public class StubManagerTest {
 	
 	@Test
 	public void testRegisterStubService() {
-		assertFalse(stubManager.isRegisteredService("foo:bar"));
+		assertFalse(stubManager.isRegisteredService(SERVICE_NAME));
 		PowerMockito.when(Server.getResources()).thenReturn(new Resources("",false));
-		stubManager.registerStubService("foo:bar");
+		stubManager.registerStubService(SERVICE_NAME);
 	}
 
 	@Test

@@ -83,7 +83,7 @@ public class MockManager extends AbstractFlowManager {
 		pipelineCursor.destroy();
 	}
 	
-	Map<String, Object> adviceToMap(Advice... advices) {
+	private Map<String, Object> adviceToMap(Advice... advices) {
 		Map<String, Object> adviceMap = new HashMap<>();
 		for (Advice adv : advices) {
 			adviceMap.put(adv.getId(), adv.toMap());
