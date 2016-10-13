@@ -1,5 +1,5 @@
 ## wm-aop
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/33aec3b2a6e8474b8663bc5ef1ce45e0)](https://www.codacy.com/app/wmaop/wm-aop?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=wmaop/wm-aop&amp;utm_campaign=Badge_Grade)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/33aec3b2a6e8474b8663bc5ef1ce45e0)](https://www.codacy.com/app/wmaop/wm-aop?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=wmaop/wm-aop&amp;utm_campaign=Badge_Grade) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 This project offers an Aspect Oriented style framework for Software AG webMethods that allows the dynamic creation of mocks and interceptors which can be conditionally invoked when services are executing.   It is also the foundation for [wm-jbehave](https://github.com/wmaop/wm-jbehave/wiki) that offers Behaviour Driven Unit Testing from within Software AG Designer.  When you have these components installed you will be able to:
 
