@@ -41,11 +41,11 @@ public class InterceptorFactory {
 		return new PipelineCaptureInterceptor(fileName);
 	}
 
-	public Interceptor getExceptionInterceptor(String exc) {
+	public Interceptor getExceptionInterceptor(String exceptionClassName) {
 		try {
-			return new ExceptionInterceptor(exc);
+			return new ExceptionInterceptor(exceptionClassName);
 		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
-			throw new RuntimeException(e);
+			throw new InterceptionException("Problem resolving exception class " + exceptionClassName, e);
 		}
 	}
 

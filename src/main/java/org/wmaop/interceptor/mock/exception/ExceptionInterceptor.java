@@ -12,8 +12,8 @@ public class ExceptionInterceptor extends BaseInterceptor {
 
 	private final InterceptResult interceptResult;
 
-	public ExceptionInterceptor(String e) throws InstantiationException, IllegalAccessException, ClassNotFoundException {
-		this((Exception) Class.forName(e).newInstance());
+	public ExceptionInterceptor(String exceptionClassName) throws InstantiationException, IllegalAccessException, ClassNotFoundException {
+		this((Exception) Class.forName(exceptionClassName).newInstance());
 	}
 	
 	public ExceptionInterceptor(Exception e) {

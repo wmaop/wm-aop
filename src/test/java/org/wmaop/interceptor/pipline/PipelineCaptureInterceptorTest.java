@@ -26,7 +26,7 @@ public class PipelineCaptureInterceptorTest {
 	}
 
 	@Test
-	public void ShouldUseDefaultExtension() throws Exception {
+	public void shouldUseDefaultExtension() throws Exception {
 		PipelineCaptureInterceptor pci = spy(new PipelineCaptureInterceptor("target/foo"));
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		when(pci.getFileOutputStream("target/foo-1.xml")).thenReturn(baos);

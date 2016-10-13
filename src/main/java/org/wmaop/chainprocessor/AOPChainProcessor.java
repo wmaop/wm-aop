@@ -115,7 +115,7 @@ public class AOPChainProcessor implements InvokeChainProcessor {
 		try {
 			for (Advice advice : adviceManager.getAdvicesForInterceptPoint(pos.getInterceptPoint())) {
 				if (advice.getAdviceState() == ENABLED && advice.isApplicable(pos, idata)) {
-					InterceptResult ir = intercept(pos, idata, serviceStatus, advice);
+					InterceptResult ir = intercept(pos, idata, advice);
 					if (ir.hasIntercepted()) {
 						hasIntercepted = ir; // Ensure its only set, never reset to false
 						if (exitOnIntercept) {
@@ -133,8 +133,7 @@ public class AOPChainProcessor implements InvokeChainProcessor {
 		return hasIntercepted;
 	}
 
-	private InterceptResult intercept(FlowPosition pos, IData idata, ServiceStatus serviceStatus,
-			Advice advice) {
+	private InterceptResult intercept(FlowPosition pos, IData idata, Advice advice) {
 		InterceptResult interceptResult = advice.getInterceptor().intercept(pos, idata);
 		logger.info("Intercepting " + advice.getId() + " " + pos.getInterceptPoint() + ' ' + pos + " - " + interceptResult.hasIntercepted());
 		return interceptResult;
