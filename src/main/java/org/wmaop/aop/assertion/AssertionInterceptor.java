@@ -61,6 +61,6 @@ public class AssertionInterceptor implements Interceptor, Assertable {
 		am.put("assertionName", assertionName);
 		am.put("invokeCount", invokeCount);
 		am.put("asserted", Boolean.toString(asserted));
-		return null;
+		return am;
 	}
 }

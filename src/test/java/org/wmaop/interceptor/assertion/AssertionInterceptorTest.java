@@ -23,12 +23,12 @@ public class AssertionInterceptorTest {
 		ai.intercept(mock(FlowPosition.class), mock(IData.class));
 		assertEquals(1, ai.getInvokeCount());
 		assertTrue(ai.hasAsserted());
+		assertEquals("true", ai.toMap().get("asserted"));
 		
 		ai.reset();
 		assertEquals(0, ai.getInvokeCount());
 		assertFalse(ai.hasAsserted());
-		
-		ai.toMap();
+		assertEquals("false", ai.toMap().get("asserted"));
 	}
 
 }

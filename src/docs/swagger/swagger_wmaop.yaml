@@ -1,7 +1,14 @@
 ---
 swagger: "2.0"
 info:
-  description: "wmaop RESTful API provides the ability to define mocks within webMethods Integration Server."
+  description: |
+    wm-aop RESTful API provides the ability to define mocks within webMethods Integration Server.  Note that where _paths_ are shown, they should be prepended with the base path, eg, when looking at /define/advice the actual path you call is /rest/org/wmaop/define/advice
+    
+    Being familiar with [wm-jbehave stories](https://github.com/wmaop/wm-jbehave/wiki/Syntax-for-creating-JBehave-stories) helps to identify use cases and ways to use the API.
+    
+    Note that the examples show responses when the _Accept:_ header is set with _text/xml_.   Setting with _application/json_ is similarly valid where suitable for your tooling.  Without the _Accept:_ header you may receive a default response of html.
+    
+    This documentation is auto-generated from the [Swagger definition of the API](https://github.com/wmaop/wm-aop/blob/master/src/docs/swagger/swagger_wmaop.yaml)
   version: "1.1.1"
   title: "wm-aop"
   contact: "info@wmaop.org"
@@ -14,14 +21,15 @@ security:
 paths:
   /define/advice/{adviceId}:
     get:
-      tags:
-      - "Default"
       summary: "Get advice details"
       description: |
         Specify the adviceId to see details of that advice or leave the adviceId null for all registered advices.   Returned values is an IData record structure. 
         #### Example
         If we register a simple mock, such as that shown in define fixedResponse, then with
-        ````GET http://localhost:5555/rest/org/wmaop/define/advice```` we receive:
+        ````
+        GET http://localhost:5555/rest/org/wmaop/define/advice/myMockingId
+        ````
+        we receive the response of:
         ````
         <?xml version="1.0" encoding="UTF-8"?>
         <Values version="2.0">
@@ -65,75 +73,119 @@ paths:
       parameters:
       - name: "adviceId"
         in: "path"
-        description: "Id of the advice.  Applies to any form of advice: scenario;\
-          \ exception; fixedResponse; assertion."
-        required: true
+        description: "Id of the advice.  Applies to any form of advice: scenario; exception; fixedResponse; assertion."
+        required: false
         type: "string"
       responses:
         200:
-          description: "Status 200"
+          description: "IData structure of advices."
     delete:
-      tags:
-      - "Default"
       summary: "Delete an advice"
-      description: "adviceId is mandatory otherwise no delete occurs."
+      description: |
+        Delete an advice, reverting back to standard behaviour for that service."
+        #### Example
+        Deleting an advice with the id of _myMockingId_
+        ````
+        DELETE http://localhost:5555/rest/org/wmaop/define/advice/myMockingId
+        ````
       parameters:
       - name: "adviceId"
         in: "path"
-        description: "Id of the advice.  Applies to any form of advice: scenario;\
-          \ exception; fixedResponse; assertion."
+        description: "Id of the advice.  Applies to any form of advice: scenario; exception; fixedResponse; assertion.  The adviceId is mandatory otherwise no delete occurs."
         required: true
         type: "string"
       responses:
         200:
-          description: "Status 200"
+          description: "200 Returned in all cases even when no advice exists for the id"
   /define/assertion/{adviceId}:
     get:
-      tags:
-      - "Default"
-      summary: "Get details of the assertion"
+      summary: "Get simplified details of an assertion (Or indeed any advice...)"
+      description: |
+        Retrieves simplified details of the assertion to allow easy check of the number of times the assertion was invoked when its condition matched (Ie, pipeline state matched the condition applied or pure invokation count where no condition occurs).
+        
+        The assertion (And mock) lookup uses the adviceId as a prefix rather than an exact match. This allows a combined count for mocks or assertions where they begin with the id.  So, mocks with adviceId's of _adviceMock1_ and _adviceMock2_ count have their counts tallied by looking up _adviceMock_.  For example, you may have one of multiple services called, checking the prefix allows a single test to for an invoke count of 1 to prove that one was invoked.  
+        #### Example
+        Making a request for the assertion name of _myMockingId_:
+        ````
+        GET http://localhost:5555/rest/org/wmaop/define/assertion/myAssertion
+        ````
+        Gives the response of:
+        ````
+        <?xml version="1.0" encoding="UTF-8"?>
+        <Values version="2.0">
+            <value name="adviceId">myAssertion</value>
+            <number name="invokeCount" type="Integer">0</number>
+        </Values>
+        ````
+        Note that all registered advices are _assertable_ and as such you can specify any {adviceId} to retrieve its invoke count, e.g. ````GET http://localhost:5555/rest/org/wmaop/define/assertion/myMockingId```` to see an invoke count of the simple mock defined elsewhere here.
       parameters:
       - name: "adviceId"
         in: "path"
-        description: "The ID of the assertion"
+        description: "The ID of the assertion or any other advice"
         required: true
         type: "string"
       responses:
         200:
-          description: "Status 200"
+          description: "A response indicating the invoke count"
+          schema:
+            $ref: "#/definitions/Assertion Response"
     post:
-      tags:
-      - "Default"
       summary: "Create an assertion"
+      description: |
+        Firing mocks and testing pipeline values might be enough to satisfy you that the test has worked, but sometimes its useful to know that a particular service has been invoked and how many times (Eg, if the service has iterated some data, did it action the correct number?). Its also useful to know if a service has produced the expected output but it might not be possible to check the eventual pipeline contents due to values being dropped, etc.
+        
+        Using Assertions allows you to 'peek' at the pipeline and check that something has happend. Just like mocks, assertions can have conditions applied to them so that the assertion only registers as invoked if the condition is met.
+        
+        Note that you only need assertions when checking flow through a service, usually before or after a particular service of interest is invoked. If you want to check that your mocks have fired, use a GET /define/assertion/{adviceId} on a mock for a summary of its invokation count
+        #### Example
+        Creating an assertion called _postAddingNumbersAssertion_ which is invoked _after_ the _serviceName_ of _pub.math:addInts is called and the pipeline _condition_ is that the _value_ in the pipeline is 9.   Note that the URL is fully URL encoded to escape the spaces, colons and equals symbols.  Failure to correctly encode the URL will lead to incorrect behaviour.
+        ````
+        POST http://localhost:5555/rest/org/wmaop/define/assertion/postAddingNumbersAssertion?serviceName=pub.math%3AaddInts&condition=value%20%3D%3D%209&interceptPoint=AFTER
+        ````
       parameters:
       - name: "adviceId"
         in: "path"
-        description: "The ID of the assertion"
+        description: "The ID of the assertion which also forms its adviceId"
         required: true
         type: "string"
       - name: "serviceName"
         in: "query"
-        required: false
+        description: "Fully qualified name of the service which this assertion will interact with" 
+        required: true
         type: "string"
       - name: "condition"
         in: "query"
+        description: "A JEXL pipeline expression to test whether this assertion is applicable. See [Pipeline Expressions Using JEXL](https://github.com/wmaop/wm-jbehave/wiki/Pipeline-Expressions-Using-JEXL) for details on how to define the expressions."
         required: false
         type: "string"
       - name: "interceptPoint"
         in: "query"
-        required: false
+        description: "The point of interception and either _before_, _invoke_ or _after_ (Case insensitive).  Assertions are generally set either _before_ or _after_ a service.  Setting to _invoke_ will replace the service with the assertion, effectively eliminating the original service and having no effect on the pipeline."
+        required: true
         type: "string"
       - name: "scope"
         in: "query"
+        description: "The scope to which this assertion applies and can be either _session_, _user_ or _global_ (Case insensitive)"
         required: false
         type: "string"
+        default: "user"
+      - name: "username"
+        in: "query"
+        description: "When the scope is _user_ the username to which this applies.  If not supplied then the user is assumed to be the authenticated user making the call."
+        required: false
+        type: "string"
+        default: "Username that authenticated the request"
       responses:
         200:
           description: "Status 200"
     delete:
-      tags:
-      - "Default"
-      summary: "Delete an assertion by its assertionId"
+      summary: "Delete an assertion"
+      description: |
+        Delete an assertion by using its adviceId.
+        #### Example
+        ````
+        DELETE http://localhost:5555/rest/org/wmaop/define/assertion/myMockingId
+        ````
       parameters:
       - name: "adviceId"
         in: "path"
@@ -142,51 +194,128 @@ paths:
         type: "string"
       responses:
         200:
-          description: "Status 200"
+          description: "Status 200 returned in all cases even when adviceId doesnt exist"
   /define/exception/{adviceId}:
     post:
-      tags:
-      - "Default"
       summary: "Create an exception"
+      description: |
+        Testing of behaviour should include negative paths where exceptional circumstances need handling and exeception handling requires execution. Instead of a service executing, its possible to raise an exception instead thereby simulating a failure.
+        
+        Exceptions defined this way are assertable and so can be checked to verify they've been invoked using ````GET /define/assertion/{assertionId}````
+        #### Example
+        Preventing the _pub.jms:send_ service from opperating instead an _java.lang.UnsupportedOperationException_ is thrown.  In this example, no scope is supplied so the effect is global across IS.
+        ````
+        POST http://localhost:5555/rest/org/wmaop/define/exception/myExceptionId?serviceName=pub.jms%3Asend&interceptPoint=invoke&exception=java.lang.UnsupportedOperationException
+        ````
       parameters:
       - name: "adviceId"
         in: "path"
         description: "The ID of the exception"
         required: true
         type: "string"
+      - name: "serviceName"
+        in: "query"
+        description: "Fully qualified name of the service which this exception will interact with" 
+        required: true
+        type: "string"
+      - name: "exception"
+        in: "query"
+        description: "The full classname of the exception to raise, such as _java.lang.RuntimeException_ or _com.wm.app.b2b.server.ServiceException_.  The exception class name must be any java class that is Throwable and have a String constructor (Ie one where the exception message is passed in; This is the norm for most exceptions)" 
+        required: true
+        type: "string"
+      - name: "condition"
+        in: "query"
+        description: "A JEXL pipeline expression to test whether this assertion is applicable. Useful to raise an exception instead of the service on a particular pipeline state or to raise an exception after as service is called, etc.  See [Pipeline Expressions Using JEXL](https://github.com/wmaop/wm-jbehave/wiki/Pipeline-Expressions-Using-JEXL) for details on how to define the expressions."
+        required: false
+        type: "string"
+      - name: "interceptPoint"
+        in: "query"
+        description: "The point to raise the exception and either _before_, _invoke_ or _after_ (Case insensitive).  Setting to _invoke_ will replace the service and trigger an exception instead of the service behaviour."
+        required: true
+        type: "string"
+      - name: "scope"
+        in: "query"
+        description: "The scope to which this mock applies and can be either _session_, _user_ or _global_ (Case insensitive)"
+        required: false
+        type: "string"
+        default: "user"
+      - name: "username"
+        in: "query"
+        description: "When the scope is _user_ the username to which this applies.  If not supplied then the user is assumed to be the authenticated user making the call."
+        required: false
+        type: "string"
+        default: "Username that authenticated the request"
       responses:
         200:
-          description: "Status 200"
+          description: "Status 200 in all cases"
     delete:
-      tags:
-      - "Default"
       summary: "Delete an exception"
+      description: |
+        Delete an exception by its _adviceId_
+        #### Example
+        ````
+        DELETE http://localhost:5555/rest/org/wmaop/define/exception/myExceptionId
+        ````
       parameters:
       - name: "adviceId"
         in: "path"
-        description: "The ID of the exception"
+        description: "The adviceId used to register the exception"
         required: true
         type: "string"
       responses:
         200:
-          description: "Status 200"
+          description: "Status 200 in all cases"
   /define/fixedResponse/{adviceId}:
     post:
-      tags:
-      - "Default"
       summary: "Create a fixed response mock"
+      description: |
+        
       parameters:
       - name: "adviceId"
         in: "path"
-        description: "The ID of the fixed response mock"
+        description: "The ID of the assertion which also forms its adviceId"
         required: true
         type: "string"
+      - name: "serviceName"
+        in: "query"
+        description: "Fully qualified name of the service which this mock will interact with" 
+        required: true
+        type: "string"
+      - name: "condition"
+        in: "query"
+        description: "A JEXL pipeline expression to test whether this assertion is applicable. See [Pipeline Expressions Using JEXL](https://github.com/wmaop/wm-jbehave/wiki/Pipeline-Expressions-Using-JEXL) for details on how to define the expressions."
+        required: false
+        type: "string"
+      - name: "interceptPoint"
+        in: "query"
+        description: "The point of interception and either _before_, _invoke_ or _after_ (Case insensitive).  Mocks are generally set to invoke to replace the service with other behaviour.  Its also possible to use with _before_ or _after_ to insert or overwrite values in the pipeline to modify behaviour."
+        required: true
+        type: "string"
+      - name: "scope"
+        in: "query"
+        description: "The scope to which this mock applies and can be either _session_, _user_ or _global_ (Case insensitive)"
+        required: false
+        type: "string"
+        default: "user"
+      - name: "username"
+        in: "query"
+        description: "When the scope is _user_ the username to which this applies.  If not supplied then the user is assumed to be the authenticated user making the call."
+        required: false
+        type: "string"
+        default: "Username that authenticated the request"
+      - name: "calledBy"
+        in: "query"
+        description: "" 
+        required: false
+        type: "string"
+      - name: body
+          in: "body"
+          description: "IData which is used to set the pipeline when this mock is executed"
+          required: true
       responses:
         200:
           description: "Status 200"
     delete:
-      tags:
-      - "Default"
       summary: "Delete a fixed response mock"
       parameters:
       - name: "adviceId"
@@ -199,8 +328,6 @@ paths:
           description: "Status 200"
   /define/scenario/{adviceId}:
     post:
-      tags:
-      - "Default"
       summary: "Create a scenario"
       parameters:
       - name: "adviceId"
@@ -213,8 +340,6 @@ paths:
         200:
           description: "Status 200"
     delete:
-      tags:
-      - "Default"
       summary: "Delete a scenario"
       parameters:
       - name: "adviceId"
@@ -228,8 +353,6 @@ paths:
           description: "Status 200"
   /reset:
     get:
-      tags:
-      - "Control"
       summary: "Reset the mocking framework based on scope"
       parameters:
       - name: "scope"
@@ -243,15 +366,11 @@ paths:
           description: "Status 200"
   /state:
     get:
-      tags:
-      - "Default"
       parameters: []
       responses:
         200:
           description: "Status 200"
     post:
-      tags:
-      - "Default"
       summary: "Set the global state of the framework"
       parameters:
       - name: "enabled"
@@ -264,8 +383,6 @@ paths:
           description: "Status 200"
   /verify:
     get:
-      tags:
-      - "Default"
       produces:
       - "application/json"
       parameters: []
@@ -278,6 +395,16 @@ securityDefinitions:
   basic:
     type: "basic"
 definitions:
+  Assertion Response:
+    type: "object"
+    properties:
+      adviceId:
+        type: "string"
+        description: "ID of the assertion or other advice"
+      invokeCount:
+        type: "integer"
+        format: "int32"
+        description: "Number of times this assertion or advice was invoked"
   status:
     type: "object"
     required:
@@ -286,3 +413,4 @@ definitions:
       status:
         type: "string"
         description: "Should show 'Mocking framework operational' if everything is ok"
+        
