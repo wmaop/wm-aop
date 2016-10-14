@@ -269,7 +269,20 @@ paths:
     post:
       summary: "Create a fixed response mock"
       description: |
-        
+        Create a mock of a service to return a value in place of that service.
+        #### Example
+        Override the _pub.math:addInts_ service so that it always returns a _value_ of 10.
+        ````
+        POST http://localhost:5555/rest/org/wmaop/define/fixedResponse/fixedValue?serviceName=pub.math%3AaddInts&interceptPoint=invoke
+        ````
+        With a body of:
+        ````
+        <IDataXMLCoder version="1.0">
+          <record javaclass="com.wm.data.ISMemDataImpl">
+            <value name="value">10</value>
+          </record>
+        </IDataXMLCoder>        
+        ````        
       parameters:
       - name: "adviceId"
         in: "path"
@@ -305,13 +318,13 @@ paths:
         default: "Username that authenticated the request"
       - name: "calledBy"
         in: "query"
-        description: "" 
+        description: "Only invoked if this parameter matches or prefixes one of the services in the call stack.  Works in combination with condition or on its own and can ensure mock only works when called from a package (Eg _pub.foo_) or specific service (Eg _pub.foo:bar_)" 
         required: false
         type: "string"
-      - name: body
-          in: "body"
-          description: "IData which is used to set the pipeline when this mock is executed"
-          required: true
+      - name: "body"
+        in: "body"
+        description: "IData which is used to set the pipeline when this mock is executed"
+        required: true
       responses:
         200:
           description: "Status 200"
