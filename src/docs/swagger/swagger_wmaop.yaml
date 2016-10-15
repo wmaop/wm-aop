@@ -271,9 +271,9 @@ paths:
       description: |
         Create a mock of a service to return a value in place of that service.
         #### Example
-        Override the _pub.math:addInts_ service so that it always returns a _value_ of 10.
+        Override the _pub.math:addInts_ service with a mock which has an assertionId of _fixedValue_ always returns a _value_ of 10.
         ````
-        POST http://localhost:5555/rest/org/wmaop/define/fixedResponse/fixedValue?serviceName=pub.math%3AaddInts&interceptPoint=invoke
+        POST http://localhost:5555/rest/org/wmaop/define/fixedResponse/fixedValueMock?serviceName=pub.math%3AaddInts&interceptPoint=invoke
         ````
         With a body of:
         ````
@@ -327,9 +327,16 @@ paths:
         required: true
       responses:
         200:
-          description: "Status 200"
+          description: "Status 200 in all cases"
     delete:
       summary: "Delete a fixed response mock"
+      description: |
+        Delete a fixed response mock using its adviceId.
+        #### Example
+        Delete the mock named _fixedValueMock_ from the create example:
+        ````
+        DELETE http://localhost:5555/rest/org/wmaop/define/fixedResponse/fixedValueMock
+        ````        
       parameters:
       - name: "adviceId"
         in: "path"
@@ -338,64 +345,161 @@ paths:
         type: "string"
       responses:
         200:
-          description: "Status 200"
+          description: "Status 200 in all cases"
   /define/scenario/{adviceId}:
     post:
       summary: "Create a scenario"
+      description: |
+        Sometimes, simplistic mocks are not sufficient and more complex mock behaviour is required.  Creation of a scenario mock allows the definition of conditions on when to trigger the mock and the type of response required. The structure is such that different outputs from the mock can occur based on pipeline values and the sequence of data returned can be varied.
+         
+        For full information see the wiki page to [create behavioural driven scenario mocks](https://github.com/wmaop/wm-aop/wiki/Creating-Behavioural-Driven-Scenario-mocks-from-RESTful-calls)
+        #### Example
+        Create a simple scenario mock with the adviceId of _mockJmsSendTwoAlternatives_ to replace _pub.jms:send_ such that calling it returns two alternate responses each time the service is invoked
+        ````
+        POST http://localhost:5555/rest/org/wmaop/define/scenario
+        <scenario xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xsi:noNamespaceSchemaLocation="../../../main/xsd/bddSchema.xsd" id="mockJmsSendTwoAlternatives">
+            <given>
+                <service intercepted="invoke">pub.jms:send</service>
+            </given>
+            <when id="sendingJmsMessage">
+                <then dispatch="sequential">
+                  <return><![CDATA[<IDataXMLCoder version="1.0">
+                    <record javaclass="com.wm.data.ISMemDataImpl">
+                      <value name="fileName">mypipeline.xml</value>
+                      <record name="JMSMessage" javaclass="com.wm.data.ISMemDataImpl">
+                        <record name="header" javaclass="com.wm.data.ISMemDataImpl">
+                          <value name="JMSCorrelationID">ABC123</value>
+                        </record>
+                      </record>
+                    </record>
+                    </IDataXMLCoder>]]>
+                  </return>
+                  <return><![CDATA[<IDataXMLCoder version="1.0">
+                    <record javaclass="com.wm.data.ISMemDataImpl">
+                      <value name="fileName">mypipeline.xml</value>
+                      <record name="JMSMessage" javaclass="com.wm.data.ISMemDataImpl">
+                        <record name="header" javaclass="com.wm.data.ISMemDataImpl">
+                          <value name="JMSCorrelationID">DEF456</value>
+                        </record>
+                      </record>
+                    </record>
+                    </IDataXMLCoder>]]>
+                  </return>
+                </then>
+            </when>
+        </scenario>        
+        ````
       parameters:
       - name: "adviceId"
         in: "path"
-        description: "ID of the scenario.  When creating, overrides the value in the\
-          \ supplied scenario"
-        required: true
-        type: "string"
-      responses:
-        200:
-          description: "Status 200"
-    delete:
-      summary: "Delete a scenario"
-      parameters:
-      - name: "adviceId"
-        in: "path"
-        description: "ID of the scenario.  When creating, overrides the value in the\
-          \ supplied scenario"
-        required: true
-        type: "string"
-      responses:
-        200:
-          description: "Status 200"
-  /reset:
-    get:
-      summary: "Reset the mocking framework based on scope"
-      parameters:
-      - name: "scope"
-        in: "query"
-        description: "Scope defines the limit to what is reset.  Specifying a scope\
-          \ of ALL resets all scopes and stubs"
+        description: |
+          adviceId of the scenario.  When present, overrides the value in the <scenario id...> otherwise the id in the scenario is used as the adviceId 
         required: false
         type: "string"
       responses:
         200:
-          description: "Status 200"
-  /state:
-    get:
-      parameters: []
-      responses:
-        200:
-          description: "Status 200"
-    post:
-      summary: "Set the global state of the framework"
+          description: "Status 200 in all cases"
+    delete:
+      summary: "Delete a scenario"
+      description: |
+        Delete a scenario mock
+        #### Example
+        Delete the scenario named _mockJmsSendTwoAlternatives_ from the create example:
+        ````
+        DELETE http://localhost:5555/rest/org/wmaop/define/scenario/mockJmsSendTwoAlternatives
+        ````        
       parameters:
-      - name: "enabled"
-        in: "query"
-        description: "true/false"
+      - name: "adviceId"
+        in: "path"
+        description: " using its id, either the adviceId supplied when creating or if not present then the <scenario id...>"
         required: true
         type: "string"
       responses:
         200:
-          description: "Status 200"
+          description: "Status 200 in all cases"
+  /reset:
+    get:
+      summary: "Reset the mocking framework based on scope"
+      descrition: |
+        Reset the framework, bulk removing advice's (Mocks, assertions, scenarios) within that scope.  Calling with a scope of:
+        * No scope defined - Calling without the scope specified removes advice's registered as _user_ scope for the user making the call and _session_ scoped, again for the current user making the call only - _global_ scoped advice and those for other users (Ie set as _session_ and _user_).  Applicable when running tests in a shared server.
+        * ALL - removes all mocks, irrespective of original scope and sets the framework to DISABLED - Effectively removing it from the runtime.
+        * SESSION - removes advice for the current http session
+        * USER - removes advice for the current user that's making the call (Eg, you make the call authenticating as Administrator and all advice registered as _user_ scope for Administrator will be removed.  Applicable on a shared server where each user is interacting with their own user  
+        * GLOBAL - removes advice registered as a _global_ scope
+      parameters:
+      - name: "scope"
+        in: "query"
+        description: "Scope defines the limit to what is reset.  Specifying a scope of ALL resets all scopes and stubs"
+        required: false
+        type: "string"
+      responses:
+        200:
+          description: "Status 200 in all cases"
+  /state:
+    get:
+      summary: "Get the state of the framework"
+      description: |
+        Returns state of the framework to show if its operational.
+        #### Example
+        Newly started server with no mocks defined shows the state as disabled.
+        ````
+        GET http://localhost:5555/rest/org/wmaop/state
+        ````
+        Return a value of:
+        ````
+        <?xml version="1.0" encoding="UTF-8"?>
+        <Values version="2.0">
+          <value name="enabled">false</value>
+        </Values>
+        ````
+      parameters: []
+      responses:
+        200:
+          description: "Status 200 in all cases"
+          schema:
+            $ref: "#/definitions/enabled"
+    post:
+      summary: "Set the state of the framework"
+      description: |
+        Used to enable or disable the framework.  Note this doesnt reset any advice so can be used to switch off mocking, verify behaviour and switch mocking back on without having to redefine the mocks.
+        
+        Initial state on starting the server is disabled.  Registering an advice automatically sets the state to enabled.
+        
+        Note for convenience, the enabled parameter can also be supplied on the GET so that its easy to enable/disable from a browser, etc.
+        #### Example
+        Enable the framework.
+        ````
+        POST http://localhost:5555/rest/org/wmaop/state?enabled=true
+        ````
+      parameters:
+      - name: "enabled"
+        in: "query"
+        description: "true or false to enable or disable the framework"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "Status 200 in all cases"
+          schema:
+            $ref: "#/definitions/status"
   /verify:
     get:
+      summary: "Test the framework is operational"
+      description: |
+        #### Example
+        Check the framework is installed correctly:
+        ````
+        GET http://localhost:5555/rest/org/wmaop/verify
+        ````
+        Return a value of:
+        ````
+        <?xml version="1.0" encoding="UTF-8"?>
+        <Values version="2.0">
+          <value name="status">Mocking framework operational</value>
+        </Values>
+        ````
       produces:
       - "application/json"
       parameters: []
@@ -418,6 +522,14 @@ definitions:
         type: "integer"
         format: "int32"
         description: "Number of times this assertion or advice was invoked"
+  enabled:
+    type: "object"
+    required:
+    - "enabled"
+    properties:
+      status:
+        type: "string"
+        description: "Returns 'true' is mocking framework is enabled and operational otherwise 'false' indicating it is switched off and not intercepting calls."
   status:
     type: "object"
     required:
