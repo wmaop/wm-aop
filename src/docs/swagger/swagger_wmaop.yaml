@@ -488,12 +488,12 @@ paths:
     get:
       summary: "Test the framework is operational"
       description: |
+        Used after initial installation or to check if the framework is installed and functioning correctly.
         #### Example
-        Check the framework is installed correctly:
         ````
         GET http://localhost:5555/rest/org/wmaop/verify
         ````
-        Return a value of:
+        Returns a status indicating it is:
         ````
         <?xml version="1.0" encoding="UTF-8"?>
         <Values version="2.0">
