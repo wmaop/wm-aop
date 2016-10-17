@@ -1,23 +1,23 @@
 ---
 swagger: "2.0"
 info:
+  title: wm-aop restful api 
+  version: "1.1.1"
   description: |
     wm-aop RESTful API provides the ability to define mocks within webMethods Integration Server.  Note that where _paths_ are shown, they should be prepended with the base path, eg, when looking at /define/advice the actual path you call is /rest/org/wmaop/define/advice
-    
     Being familiar with [wm-jbehave stories](https://github.com/wmaop/wm-jbehave/wiki/Syntax-for-creating-JBehave-stories) helps to identify use cases and ways to use the API.
-    
     Note that the examples show responses when the _Accept:_ header is set with _text/xml_.   Setting with _application/json_ is similarly valid where suitable for your tooling.  Without the _Accept:_ header you may receive a default response of html.
-    
     This documentation is auto-generated from the [Swagger definition of the API](https://github.com/wmaop/wm-aop/blob/master/src/docs/swagger/swagger_wmaop.yaml)
-  version: "1.1.1"
-  title: "wm-aop"
-  contact: "info@wmaop.org"
+  contact: 
+    name: wmaop support
+    url: http://www.wmaop.org
+    email: info@wmaop.org
 host: "localhost:5555"
 basePath: "/rest/org/wmaop"
 schemes:
-- "http"
+  - "http"
 security:
-- basic: []
+  - basic: []
 paths:
   /define/advice/{adviceId}:
     get:
@@ -71,11 +71,11 @@ paths:
         </Values>
         ````
       parameters:
-      - name: "adviceId"
-        in: "path"
-        description: "Id of the advice.  Applies to any form of advice: scenario; exception; fixedResponse; assertion."
-        required: false
-        type: "string"
+        - name: "adviceId"
+          in: "path"
+          description: "Id of the advice.  Applies to any form of advice: scenario; exception; fixedResponse; assertion."
+          required: false
+          type: "string"
       responses:
         200:
           description: "IData structure of advices."
@@ -143,38 +143,38 @@ paths:
         POST http://localhost:5555/rest/org/wmaop/define/assertion/postAddingNumbersAssertion?serviceName=pub.math%3AaddInts&condition=value%20%3D%3D%209&interceptPoint=AFTER
         ````
       parameters:
-      - name: "adviceId"
-        in: "path"
-        description: "The ID of the assertion which also forms its adviceId"
-        required: true
-        type: "string"
-      - name: "serviceName"
-        in: "query"
-        description: "Fully qualified name of the service which this assertion will interact with" 
-        required: true
-        type: "string"
-      - name: "condition"
-        in: "query"
-        description: "A JEXL pipeline expression to test whether this assertion is applicable. See [Pipeline Expressions Using JEXL](https://github.com/wmaop/wm-jbehave/wiki/Pipeline-Expressions-Using-JEXL) for details on how to define the expressions."
-        required: false
-        type: "string"
-      - name: "interceptPoint"
-        in: "query"
-        description: "The point of interception and either _before_, _invoke_ or _after_ (Case insensitive).  Assertions are generally set either _before_ or _after_ a service.  Setting to _invoke_ will replace the service with the assertion, effectively eliminating the original service and having no effect on the pipeline."
-        required: true
-        type: "string"
-      - name: "scope"
-        in: "query"
-        description: "The scope to which this assertion applies and can be either _session_, _user_ or _global_ (Case insensitive)"
-        required: false
-        type: "string"
-        default: "user"
-      - name: "username"
-        in: "query"
-        description: "When the scope is _user_ the username to which this applies.  If not supplied then the user is assumed to be the authenticated user making the call."
-        required: false
-        type: "string"
-        default: "Username that authenticated the request"
+        - name: "adviceId"
+          in: "path"
+          description: "The ID of the assertion which also forms its adviceId"
+          required: true
+          type: "string"
+        - name: "serviceName"
+          in: "query"
+          description: "Fully qualified name of the service which this assertion will interact with" 
+          required: true
+          type: "string"
+        - name: "condition"
+          in: "query"
+          description: "A JEXL pipeline expression to test whether this assertion is applicable. See [Pipeline Expressions Using JEXL](https://github.com/wmaop/wm-jbehave/wiki/Pipeline-Expressions-Using-JEXL) for details on how to define the expressions."
+          required: false
+          type: "string"
+        - name: "interceptPoint"
+          in: "query"
+          description: "The point of interception and either _before_, _invoke_ or _after_ (Case insensitive).  Assertions are generally set either _before_ or _after_ a service.  Setting to _invoke_ will replace the service with the assertion, effectively eliminating the original service and having no effect on the pipeline."
+          required: true
+          type: "string"
+        - name: "scope"
+          in: "query"
+          description: "The scope to which this assertion applies and can be either _session_, _user_ or _global_ (Case insensitive)"
+          required: false
+          type: "string"
+          default: "user"
+        - name: "username"
+          in: "query"
+          description: "When the scope is _user_ the username to which this applies.  If not supplied then the user is assumed to be the authenticated user making the call."
+          required: false
+          type: "string"
+          default: "Username that authenticated the request"
       responses:
         200:
           description: "Status 200"
@@ -187,11 +187,11 @@ paths:
         DELETE http://localhost:5555/rest/org/wmaop/define/assertion/myMockingId
         ````
       parameters:
-      - name: "adviceId"
-        in: "path"
-        description: "The ID of the assertion"
-        required: true
-        type: "string"
+        - name: "adviceId"
+          in: "path"
+          description: "The ID of the assertion"
+          required: true
+          type: "string"
       responses:
         200:
           description: "Status 200 returned in all cases even when adviceId doesnt exist"
@@ -208,43 +208,43 @@ paths:
         POST http://localhost:5555/rest/org/wmaop/define/exception/myExceptionId?serviceName=pub.jms%3Asend&interceptPoint=invoke&exception=java.lang.UnsupportedOperationException
         ````
       parameters:
-      - name: "adviceId"
-        in: "path"
-        description: "The ID of the exception"
-        required: true
-        type: "string"
-      - name: "serviceName"
-        in: "query"
-        description: "Fully qualified name of the service which this exception will interact with" 
-        required: true
-        type: "string"
-      - name: "exception"
-        in: "query"
-        description: "The full classname of the exception to raise, such as _java.lang.RuntimeException_ or _com.wm.app.b2b.server.ServiceException_.  The exception class name must be any java class that is Throwable and have a String constructor (Ie one where the exception message is passed in; This is the norm for most exceptions)" 
-        required: true
-        type: "string"
-      - name: "condition"
-        in: "query"
-        description: "A JEXL pipeline expression to test whether this assertion is applicable. Useful to raise an exception instead of the service on a particular pipeline state or to raise an exception after as service is called, etc.  See [Pipeline Expressions Using JEXL](https://github.com/wmaop/wm-jbehave/wiki/Pipeline-Expressions-Using-JEXL) for details on how to define the expressions."
-        required: false
-        type: "string"
-      - name: "interceptPoint"
-        in: "query"
-        description: "The point to raise the exception and either _before_, _invoke_ or _after_ (Case insensitive).  Setting to _invoke_ will replace the service and trigger an exception instead of the service behaviour."
-        required: true
-        type: "string"
-      - name: "scope"
-        in: "query"
-        description: "The scope to which this mock applies and can be either _session_, _user_ or _global_ (Case insensitive)"
-        required: false
-        type: "string"
-        default: "user"
-      - name: "username"
-        in: "query"
-        description: "When the scope is _user_ the username to which this applies.  If not supplied then the user is assumed to be the authenticated user making the call."
-        required: false
-        type: "string"
-        default: "Username that authenticated the request"
+        - name: "adviceId"
+          in: "path"
+          description: "The ID of the exception"
+          required: true
+          type: "string"
+        - name: "serviceName"
+          in: "query"
+          description: "Fully qualified name of the service which this exception will interact with" 
+          required: true
+          type: "string"
+        - name: "exception"
+          in: "query"
+          description: "The full classname of the exception to raise, such as _java.lang.RuntimeException_ or _com.wm.app.b2b.server.ServiceException_.  The exception class name must be any java class that is Throwable and have a String constructor (Ie one where the exception message is passed in; This is the norm for most exceptions)" 
+          required: true
+          type: "string"
+        - name: "condition"
+          in: "query"
+          description: "A JEXL pipeline expression to test whether this assertion is applicable. Useful to raise an exception instead of the service on a particular pipeline state or to raise an exception after as service is called, etc.  See [Pipeline Expressions Using JEXL](https://github.com/wmaop/wm-jbehave/wiki/Pipeline-Expressions-Using-JEXL) for details on how to define the expressions."
+          required: false
+          type: "string"
+        - name: "interceptPoint"
+          in: "query"
+          description: "The point to raise the exception and either _before_, _invoke_ or _after_ (Case insensitive).  Setting to _invoke_ will replace the service and trigger an exception instead of the service behaviour."
+          required: true
+          type: "string"
+        - name: "scope"
+          in: "query"
+          description: "The scope to which this mock applies and can be either _session_, _user_ or _global_ (Case insensitive)"
+          required: false
+          type: "string"
+          default: "user"
+        - name: "username"
+          in: "query"
+          description: "When the scope is _user_ the username to which this applies.  If not supplied then the user is assumed to be the authenticated user making the call."
+          required: false
+          type: "string"
+          default: "Username that authenticated the request"
       responses:
         200:
           description: "Status 200 in all cases"
@@ -257,11 +257,11 @@ paths:
         DELETE http://localhost:5555/rest/org/wmaop/define/exception/myExceptionId
         ````
       parameters:
-      - name: "adviceId"
-        in: "path"
-        description: "The adviceId used to register the exception"
-        required: true
-        type: "string"
+        - name: "adviceId"
+          in: "path"
+          description: "The adviceId used to register the exception"
+          required: true
+          type: "string"
       responses:
         200:
           description: "Status 200 in all cases"
@@ -284,47 +284,47 @@ paths:
         </IDataXMLCoder>        
         ````        
       parameters:
-      - name: "adviceId"
-        in: "path"
-        description: "The ID of the assertion which also forms its adviceId"
-        required: true
-        type: "string"
-      - name: "serviceName"
-        in: "query"
-        description: "Fully qualified name of the service which this mock will interact with" 
-        required: true
-        type: "string"
-      - name: "condition"
-        in: "query"
-        description: "A JEXL pipeline expression to test whether this assertion is applicable. See [Pipeline Expressions Using JEXL](https://github.com/wmaop/wm-jbehave/wiki/Pipeline-Expressions-Using-JEXL) for details on how to define the expressions."
-        required: false
-        type: "string"
-      - name: "interceptPoint"
-        in: "query"
-        description: "The point of interception and either _before_, _invoke_ or _after_ (Case insensitive).  Mocks are generally set to invoke to replace the service with other behaviour.  Its also possible to use with _before_ or _after_ to insert or overwrite values in the pipeline to modify behaviour."
-        required: true
-        type: "string"
-      - name: "scope"
-        in: "query"
-        description: "The scope to which this mock applies and can be either _session_, _user_ or _global_ (Case insensitive)"
-        required: false
-        type: "string"
-        default: "user"
-      - name: "username"
-        in: "query"
-        description: "When the scope is _user_ the username to which this applies.  If not supplied then the user is assumed to be the authenticated user making the call."
-        required: false
-        type: "string"
-        default: "Username that authenticated the request"
-      - name: "calledBy"
-        in: "query"
-        description: "Only invoked if this parameter matches or prefixes one of the services in the call stack.  Works in combination with condition or on its own and can ensure mock only works when called from a package (Eg _pub.foo_) or specific service (Eg _pub.foo:bar_)" 
-        required: false
-        type: "string"
-      - name: "body"
-        in: "body"
-        description: "IData which is used to set the pipeline when this mock is executed"
-        required: true
+        - name: "adviceId"
+          in: "path"
+          description: "The ID of the assertion which also forms its adviceId"
+          required: true
+          type: "string"
+        - name: "serviceName"
+          in: "query"
+          description: "Fully qualified name of the service which this mock will interact with" 
+          required: true
+          type: "string"
+        - name: "condition"
+          in: "query"
+          description: "A JEXL pipeline expression to test whether this assertion is applicable. See [Pipeline Expressions Using JEXL](https://github.com/wmaop/wm-jbehave/wiki/Pipeline-Expressions-Using-JEXL) for details on how to define the expressions."
+          required: false
+          type: "string"
+        - name: "interceptPoint"
+          in: "query"
+          description: "The point of interception and either _before_, _invoke_ or _after_ (Case insensitive).  Mocks are generally set to invoke to replace the service with other behaviour.  Its also possible to use with _before_ or _after_ to insert or overwrite values in the pipeline to modify behaviour."
+          required: true
+          type: "string"
+        - name: "scope"
+          in: "query"
+          description: "The scope to which this mock applies and can be either _session_, _user_ or _global_ (Case insensitive)"
+          required: false
+          type: "string"
+          default: "user"
+        - name: "username"
+          in: "query"
+          description: "When the scope is _user_ the username to which this applies.  If not supplied then the user is assumed to be the authenticated user making the call."
+          required: false
+          type: "string"
+          default: "Username that authenticated the request"
+        - name: "calledBy"
+          in: "query"
+          description: "Only invoked if this parameter matches or prefixes one of the services in the call stack.  Works in combination with condition or on its own and can ensure mock only works when called from a package (Eg _pub.foo_) or specific service (Eg _pub.foo:bar_)" 
+          required: false
+          type: "string"
+        - name: "body"
+          in: "body"
+          description: "IData which is used to set the pipeline when this mock is executed"
+          required: true
       responses:
         200:
           description: "Status 200 in all cases"
@@ -338,11 +338,11 @@ paths:
         DELETE http://localhost:5555/rest/org/wmaop/define/fixedResponse/fixedValueMock
         ````        
       parameters:
-      - name: "adviceId"
-        in: "path"
-        description: "The ID of the fixed response mock"
-        required: true
-        type: "string"
+        - name: "adviceId"
+          in: "path"
+          description: "The ID of the fixed response mock"
+          required: true
+          type: "string"
       responses:
         200:
           description: "Status 200 in all cases"
@@ -391,12 +391,18 @@ paths:
         </scenario>        
         ````
       parameters:
-      - name: "adviceId"
-        in: "path"
-        description: |
-          adviceId of the scenario.  When present, overrides the value in the <scenario id...> otherwise the id in the scenario is used as the adviceId 
-        required: false
-        type: "string"
+        - name: "adviceId"
+          in: "path"
+          required: false
+          description: |
+            adviceId of the scenario.  When present, overrides the value in the <scenario id...> otherwise the id in the scenario is used as the adviceId 
+          type: "string"
+        - name: "body"
+          in: "body"
+          description: "Scenario XML as defined in wiki"
+          required: true
+          schema:
+            type: string
       responses:
         200:
           description: "Status 200 in all cases"
@@ -410,18 +416,18 @@ paths:
         DELETE http://localhost:5555/rest/org/wmaop/define/scenario/mockJmsSendTwoAlternatives
         ````        
       parameters:
-      - name: "adviceId"
-        in: "path"
-        description: " using its id, either the adviceId supplied when creating or if not present then the <scenario id...>"
-        required: true
-        type: "string"
+        - name: "adviceId"
+          in: "path"
+          description: " using its id, either the adviceId supplied when creating or if not present then the <scenario id...>"
+          required: true
+          type: "string"
       responses:
         200:
           description: "Status 200 in all cases"
   /reset:
     get:
       summary: "Reset the mocking framework based on scope"
-      descrition: |
+      description: |
         Reset the framework, bulk removing advice's (Mocks, assertions, scenarios) within that scope.  Calling with a scope of:
         * No scope defined - Calling without the scope specified removes advice's registered as _user_ scope for the user making the call and _session_ scoped, again for the current user making the call only - _global_ scoped advice and those for other users (Ie set as _session_ and _user_).  Applicable when running tests in a shared server.
         * ALL - removes all mocks, irrespective of original scope and sets the framework to DISABLED - Effectively removing it from the runtime.
@@ -429,11 +435,11 @@ paths:
         * USER - removes advice for the current user that's making the call (Eg, you make the call authenticating as Administrator and all advice registered as _user_ scope for Administrator will be removed.  Applicable on a shared server where each user is interacting with their own user  
         * GLOBAL - removes advice registered as a _global_ scope
       parameters:
-      - name: "scope"
-        in: "query"
-        description: "Scope defines the limit to what is reset.  Specifying a scope of ALL resets all scopes and stubs"
-        required: false
-        type: "string"
+        - name: "scope"
+          in: "query"
+          description: "Scope defines the limit to what is reset.  Specifying a scope of ALL resets all scopes and stubs"
+          required: false
+          type: "string"
       responses:
         200:
           description: "Status 200 in all cases"
@@ -474,11 +480,11 @@ paths:
         POST http://localhost:5555/rest/org/wmaop/state?enabled=true
         ````
       parameters:
-      - name: "enabled"
-        in: "query"
-        description: "true or false to enable or disable the framework"
-        required: true
-        type: "string"
+        - name: "enabled"
+          in: "query"
+          description: "true or false to enable or disable the framework"
+          required: true
+          type: "string"
       responses:
         200:
           description: "Status 200 in all cases"
@@ -501,7 +507,8 @@ paths:
         </Values>
         ````
       produces:
-      - "application/json"
+        - "application/json"
+        - "text/xml"
       parameters: []
       responses:
         200:
@@ -525,7 +532,7 @@ definitions:
   enabled:
     type: "object"
     required:
-    - "enabled"
+      - "enabled"
     properties:
       status:
         type: "string"
@@ -533,7 +540,7 @@ definitions:
   status:
     type: "object"
     required:
-    - "status"
+      - "status"
     properties:
       status:
         type: "string"
