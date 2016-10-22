@@ -21,6 +21,14 @@ security:
 paths:
   /define/advice/{adviceId}:
     get:
+      summary: "Get all advice details"
+      description: |
+        Specify the adviceId to see details of that advice or leave the adviceId null for all registered advices.   Returned values is an IData record structure - See get with id for example
+      responses:
+        200:
+          description: "IData structure of advices."
+  /define/advice/{adviceId}:
+    get:
       summary: "Get advice details"
       description: |
         Specify the adviceId to see details of that advice or leave the adviceId null for all registered advices.   Returned values is an IData record structure. 
@@ -74,7 +82,7 @@ paths:
         - name: "adviceId"
           in: "path"
           description: "Id of the advice.  Applies to any form of advice: scenario; exception; fixedResponse; assertion."
-          required: false
+          required: true
           type: "string"
       responses:
         200:
@@ -325,6 +333,8 @@ paths:
           in: "body"
           description: "IData which is used to set the pipeline when this mock is executed"
           required: true
+          schema:
+            $ref: "#/definitions/idata"
       responses:
         200:
           description: "Status 200 in all cases"
@@ -343,6 +353,23 @@ paths:
           description: "The ID of the fixed response mock"
           required: true
           type: "string"
+      responses:
+        200:
+          description: "Status 200 in all cases"
+  /define/scenario:
+    post:
+      summary: "Create a scenario"
+      description: |
+        Create a scenario mock using the <scenario id...> as the adviceId.
+        
+        For full information see the wiki page to [create behavioural driven scenario mocks](https://github.com/wmaop/wm-aop/wiki/Creating-Behavioural-Driven-Scenario-mocks-from-RESTful-calls)
+      parameters:
+        - name: "body"
+          in: "body"
+          description: "Scenario XML as defined in wiki"
+          required: true
+          schema:
+            $ref: "#/definitions/idata"
       responses:
         200:
           description: "Status 200 in all cases"
@@ -393,7 +420,7 @@ paths:
       parameters:
         - name: "adviceId"
           in: "path"
-          required: false
+          required: true
           description: |
             adviceId of the scenario.  When present, overrides the value in the <scenario id...> otherwise the id in the scenario is used as the adviceId 
           type: "string"
@@ -545,4 +572,11 @@ definitions:
       status:
         type: "string"
         description: "Should show 'Mocking framework operational' if everything is ok"
-        
+  idata:
+    type: "object"
+    required:
+      - "idata"
+    properties:
+      status:
+        type: "string"
+        description: "IData used to modify the pipeline"
