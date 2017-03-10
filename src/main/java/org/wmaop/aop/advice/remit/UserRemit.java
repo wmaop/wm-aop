@@ -9,6 +9,8 @@ import com.wm.app.b2b.server.User;
 
 public class UserRemit implements Remit {
 
+	public static final String DEFAULT_USERNAME = "Default";
+	
 	private String username;
 
 	public UserRemit() {
@@ -40,7 +42,7 @@ public class UserRemit implements Remit {
 	
 	private String getCurrentUsername() {
 		User currentUser = InvokeState.getCurrentUser();
-		// Defacto name when not auth
-		return currentUser == null ? "Default" : currentUser.getName();
+		// Verfiy defacto name when not authenticated
+		return currentUser == null ? DEFAULT_USERNAME : currentUser.getName();
 	}
 }

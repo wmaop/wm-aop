@@ -9,12 +9,15 @@ import org.wmaop.aop.interceptor.InterceptPoint;
 public class PipelinePositionTest {
 
 	@Test
-	public void test() {
+	public void shouldExtractPackageName() {
 		assertEquals("pub", new FlowPosition(InterceptPoint.INVOKE, "pub:foo").packageName);
-		assertEquals("foo", new FlowPosition(InterceptPoint.INVOKE, "pub:foo").serviceName);
 		assertEquals("", new FlowPosition(InterceptPoint.INVOKE, "").packageName);
+	}
+
+	@Test
+	public void shouldExtractServiceName() {
+		assertEquals("foo", new FlowPosition(InterceptPoint.INVOKE, "pub:foo").serviceName);
 		assertEquals("", new FlowPosition(InterceptPoint.INVOKE, "").serviceName);
 		assertEquals("foo", new FlowPosition(InterceptPoint.INVOKE, "foo").serviceName);
 	}
-
 }

@@ -8,17 +8,27 @@ import org.wmaop.aop.interceptor.InterceptResult;
 public class ExceptionInterceptorTest {
 
 	@Test
-	public void shouldReturnExceptionInterceptResult() throws Exception {
+	public void shouldHandleExceptionInstance() throws Exception {
 
 		Exception exception = new Exception();
 		ExceptionInterceptor ei = new ExceptionInterceptor(exception);
+		
 		InterceptResult ir = ei.intercept(null, null);
+		
+		assertEquals(1, ei.getInvokeCount());
 		assertEquals(ir.getException(), exception);
-
-		ei = new ExceptionInterceptor("java.lang.RuntimeException");
-		ir = ei.intercept(null, null);
-		assertEquals(ir.getException().getClass().getName(), "java.lang.RuntimeException");
-		assertEquals(ei.toMap().get("exception"), "java.lang.RuntimeException");
+	}
+	
+	@Test
+	public void shouldHandleExceptionName() throws Exception {
+		String exceptionClassName = "java.lang.RuntimeException";
+		
+		ExceptionInterceptor ei = new ExceptionInterceptor(exceptionClassName);
+		
+		InterceptResult ir = ei.intercept(null, null);
+		
+		assertEquals(ir.getException().getClass().getName(), exceptionClassName);
+		assertEquals(ei.toMap().get("exception"), exceptionClassName);
 
 	}
 

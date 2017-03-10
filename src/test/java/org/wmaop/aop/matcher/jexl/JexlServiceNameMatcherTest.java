@@ -3,14 +3,18 @@ package org.wmaop.aop.matcher.jexl;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.wmaop.aop.interceptor.FlowPosition;
 import org.wmaop.aop.interceptor.InterceptPoint;
 
 public class JexlServiceNameMatcherTest {
 
+	@Rule
+	public ExpectedException thrown = ExpectedException.none();
+	
 	@Test
 	public void shouldMatch() {
 		JexlServiceNameMatcher jsnm = new JexlServiceNameMatcher("alpha", "serviceName == 'foo'");
@@ -28,11 +32,7 @@ public class JexlServiceNameMatcherTest {
 
 	@Test
 	public void shouldFail() {
-		try {
-			new JexlServiceNameMatcher("alpha", "serviceName = 'foo'");
-			fail();
-		} catch (Exception e) {
-			// NOOP
-		}
+		thrown.expect(JexlParseException.class);
+		new JexlServiceNameMatcher("alpha", "serviceName = 'foo'");
 	}
 }

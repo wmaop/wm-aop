@@ -8,7 +8,7 @@ import org.wmaop.aop.advice.Scope;
 public class GlobalRemitTest {
 
 	@Test
-	public void test() {
+	public void shouldExerciseScopeApplicability() {
 		GlobalRemit gr = new GlobalRemit();
 		assertTrue(gr.isApplicable());
 		assertTrue(gr.isApplicable(Scope.ALL));

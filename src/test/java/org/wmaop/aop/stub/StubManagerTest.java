@@ -43,11 +43,11 @@ import com.wm.lang.ns.NSNode;
 @PrepareForTest({PackageManager.class,Namespace.class,ServerClassLoader.class,Server.class})
 public class StubManagerTest {
 
-	@Rule
-	public TemporaryFolder tempFolder= new TemporaryFolder();
-
 	private StubManager stubManager;
 	private static final String SERVICE_NAME = "foo:bar";
+
+	@Rule
+	public TemporaryFolder tempFolder= new TemporaryFolder();
 
 	@Before
 	public void setUp() {
@@ -58,35 +58,43 @@ public class StubManagerTest {
 	}
 	
 	@Test
-	public void testRegisterStubService() {
+	public void shouldRegisterStubService() {
 		assertFalse(stubManager.isRegisteredService(SERVICE_NAME));
 		PowerMockito.when(Server.getResources()).thenReturn(new Resources("",false));
+		
 		stubManager.registerStubService(SERVICE_NAME);
+		
+		assertTrue(stubManager.hasStub(SERVICE_NAME));
 	}
 
 	@Test
-	public void testUnregisterStubService() throws NSException {
-		BaseService svc = mock(BaseService.class);
-		when(svc.getPackageName()).thenReturn(StubManager.SUPPORTING_PKG);
-		
-		Namespace ns = mock(Namespace.class);
-		PowerMockito.mockStatic(Namespace.class);
-		PowerMockito.when(Namespace.getService((NSName) any())).thenReturn(svc);
-		PowerMockito.when(Namespace.current()).thenReturn(ns);
-		
-		PowerMockito.mockStatic(PackageManager.class);
-		Package pkg = mock(Package.class);
-		PowerMockito.when(PackageManager.getPackage(StubManager.SUPPORTING_PKG)).thenReturn(pkg);
+	public void shouldUnregisterStubService() throws NSException {
+		Namespace ns = mockNamespace();
+		Package pkg = mockPackage();
+
 		stubManager.unregisterStubService(SERVICE_NAME);
 		
 		verify(ns, times(1)).deleteNode((NSName) any(), eq(true), eq(pkg));
 	}
 
 	@Test
-	public void testClearStubs() throws NSException {
-		Package pkg = mock(Package.class);
-		PowerMockito.when(PackageManager.getPackage(StubManager.SUPPORTING_PKG)).thenReturn(pkg);
-	
+	public void shouldUnregisterStubFromAdvice() {
+		Advice advice = createAdviceMock();
+		PowerMockito.when(Server.getResources()).thenReturn(new Resources("",false));
+		
+		stubManager.registerStubService(SERVICE_NAME);
+		assertTrue(stubManager.hasStub(advice));
+		
+		mockNamespace();
+		mockPackage();		
+
+		stubManager.unregisterStubService(advice);
+		assertFalse(stubManager.hasStub(advice));
+	}
+
+	@Test
+	public void shouldClearStubs() throws NSException {
+		Package pkg = mockPackage();
 		Namespace ns = mock(Namespace.class);
 		Vector<NSNode> nodes = new Vector<NSNode>();
 		nodes.add(mock(NSNode.class));
@@ -102,25 +110,17 @@ public class StubManagerTest {
 	}
 
 	@Test
-	public void testUnregisterStub() {
-		Advice advice = createAdviceMock();
-		stubManager.unregisterStubService(advice);
-	}
-
-	@Test
-	public void testDeleteStubPackage() {
-		Package pkg = mock(Package.class);
-		PowerMockito.when(PackageManager.getPackage(StubManager.SUPPORTING_PKG)).thenReturn(pkg);
+	public void shouldDeleteStubPackage() {
+		Package pkg = mockPackage();
 		stubManager.deleteStubPackage();
-		
+				
 		PowerMockito.verifyStatic();
 		PackageManager.flushPackage(pkg);
 	}
 
 	@Test
 	public void shouldSkipWithExistingPackagePresent() {
-		Package pkg = mock(Package.class);
-		PowerMockito.when(PackageManager.getPackage(StubManager.SUPPORTING_PKG)).thenReturn(pkg);
+		mockPackage();
 		assertFalse(stubManager.isStubPackageMissing());
 	}
 
@@ -129,6 +129,7 @@ public class StubManagerTest {
 		File pkgsFolder = tempFolder.newFolder();
 		File stubFolder = new File(pkgsFolder.getAbsolutePath()+'/'+StubManager.SUPPORTING_PKG);
 		stubFolder.mkdirs();
+		
 		PowerMockito.when(Server.getResources()).thenReturn(new Resources(stubFolder.getAbsolutePath(),false));
 		PowerMockito.when(PackageManager.getPackageDir()).thenReturn(pkgsFolder);
 		stubManager.createStubPackage();
@@ -150,6 +151,23 @@ public class StubManagerTest {
 		assertEquals(SERVICE_NAME, stubManager.getServiceName(advice));
 	}
 
+	private Namespace mockNamespace() {
+		BaseService svc = mock(BaseService.class);
+		when(svc.getPackageName()).thenReturn(StubManager.SUPPORTING_PKG);
+		
+		Namespace ns = mock(Namespace.class);
+		PowerMockito.mockStatic(Namespace.class);
+		PowerMockito.when(Namespace.getService((NSName) any())).thenReturn(svc);
+		PowerMockito.when(Namespace.current()).thenReturn(ns);
+		return ns;
+	}
+
+	private Package mockPackage() {
+		Package pkg = mock(Package.class);
+		PowerMockito.when(PackageManager.getPackage(StubManager.SUPPORTING_PKG)).thenReturn(pkg);
+		return pkg;
+	}
+
 	private Advice createAdviceMock() {
 		PointCut pointcut = mock(PointCut.class);
 		FlowPositionMatcher matcher = mock(FlowPositionMatcher.class);
@@ -160,14 +178,16 @@ public class StubManagerTest {
 	}
 
 	@Test
-	public void testDeleteFolder() throws IOException {
+	public void shouldDeleteFolder() throws IOException {
 		File pkgsFolder = tempFolder.newFolder();
 		File stubFolder = new File(pkgsFolder.getAbsolutePath()+"/foo/bar");
 		stubFolder.mkdirs();
 		File tmpFile = new File(pkgsFolder.getAbsolutePath()+"/foo/blah.txt");
 		tmpFile.createNewFile();
+		
 		assertTrue(new File(pkgsFolder.getAbsolutePath()+"/foo").exists());
 		assertTrue(tmpFile.exists());
+		
 		stubManager.deleteFolder(pkgsFolder.getAbsolutePath());
 		assertFalse(tmpFile.exists());
 		assertFalse(new File(pkgsFolder.getAbsolutePath()+"/foo").exists());

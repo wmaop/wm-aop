@@ -1,18 +1,24 @@
 package org.wmaop.interceptor.pipline;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 import java.io.ByteArrayOutputStream;
 
+import org.junit.Rule;
 import org.junit.Test;
-import org.wmaop.interceptor.pipline.PipelineCaptureInterceptor;
+import org.junit.rules.ExpectedException;
 
 import com.wm.data.IDataFactory;
 
 public class PipelineCaptureInterceptorTest {
 
+	@Rule
+	public ExpectedException thrown = ExpectedException.none();
+	
 	@Test
 	public void shouldCaptureToFile() throws Exception {
 		PipelineCaptureInterceptor pci = spy(new PipelineCaptureInterceptor("target/foo.xml"));
@@ -37,12 +43,8 @@ public class PipelineCaptureInterceptorTest {
 
 	@Test
 	public void shouldThrowException() throws Exception {
+		thrown.expect(Exception.class); // actual error is non-visible junit ValidationError
 		PipelineCaptureInterceptor pci = new PipelineCaptureInterceptor("z///zxzz:\foojashfjh");
-		try {
-			pci.intercept(null, IDataFactory.create());
-			fail();
-		} catch (RuntimeException e) {
-			// Pass
-		}
+		pci.intercept(null, IDataFactory.create());
 	}
 }

@@ -9,6 +9,8 @@ import com.wm.app.b2b.server.Session;
 
 public class SessionRemit implements Remit {
 
+	public static final String NO_SESSION = "NoSession";
+	
 	private final String associatedSessionId;
 	
 	public SessionRemit() {
@@ -38,7 +40,7 @@ public class SessionRemit implements Remit {
 		Session session = InvokeState.getCurrentSession();
 		final String id;
 		if (session == null) {
-			id = "NoSession";
+			id = NO_SESSION;
 		} else {
 			id = session.getSessionID();
 		}
