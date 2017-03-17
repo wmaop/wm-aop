@@ -16,6 +16,8 @@ import com.wm.util.coder.IDataXMLCoder;
 
 public class PipelineCaptureInterceptor extends BaseInterceptor {
 
+	public static final String MAP_CURRENT_FILE = "currentFile";
+	
 	private final String prefix;
 	private final String suffix;
 	private int fileCount;
@@ -54,7 +56,7 @@ public class PipelineCaptureInterceptor extends BaseInterceptor {
 
 	@Override
 	protected void addMap(Map<String, Object> am) {
-		am.put("type", "PipelineCaptureInterceptor");
-		am.put("currentFile", fileCount == 0 ? "No file captured" : getFileName());
+		am.put(MAP_TYPE, "PipelineCaptureInterceptor");
+		am.put(MAP_CURRENT_FILE, fileCount == 0 ? "No file captured" : getFileName());
 	}
 }

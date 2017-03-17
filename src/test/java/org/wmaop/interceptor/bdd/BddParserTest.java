@@ -17,7 +17,7 @@ import org.wmaop.chainprocessor.AOPChainProcessor;
 public class BddParserTest {
 
 	@Test
-	public void shouldParse() throws Exception {
+	public void shouldParse() throws BddParseException {
 
 		PowerMockito.mockStatic(AOPChainProcessor.class);
 		AOPChainProcessor mockProcessor = mock(AOPChainProcessor.class);

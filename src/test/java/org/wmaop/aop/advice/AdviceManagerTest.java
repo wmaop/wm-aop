@@ -15,10 +15,10 @@ import org.wmaop.aop.pointcut.PointCut;
 
 public class AdviceManagerTest {
 
-	AdviceManager adm;
+	private AdviceManager adm;
 
 	@Before
-	public void setup() {
+	public void setUp() {
 		adm = new AdviceManager();
 	}
 

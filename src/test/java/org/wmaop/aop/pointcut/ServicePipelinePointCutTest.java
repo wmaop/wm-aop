@@ -25,7 +25,7 @@ public class ServicePipelinePointCutTest {
 
 	@Before
 	@SuppressWarnings("unchecked")
-	public void setup() {
+	public void setUp() {
 		pipelinePosition = mock(FlowPosition.class);
 		serviceNameMatcher = mock(FlowPositionMatcher.class);
 		idata = mock(IData.class);

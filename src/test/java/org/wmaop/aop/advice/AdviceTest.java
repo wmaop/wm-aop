@@ -30,7 +30,7 @@ public class AdviceTest {
 
 
 	@Before
-	public void setup() {
+	public void setUp() {
 		pointCut = mock(PointCut.class);
 		interceptor = mock(Interceptor.class);
 		pipelinePosition = mock(FlowPosition.class);

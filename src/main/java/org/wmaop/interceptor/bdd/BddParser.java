@@ -1,6 +1,5 @@
 package org.wmaop.interceptor.bdd;
 
-import java.io.IOException;
 import java.io.InputStream;
 
 import javax.xml.bind.JAXBContext;
@@ -37,11 +36,15 @@ public class BddParser {
 		protected String assertionid;
 	}
 
-	public ParsedScenario parse(InputStream bddstream, String adviceId) throws JAXBException, IOException {
-		JAXBContext jaxbContext = JAXBContext.newInstance(Scenario.class);
-		Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
-		Scenario scenario = (Scenario) jaxbUnmarshaller.unmarshal(bddstream);
-		return new ParsedScenario(processAdvice(scenario, adviceId), scenario.getGiven().getService().getValue());
+	public ParsedScenario parse(InputStream bddstream, String adviceId) throws BddParseException  {
+		try {
+			JAXBContext jaxbContext = JAXBContext.newInstance(Scenario.class);
+			Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
+			Scenario scenario = (Scenario) jaxbUnmarshaller.unmarshal(bddstream);
+			return new ParsedScenario(processAdvice(scenario, adviceId), scenario.getGiven().getService().getValue());
+		} catch (JAXBException e) {
+			throw new BddParseException("Error parsing " + adviceId, e);
+		}
 	}
 
 	private Advice processAdvice(Scenario scenario, String adviceId) {

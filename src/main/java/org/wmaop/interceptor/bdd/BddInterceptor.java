@@ -6,6 +6,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.wmaop.aop.interceptor.CompositeInterceptor;
 import org.wmaop.aop.interceptor.FlowPosition;
@@ -23,6 +25,10 @@ import org.wmaop.util.logger.Logger;
 import com.wm.data.IData;
 
 public class BddInterceptor extends BaseInterceptor implements CompositeInterceptor {
+
+	public static final String MAP_DEFAULT_INTERCEPTORS = "defaultInterceptors";
+	public static final String MAP_INTERCEPTORS = "interceptors";
+	public static final String MAP_IGNORE_NO_MATCH = "ignoreNoMatch";
 
 	private static final Logger logger = Logger.getLogger(BddInterceptor.class);
 
@@ -58,16 +64,12 @@ public class BddInterceptor extends BaseInterceptor implements CompositeIntercep
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T extends Interceptor> List<T> getInterceptorsOfType(Class<T> type) {
-		List<T> m = new ArrayList<>();
-		for (String id : interceptorMap.keySet()) {
-			for (Interceptor interceptor: interceptorMap.get(id)) {
-				if (type.isAssignableFrom(interceptor.getClass())) {
-					m.add((T) interceptor);
-				}
-			}
-		}
-		return m ;
+	public <T extends Interceptor> List<T> getInterceptorsOfType(final Class<T> type) {
+		
+		return (List<T>) interceptorMap.entrySet().stream()
+				.flatMap(e -> e.getValue().stream())
+				.filter(i -> type.isAssignableFrom(i.getClass()))
+				.collect(Collectors.toList());
 	}
 	
 	
@@ -114,35 +116,32 @@ public class BddInterceptor extends BaseInterceptor implements CompositeIntercep
 	}
 
 	private InterceptResult executeActions(List<Interceptor> list, FlowPosition flowPosition, IData idata) {
-		InterceptResult result = InterceptResult.TRUE;
-		for (Interceptor action : list) {
-			InterceptResult ir = action.intercept(flowPosition, idata);
-			if (ir.getException() != null) {
-				result = ir;
-			}
-		}
-		return result;
+		Optional<InterceptResult> result = list.stream()
+				.map(i -> i.intercept(flowPosition, idata))
+				.filter(ir -> ir.getException() != null)
+				.findFirst();
+		return result.orElse(InterceptResult.TRUE);
 	}
 	
 	@Override
 	public void addMap(Map<String, Object> am) {
-		am.put("type", "BddInterceptor");
-		am.put("name", name);
-		am.put("invokeCount", invokeCount);
-		am.put("ignoreNoMatch", Boolean.toString(ignoreNoMatch));
+		am.put(MAP_TYPE, "BddInterceptor");
+		am.put(MAP_NAME, name);
+		am.put(MAP_INVOKE_COUNT, invokeCount);
+		am.put(MAP_IGNORE_NO_MATCH, Boolean.toString(ignoreNoMatch));
+		
 		Map<String, Object> iterceptors = new HashMap<>();
 		for (Entry<String, List<Interceptor>> e : interceptorMap.entrySet()) {
 			iterceptors.put(e.getKey(), toMapList(e.getValue()));
 		}
-		am.put("interceptors", iterceptors);
-		am.put("defaultInterceptors", toMapList(defaultInterceptors));
+		
+		am.put(MAP_INTERCEPTORS, iterceptors);
+		am.put(MAP_DEFAULT_INTERCEPTORS, toMapList(defaultInterceptors));
 	}
 
 	private List<Map<String, Object>> toMapList(List<Interceptor> interceptors) {
-		List<Map<String, Object>> ml = new ArrayList<>();
-		for (Interceptor i : interceptors) {
-			ml.add(i.toMap());
-		}
-		return ml;
+		return interceptors.stream()
+				.map(Interceptor::toMap)
+				.collect(Collectors.toList());
 	}
 }

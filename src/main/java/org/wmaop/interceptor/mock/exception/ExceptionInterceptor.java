@@ -10,6 +10,8 @@ import com.wm.data.IData;
 
 public class ExceptionInterceptor extends BaseInterceptor {
 
+	public static final String MAP_EXCEPTION = "exception";
+	
 	private final InterceptResult interceptResult;
 
 	public ExceptionInterceptor(String exceptionClassName) throws InstantiationException, IllegalAccessException, ClassNotFoundException {
@@ -29,8 +31,8 @@ public class ExceptionInterceptor extends BaseInterceptor {
 
 	@Override
 	protected void addMap(Map<String, Object> am) {
-		am.put("type", "ExceptionInterceptor");
-		am.put("exception", interceptResult.getException().getClass().getName());
+		am.put(MAP_TYPE, "ExceptionInterceptor");
+		am.put(MAP_EXCEPTION, interceptResult.getException().getClass().getName());
 		
 	}
 

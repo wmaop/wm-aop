@@ -5,6 +5,7 @@ import java.io.InputStream;
 
 import org.wmaop.aop.stub.StubManager;
 import org.wmaop.chainprocessor.AOPChainProcessor;
+import org.wmaop.interceptor.bdd.BddParseException;
 import org.wmaop.interceptor.bdd.BddParser;
 import org.wmaop.interceptor.bdd.ParsedScenario;
 import org.wmaop.util.logger.Logger;
@@ -55,7 +56,7 @@ public class ScenarioManager {
 			aop.getAdviceManager().registerAdvice(scenario.getAdvice());
 			aop.getStubManager().registerStubService(scenario.getServiceNames());
 			aop.setEnabled(true);
-		} catch (Exception e) {
+		} catch (BddParseException e) {
 			logger.error("Error parsing scenario", e);
 			throw new ServiceException("Error parsing scenario: " + e.getMessage());
 		}

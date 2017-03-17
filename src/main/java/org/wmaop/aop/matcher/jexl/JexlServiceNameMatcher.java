@@ -21,6 +21,7 @@ public class JexlServiceNameMatcher implements Matcher<FlowPosition> {
 		expression = createExpression(sid, expr);
 	}
 
+	@Override
 	public MatchResult match(FlowPosition flowPosition) {
 		final JexlContext ctx = new MapContext();
 		ctx.set("serviceName", flowPosition.toString());

@@ -17,6 +17,7 @@ import com.wm.util.coder.IDataXMLCoder;
 
 public class RestDelegatingInterceptor extends BaseInterceptor {
 
+	public static final String MAP_DESTINATION_URL = "destinationUrl";
 	public static final String APPLICATION_XML = "application/xml";
 
 	private final String destinationUrl;
@@ -64,7 +65,7 @@ public class RestDelegatingInterceptor extends BaseInterceptor {
 
 	@Override
 	protected void addMap(Map<String, Object> am) {
-		am.put("type", "RestDelegatingInterceptor");
-		am.put("destinationUrl", destinationUrl);
+		am.put(MAP_TYPE, "RestDelegatingInterceptor");
+		am.put(MAP_DESTINATION_URL, destinationUrl);
 	}
 }

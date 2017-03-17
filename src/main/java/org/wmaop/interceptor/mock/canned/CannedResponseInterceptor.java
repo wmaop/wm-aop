@@ -18,6 +18,9 @@ import com.wm.util.coder.IDataXMLCoder;
 
 public class CannedResponseInterceptor extends BaseInterceptor {
 
+	public static final String MAP_RESPONSE = "response";
+	public static final String MAP_RESPONSE_SEQUENCE = "responseSequence";
+	
 	private static final String CANNED_RESPONSE_PREFIX = "CannedResponse:";
 
 	public enum ResponseSequence {
@@ -84,11 +87,11 @@ public class CannedResponseInterceptor extends BaseInterceptor {
 
 	@Override
 	protected void addMap(Map<String, Object> am) {
-		am.put("type", "CannedResponseInterceptor");
-		am.put("responseSequence", sequence.toString());
+		am.put(MAP_TYPE, "CannedResponseInterceptor");
+		am.put(MAP_RESPONSE_SEQUENCE, sequence.toString());
 		int i = 0;
 		for (IData idata : cannedIdata) {
-			am.put("response" + i++, idata);
+			am.put(MAP_RESPONSE + i++, idata);
 		}
 	}
 

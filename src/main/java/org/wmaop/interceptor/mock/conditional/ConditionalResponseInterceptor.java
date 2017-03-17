@@ -20,6 +20,12 @@ import com.wm.util.coder.IDataXMLCoder;
 
 public class ConditionalResponseInterceptor extends BaseInterceptor {
 
+	public static final String MAP_RESPONSES = "responses";
+	public static final String MAP_IGNORE_NO_MATCH = "ignoreNoMatch";
+	public static final String MAP_DEFAULT_ID = "defaultId";
+	public static final String MAP_DEFAULT_RESPONSE = "defaultResponse";
+	public static final String MAP_CONDITION = "condition";
+
 	private static final Logger logger = Logger.getLogger(ConditionalResponseInterceptor.class);
 
 	private final JexlIDataMatcher evaluator;
@@ -70,11 +76,11 @@ public class ConditionalResponseInterceptor extends BaseInterceptor {
 
 	@Override
 	protected void addMap(Map<String, Object> am) {
-		am.put("type", "ConditionalResponseInterceptor");
-		am.put("condition", evaluator.toMap());
-		am.put("defaultResponse", defaultResponse);
-		am.put("defaultId", defaultId);
-		am.put("ignoreNoMatch", Boolean.toString(ignoreNoMatch));
-		am.put("rsponses", responses);
+		am.put(MAP_TYPE, "ConditionalResponseInterceptor");
+		am.put(MAP_CONDITION, evaluator.toMap());
+		am.put(MAP_DEFAULT_RESPONSE, defaultResponse);
+		am.put(MAP_DEFAULT_ID, defaultId);
+		am.put(MAP_IGNORE_NO_MATCH, Boolean.toString(ignoreNoMatch));
+		am.put(MAP_RESPONSES, responses);
 	}
 }

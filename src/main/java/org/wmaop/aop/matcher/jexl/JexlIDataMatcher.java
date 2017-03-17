@@ -6,8 +6,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.apache.commons.jexl3.JexlExpression;
 import org.apache.commons.jexl3.JexlContext;
+import org.apache.commons.jexl3.JexlExpression;
 import org.apache.commons.jexl3.MapContext;
 import org.wmaop.aop.matcher.MatchResult;
 import org.wmaop.aop.matcher.Matcher;
@@ -19,23 +19,23 @@ import com.wm.data.IData;
 public class JexlIDataMatcher implements Matcher<IData> {
 
 	private final Map<String, JexlExpression> expressions = new LinkedHashMap<>();
-	private final String EXPRESSION;
+	private final String expression;
 	
 	public JexlIDataMatcher(String sid, String expression) {
 		createExpression(sid, expression);
-		EXPRESSION = expression;
+		this.expression = expression;
 	}
 
 	public JexlIDataMatcher(Map<String, String> exprs) {
 		for (Entry<String, String> expr : exprs.entrySet()) {
 			createExpression(expr.getKey(), expr.getValue());
 		}
-		EXPRESSION = Arrays.toString(expressions.values().toArray());
+		expression = Arrays.toString(expressions.values().toArray());
 	}
 
+	@Override
 	public MatchResult match(IData idata) {
 		JexlContext ctx = new IDataJexlContext(idata);
-
 		for (Entry<String, JexlExpression> expr : expressions.entrySet()) {
 			Object result = expr.getValue().evaluate(ctx);
 			verifyExpressionResult(expr.getKey(), result);
@@ -61,7 +61,7 @@ public class JexlIDataMatcher implements Matcher<IData> {
 
 	@Override
 	public String toString() {
-		return "JexlMatcher["+EXPRESSION+']';
+		return "JexlMatcher["+expression+']';
 	}
 
 	@Override

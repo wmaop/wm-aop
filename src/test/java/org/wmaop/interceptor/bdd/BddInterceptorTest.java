@@ -15,8 +15,10 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Scanner;
 
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -36,25 +38,34 @@ import com.wm.lang.ns.NSName;
 
 public class BddInterceptorTest {
 
+	private AOPChainProcessor cp;
+	private IData pipeline;
+	private ServiceStatus ss;
+	private Iterator<InvokeChainProcessor> chainIterator;
+
+
 	@Rule
 	public TemporaryFolder folder = new TemporaryFolder();
 
+	@Before
+	public void setUp() {
+		cp = new AOPChainProcessor(new AdviceManager(), mock(StubManager.class));
+		pipeline = IDataFactory.create();
+		ss = mock(ServiceStatus.class);
+		chainIterator = new ArrayList<InvokeChainProcessor>().iterator();
+	}
+	
+	@Test
+	public void shouldTranslateToMap() throws Exception {
+		ParsedScenario scenario = configureProcessor("bdd/assertionBdd.xml");
+		BddInterceptor bddi = (BddInterceptor) scenario.getAdvice().getInterceptor();
+		Map<String, Object> m = bddi.toMap();
+		assertEquals("BddInterceptor", m.get("type"));
+	}
+	
 	@Test
 	public void shouldAssert() throws Exception {
-		ClassLoader classLoader = this.getClass().getClassLoader();
-		AOPChainProcessor cp = new AOPChainProcessor(new AdviceManager(), mock(StubManager.class));
-		cp.setEnabled(true);
-		ParsedScenario scenario = new BddParser().parse(classLoader.getResourceAsStream("bdd/assertionBdd.xml"), null);
-		cp.getAdviceManager().registerAdvice(scenario.getAdvice());
-
-		BddInterceptor bddi = (BddInterceptor) scenario.getAdvice().getInterceptor();
-		assertEquals(1, bddi.getInterceptorsOfType(Assertable.class).size());
-
-		// Pipeline mocking
-		IData pipeline = IDataFactory.create();
-		ServiceStatus ss = mock(ServiceStatus.class);
-
-		Iterator<InvokeChainProcessor> chainIterator = new ArrayList<InvokeChainProcessor>().iterator();
+		configureProcessor("bdd/assertionBdd.xml");
 
 		// Execute a service, no change to pipeline
 		cp.process(chainIterator, getBaseService("pub.test:svcA"), pipeline, ss);
@@ -90,14 +101,15 @@ public class BddInterceptorTest {
 	}
 
 	@Test
+	public void shouldGetInterceptorOfType() throws Exception {
+		ParsedScenario scenario = configureProcessor("bdd/assertionBdd.xml");
+		BddInterceptor bddi = (BddInterceptor) scenario.getAdvice().getInterceptor();
+		assertEquals(1, bddi.getInterceptorsOfType(Assertable.class).size());
+	}
+	
+	@Test
 	public void shouldFireCannedReturn() throws Exception {
-		AOPChainProcessor cp = getConfiguredProcessor("bdd/cannedReturnBdd.xml");
-
-		// Pipeline mocking
-		IData pipeline = IDataFactory.create();
-		ServiceStatus ss = mock(ServiceStatus.class);
-
-		Iterator<InvokeChainProcessor> chainIterator = new ArrayList<InvokeChainProcessor>().iterator();
+		configureProcessor("bdd/cannedReturnBdd.xml");
 
 		// Execute a service, no change to pipeline
 		cp.process(chainIterator, getBaseService("pub.test:svcA"), pipeline, ss);
@@ -111,17 +123,12 @@ public class BddInterceptorTest {
 
 	@Test
 	public void shouldSetException() throws Exception {
-		AOPChainProcessor cp = getConfiguredProcessor("bdd/exceptionBdd.xml");
+		configureProcessor("bdd/exceptionBdd.xml");
 
 		// Pipeline mocking
-		IData pipeline = IDataFactory.create();
 		IData alpha = IDataFactory.create();
 		add(alpha, "beta", "abc");
 		add(pipeline, "alpha", alpha);
-
-		ServiceStatus ss = mock(ServiceStatus.class);
-
-		Iterator<InvokeChainProcessor> chainIterator = new ArrayList<InvokeChainProcessor>().iterator();
 
 		// Execute a service, no change to pipeline
 		cp.process(chainIterator, getBaseService("org.wmaop.foo:bar"), pipeline, ss);
@@ -135,12 +142,7 @@ public class BddInterceptorTest {
 
 	@Test
 	public void shouldExecuteMultipleReturnsWithDefault() throws Exception {
-		AOPChainProcessor cp = getConfiguredProcessor("bdd/multipleReturnBdd.xml");
-
-		// Pipeline mocking
-		IData pipeline = IDataFactory.create();
-		ServiceStatus ss = mock(ServiceStatus.class);
-		Iterator<InvokeChainProcessor> chainIterator = new ArrayList<InvokeChainProcessor>().iterator();
+		configureProcessor("bdd/multipleReturnBdd.xml");
 
 		// No change to pipeline, not fired
 		cp.process(chainIterator, getBaseService("org.wmaop.foo:bar"), pipeline, ss);
@@ -162,11 +164,7 @@ public class BddInterceptorTest {
 
 	@Test
 	public void shouldExecuteServiceAndWhenConditions() throws Exception {
-		AOPChainProcessor cp = getConfiguredProcessor("bdd/multipleReturnWithElseBdd.xml");
-		// Pipeline mocking
-		IData pipeline = IDataFactory.create();
-		ServiceStatus ss = mock(ServiceStatus.class);
-		Iterator<InvokeChainProcessor> chainIterator = new ArrayList<InvokeChainProcessor>().iterator();
+		configureProcessor("bdd/multipleReturnWithElseBdd.xml");
 
 		cp.process(chainIterator, getBaseService("org.wmaop.foo:bar"), pipeline, ss);
 		assertEquals("gamma", get(pipeline, "apple"));
@@ -182,12 +180,7 @@ public class BddInterceptorTest {
 
 	@Test
 	public void shouldReturnWithoutElse() throws Exception {
-		AOPChainProcessor cp = getConfiguredProcessor("bdd/multipleReturnWithoutElseBdd.xml");
-
-		// Pipeline mocking
-		IData pipeline = IDataFactory.create();
-		ServiceStatus ss = mock(ServiceStatus.class);
-		Iterator<InvokeChainProcessor> chainIterator = new ArrayList<InvokeChainProcessor>().iterator();
+		configureProcessor("bdd/multipleReturnWithoutElseBdd.xml");
 
 		// No change to pipeline, not fired
 		cp.process(chainIterator, getBaseService("org.wmaop.foo:bar"), pipeline, ss);
@@ -204,12 +197,7 @@ public class BddInterceptorTest {
 
 	@Test
 	public void shouldSequentialReturn() throws Exception {
-		AOPChainProcessor cp = getConfiguredProcessor("bdd/sequentialReturnBdd.xml");
-
-		// Pipeline mocking
-		IData pipeline = IDataFactory.create();
-		ServiceStatus ss = mock(ServiceStatus.class);
-		Iterator<InvokeChainProcessor> chainIterator = new ArrayList<InvokeChainProcessor>().iterator();
+		configureProcessor("bdd/sequentialReturnBdd.xml");
 
 		cp.process(chainIterator, getBaseService("org.wmaop.foo:bar"), pipeline, ss);
 		assertEquals("alpha", get(pipeline, "a"));
@@ -226,12 +214,7 @@ public class BddInterceptorTest {
 
 	@Test
 	public void shouldRandomReturn() throws Exception {
-		AOPChainProcessor cp = getConfiguredProcessor("bdd/randomReturnBdd.xml");
-
-		// Pipeline mocking
-		IData pipeline = IDataFactory.create();
-		ServiceStatus ss = mock(ServiceStatus.class);
-		Iterator<InvokeChainProcessor> chainIterator = new ArrayList<InvokeChainProcessor>().iterator();
+		configureProcessor("bdd/randomReturnBdd.xml");
 
 		for (int i = 0; i < 20; i++) {
 			cp.process(chainIterator, getBaseService("org.wmaop.foo:bar"), pipeline, ss);
@@ -256,11 +239,6 @@ public class BddInterceptorTest {
 			ParsedScenario scenario = new BddParser().parse(bais, null);
 			cp.getAdviceManager().registerAdvice(scenario.getAdvice());
 
-			// Pipeline mocking
-			IData pipeline = IDataFactory.create();
-			ServiceStatus ss = mock(ServiceStatus.class);
-			Iterator<InvokeChainProcessor> chainIterator = new ArrayList<InvokeChainProcessor>().iterator();
-
 			add(pipeline, "foo", 2);
 			cp.process(chainIterator, getBaseService("org.wmaop.foo:bar"), pipeline, ss);
 
@@ -271,14 +249,13 @@ public class BddInterceptorTest {
 		}
 	}
 
-	private AOPChainProcessor getConfiguredProcessor(String testXmlFileName) throws Exception {
+	private ParsedScenario configureProcessor(String testXmlFileName) throws BddParseException {
 		ClassLoader classLoader = this.getClass().getClassLoader();
-		AOPChainProcessor cp = new AOPChainProcessor(new AdviceManager(), mock(StubManager.class));
 		cp.setEnabled(true);
 
 		ParsedScenario scenario = new BddParser().parse(classLoader.getResourceAsStream(testXmlFileName), null);
 		cp.getAdviceManager().registerAdvice(scenario.getAdvice());
-		return cp;
+		return scenario;
 	}
 
 	private BaseService getBaseService(String svcName) {
