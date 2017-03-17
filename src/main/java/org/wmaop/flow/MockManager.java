@@ -193,9 +193,8 @@ public class MockManager extends AbstractFlowManager {
 		mandatory(pipeline, "{0} must exist when creating an assertion", ADVICE_ID, INTERCEPT_POINT, SERVICE_NAME, EXCEPTION);
 		
 		try {
-			Exception e = (Exception) Class.forName(exception).getDeclaredConstructor(String.class).newInstance("WMAOP " + serviceName);
-			registerInterceptor(adviceId, getRemit(pipeline), interceptPoint, serviceName, pipelineCondition, new ExceptionInterceptor(e), calledBy);
-		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
+			registerInterceptor(adviceId, getRemit(pipeline), interceptPoint, serviceName, pipelineCondition, new ExceptionInterceptor(exception, "WMAOP " + serviceName), calledBy);
+		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException | IllegalArgumentException | SecurityException e) {
 			throw new ServiceException(e);
 		}
 	}
