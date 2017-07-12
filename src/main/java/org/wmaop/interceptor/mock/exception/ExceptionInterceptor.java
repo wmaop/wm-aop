@@ -12,14 +12,16 @@ import com.wm.data.IData;
 public class ExceptionInterceptor extends BaseInterceptor {
 
 	public static final String MAP_EXCEPTION = "exception";
-	
+
 	private final InterceptResult interceptResult;
 
-	public ExceptionInterceptor(String exceptionClassName) throws InstantiationException, IllegalAccessException, ClassNotFoundException {
+	public ExceptionInterceptor(String exceptionClassName)
+			throws InstantiationException, IllegalAccessException, ClassNotFoundException {
 		this(exceptionClassName, null);
 	}
-	
-	public ExceptionInterceptor(String exceptionClassName, String defaultMessage) throws InstantiationException, IllegalAccessException, ClassNotFoundException {
+
+	public ExceptionInterceptor(String exceptionClassName, String defaultMessage)
+			throws InstantiationException, IllegalAccessException, ClassNotFoundException {
 		super("Exception:" + exceptionClassName);
 		Exception exception;
 		int bktPos = exceptionClassName.indexOf('(');
@@ -46,10 +48,10 @@ public class ExceptionInterceptor extends BaseInterceptor {
 	}
 
 	public ExceptionInterceptor(Exception e) {
-		super("Exception:"+e.getClass().getName());
+		super("Exception:" + e.getClass().getName());
 		interceptResult = new InterceptResult(true, e);
 	}
-	
+
 	@Override
 	public InterceptResult intercept(FlowPosition flowPosition, IData idata) {
 		invokeCount++;
@@ -60,17 +62,21 @@ public class ExceptionInterceptor extends BaseInterceptor {
 	protected void addMap(Map<String, Object> am) {
 		am.put(MAP_TYPE, "ExceptionInterceptor");
 		am.put(MAP_EXCEPTION, interceptResult.getException().getClass().getName());
-		
+
 	}
 
 	private String getMessage(String classDeclaration, int bktPos) {
 		int start = bktPos + 1;
-		while(isSkippable(classDeclaration.charAt(start))) { start++; }
+		while (isSkippable(classDeclaration.charAt(start))) {
+			start++;
+		}
 		int end = classDeclaration.length();
-		while(isSkippable(classDeclaration.charAt(end - 1))) { end--; }
+		while (isSkippable(classDeclaration.charAt(end - 1))) {
+			end--;
+		}
 		return classDeclaration.substring(start, end);
 	}
-	
+
 	private boolean isSkippable(char c) {
 		switch (c) {
 		case '\"':
@@ -83,5 +89,5 @@ public class ExceptionInterceptor extends BaseInterceptor {
 			return false;
 		}
 	}
-		
+
 }
