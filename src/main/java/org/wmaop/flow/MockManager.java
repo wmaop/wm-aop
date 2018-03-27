@@ -17,6 +17,7 @@ import org.wmaop.chainprocessor.AOPChainProcessor;
 import org.wmaop.interceptor.mock.canned.CannedResponseInterceptor;
 import org.wmaop.interceptor.mock.canned.CannedResponseInterceptor.ResponseSequence;
 import org.wmaop.interceptor.mock.exception.ExceptionInterceptor;
+import org.wmaop.interceptor.mock.isservice.FlowServiceDelegatingInterceptor;
 import org.wmaop.util.pipeline.StructureConverter;
 
 import com.wm.app.b2b.server.ServiceException;
@@ -32,6 +33,8 @@ public class MockManager extends AbstractFlowManager {
 	public static final String RESPONSE = "response";
 	public static final String INTERCEPT_POINT = "interceptPoint";
 	public static final String SERVICE_NAME = "serviceName";
+	public static final String INTERFACE = "interface";
+	public static final String MOCK_SERVICE_NAME = "mockServiceName";
 	public static final String CONDITION = "condition";
 	public static final String EXCEPTION = "exception";
 	public static final String SCOPE = "scope";
@@ -197,4 +200,23 @@ public class MockManager extends AbstractFlowManager {
 			throw new ServiceException(e);
 		}
 	}
+	
+	@SuppressWarnings("unchecked")
+	public void registerFlowServiceMock(IData pipeline) throws ServiceException {
+		IDataCursor pipelineCursor = pipeline.getCursor();
+		String adviceId = IDataUtil.getString(pipelineCursor, ADVICE_ID);
+		String interceptPoint = IDataUtil.getString(pipelineCursor, INTERCEPT_POINT);
+		String serviceName = IDataUtil.getString(pipelineCursor, SERVICE_NAME);
+		String ifcname = IDataUtil.getString(pipelineCursor, INTERFACE);
+		String mockServiceName = IDataUtil.getString(pipelineCursor, MOCK_SERVICE_NAME);
+		String pipelineCondition = IDataUtil.getString(pipelineCursor, CONDITION);
+		String calledBy = IDataUtil.getString(pipelineCursor, CALLED_BY);
+		pipelineCursor.destroy();
+
+		mandatory(pipeline, "{0} must exist when creating a flow service mock", ADVICE_ID, INTERCEPT_POINT, SERVICE_NAME, INTERFACE, MOCK_SERVICE_NAME);
+		
+		Interceptor interceptor = new FlowServiceDelegatingInterceptor(ifcname, mockServiceName);
+		registerInterceptor(adviceId, getRemit(pipeline), interceptPoint.toUpperCase(), serviceName, pipelineCondition, interceptor, calledBy);
+	}
+
 }
