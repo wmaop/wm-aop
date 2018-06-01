@@ -37,11 +37,17 @@ public class BddInterceptor extends BaseInterceptor implements CompositeIntercep
 	private final Map<String, List<Interceptor>> interceptorMap = new HashMap<>();
 	private final List<Interceptor> defaultInterceptors = new ArrayList<>();
 	private final boolean ignoreNoMatch;
-
+	private final InterceptorFactory interceptorFactory;
+	
 	private boolean hasExpressions;
 	
 	public BddInterceptor(Scenario scenario, boolean ignoreNoMatch) {
+		this(scenario, ignoreNoMatch, new InterceptorFactoryImpl());
+	}
+	
+	public BddInterceptor(Scenario scenario, boolean ignoreNoMatch, InterceptorFactory interceptorFactory) {
 		super("Scenario:"+scenario.getId());
+		this.interceptorFactory = interceptorFactory;
 		Map<String, String> exprs = new LinkedHashMap<>();
 		this.ignoreNoMatch = ignoreNoMatch;
 		for (When when : scenario.getWhen()) {
@@ -74,14 +80,13 @@ public class BddInterceptor extends BaseInterceptor implements CompositeIntercep
 	
 	
 	private void processWhen(Map<String, String> exprs, When when) {
-		InterceptorFactory intFactory = new InterceptorFactory();
 		String id = when.getId();
 		String expr = when.getCondition();
 
 		for (Object o : when.getContent()) {
 			if (!(o instanceof Then))
 				continue;
-			Interceptor interceptor = intFactory.getInterceptor((Then) o);
+			Interceptor interceptor = interceptorFactory.getInterceptor((Then) o);
 			if (expr != null) {
 				exprs.put(id, expr);
 				List<Interceptor> am = interceptorMap.get(id);

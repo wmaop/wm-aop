@@ -14,6 +14,7 @@ import org.wmaop.aop.advice.remit.UserRemit;
 import org.wmaop.aop.assertion.AssertionInterceptor;
 import org.wmaop.aop.interceptor.Interceptor;
 import org.wmaop.chainprocessor.AOPChainProcessor;
+import org.wmaop.interceptor.delegating.FlowServiceDelegatingInterceptor;
 import org.wmaop.interceptor.mock.canned.CannedResponseInterceptor;
 import org.wmaop.interceptor.mock.canned.CannedResponseInterceptor.ResponseSequence;
 import org.wmaop.interceptor.mock.exception.ExceptionInterceptor;
@@ -37,6 +38,7 @@ public class MockManager extends AbstractFlowManager {
 	public static final String SCOPE = "scope";
 	public static final String USERNAME = "username";
 	public static final String CALLED_BY = "calledBy";
+	public static final String DELEGATED_SERVICE_NAME = "delegatedServiceName";
 	
 	public void reset(IData pipeline) throws ServiceException {
 		IDataCursor pipelineCursor = pipeline.getCursor();
@@ -197,4 +199,20 @@ public class MockManager extends AbstractFlowManager {
 			throw new ServiceException(e);
 		}
 	}
+	
+	public void registerFlowServiceMock(IData pipeline) throws ServiceException {
+		IDataCursor pipelineCursor = pipeline.getCursor();
+		String adviceId = IDataUtil.getString(pipelineCursor, ADVICE_ID);
+		String interceptPoint = IDataUtil.getString(pipelineCursor, INTERCEPT_POINT);
+		String serviceName = IDataUtil.getString(pipelineCursor, SERVICE_NAME);
+		String delegatedServiceName = IDataUtil.getString(pipelineCursor, DELEGATED_SERVICE_NAME);
+		String pipelineCondition = IDataUtil.getString(pipelineCursor, CONDITION);
+		String calledBy = IDataUtil.getString(pipelineCursor, CALLED_BY);
+		pipelineCursor.destroy();
+
+		mandatory(pipeline, "{0} must exist when creating a flow service mock", ADVICE_ID, INTERCEPT_POINT, SERVICE_NAME, DELEGATED_SERVICE_NAME);
+		
+		Interceptor interceptor = new FlowServiceDelegatingInterceptor(delegatedServiceName);
+		registerInterceptor(adviceId, getRemit(pipeline), interceptPoint.toUpperCase(), serviceName, pipelineCondition, interceptor, calledBy);
+	}	
 }

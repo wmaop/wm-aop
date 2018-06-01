@@ -30,6 +30,8 @@ public class BddParser {
 
 	private static final Logger logger = Logger.getLogger(BddParser.class);
 
+	private InterceptorFactory interceptorFactory;
+	
 	class AssertionHolder {
 		protected String whenCondition;
 		protected String whenid;
@@ -48,7 +50,7 @@ public class BddParser {
 	}
 
 	private Advice processAdvice(Scenario scenario, String adviceId) {
-		Interceptor interceptor = new BddInterceptor(scenario, true);
+		Interceptor interceptor = interceptorFactory == null ? new BddInterceptor(scenario, true) : new BddInterceptor(scenario, true, interceptorFactory);
 		String id = adviceId != null && adviceId.length() > 0 ? adviceId : scenario.getId(); 
 		return new Advice(id, getScope(scenario), getJoinPoint(scenario), interceptor);
 	}
@@ -97,5 +99,9 @@ public class BddParser {
 		}
 		logger.info("Created pipeline matcher: " + pipelineMatcher);
 		return pipelineMatcher;
+	}
+
+	public void setInterceptorFactory(InterceptorFactory interceptorFactory) {
+		this.interceptorFactory = interceptorFactory;
 	}
 }

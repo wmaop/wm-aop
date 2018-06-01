@@ -57,6 +57,7 @@
         <xs:element ref="pipelineCapture"/>
         <xs:element ref="assert"/>
         <xs:element ref="throw"/>
+        <xs:element ref="invoke"/>
       </xs:choice>
       <xs:attribute name="dispatch" default="sequential">
         <xs:simpleType>
@@ -81,6 +82,7 @@
 
   <xs:element name="return" type="xs:string"/>
   <xs:element name="throw" type="xs:string"/>
+  <xs:element name="invoke" type="xs:string"/>
   <xs:element name="pipelineCapture" type="xs:string"/>
   
   <xs:element name="assert">

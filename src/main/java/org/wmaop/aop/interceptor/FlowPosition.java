@@ -1,5 +1,9 @@
 package org.wmaop.aop.interceptor;
 
+import org.wmaop.util.pipeline.NameParser;
+
+import com.webmethods.util.Pair;
+
 public class FlowPosition {
 
 	public final String packageName;
@@ -7,23 +11,12 @@ public class FlowPosition {
 	public final String fqname;
 	private InterceptPoint interceptPoint;
 	
-	public FlowPosition(InterceptPoint point, String fqname) {
+	public FlowPosition(InterceptPoint point, String fqServiceName) {
 		interceptPoint = point;
-		if (fqname == null) {
-			serviceName = "";
-			packageName = "";
-			this.fqname = "";
-		} else {
-			this.fqname = fqname;
-			int pkgsep = fqname.lastIndexOf(':');
-			if (pkgsep == -1) {
-				serviceName = fqname;
-				packageName = "";
-			} else {
-				serviceName = fqname.substring(pkgsep + 1);
-				packageName = fqname.substring(0, pkgsep);
-			}
-		}
+		Pair<String, String> parsedName = NameParser.parseFQServiceName(fqServiceName);
+		this.packageName = parsedName.getFirst();
+		this.serviceName = parsedName.getSecond();
+		fqname = fqServiceName == null?"":fqServiceName;
 	}
 	
 	@Override

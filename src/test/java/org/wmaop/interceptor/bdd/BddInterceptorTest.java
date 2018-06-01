@@ -24,8 +24,12 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.wmaop.aop.advice.AdviceManager;
 import org.wmaop.aop.assertion.Assertable;
+import org.wmaop.aop.interceptor.FlowPosition;
+import org.wmaop.aop.interceptor.InterceptResult;
+import org.wmaop.aop.interceptor.Interceptor;
 import org.wmaop.aop.stub.StubManager;
 import org.wmaop.chainprocessor.AOPChainProcessor;
+import org.wmaop.interceptor.bdd.xsd.Then;
 
 import com.wm.app.b2b.server.BaseService;
 import com.wm.app.b2b.server.invoke.InvokeChainProcessor;
@@ -179,6 +183,48 @@ public class BddInterceptorTest {
 	}
 
 	@Test
+	public void shouldDelegateServiceAndWhenConditions() throws Exception {
+		// Note this checks the parsing works, not the interceptor
+		InterceptorFactory ifact = new InterceptorFactory() {
+			private Interceptor interceptor = new Interceptor() {
+				private int invoked = 0;
+				@Override
+				public Map<String, Object> toMap() {
+					return null;
+				}
+				
+				@Override
+				public InterceptResult intercept(FlowPosition flowPosition, IData idata) {
+					invoked++;
+					return InterceptResult.TRUE;
+				}
+				
+				@Override
+				public String getName() {
+					return "";
+				}
+				
+				@Override
+				public int getInvokeCount() {
+					return invoked;
+				}
+			};
+			@Override
+			public Interceptor getInterceptor(Then then) {
+				assertEquals("org.wmaop.foo:barbar", then.getInvoke());
+				return interceptor;
+			}
+		};
+		configureProcessor("bdd/delegatedServiceBdd.xml", ifact);
+		cp.process(chainIterator, getBaseService("org.wmaop.foo:bar"), pipeline, ss);
+		
+		Then then = new Then();
+		then.setInvoke("org.wmaop.foo:barbar");
+		assertEquals(1, ifact.getInterceptor(then).getInvokeCount());
+	}
+	
+	
+	@Test
 	public void shouldReturnWithoutElse() throws Exception {
 		configureProcessor("bdd/multipleReturnWithoutElseBdd.xml");
 
@@ -250,10 +296,18 @@ public class BddInterceptorTest {
 	}
 
 	private ParsedScenario configureProcessor(String testXmlFileName) throws BddParseException {
+		return configureProcessor(testXmlFileName, null);
+	}
+
+	private ParsedScenario configureProcessor(String testXmlFileName, InterceptorFactory interceptorFactory) throws BddParseException {
 		ClassLoader classLoader = this.getClass().getClassLoader();
 		cp.setEnabled(true);
 
-		ParsedScenario scenario = new BddParser().parse(classLoader.getResourceAsStream(testXmlFileName), null);
+		BddParser bddParser = new BddParser();
+		if (interceptorFactory != null) {
+			bddParser.setInterceptorFactory(interceptorFactory);
+		}
+		ParsedScenario scenario = bddParser.parse(classLoader.getResourceAsStream(testXmlFileName), null);
 		cp.getAdviceManager().registerAdvice(scenario.getAdvice());
 		return scenario;
 	}
